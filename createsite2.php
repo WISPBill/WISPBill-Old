@@ -69,7 +69,7 @@ $con = $mysqli->real_escape_string($con);
 
 // end of data sanitize and existence check
 // start of data entry
-if ($mysqli->query("INSERT INTO `wispbillv2`.`location` (`idlocation`, `name`,
+if ($mysqli->query("INSERT INTO `$db`.`location` (`idlocation`, `name`,
                    `latitude`, `longitude`, `type`, `contacts_idcontacts`,
                    `ifconfig`, `coverage`) VALUES
                    (NULL, '$name', '$lat', '$lon', '$type', '$con', 'no', NULL);") === TRUE) {

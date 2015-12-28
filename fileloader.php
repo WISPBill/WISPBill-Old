@@ -23,6 +23,8 @@ require_once('./billconfig.php');
 require_once('./geocoder.php');
 // Functions for Edgerouter MGMT
 require_once('./edgerouterconfig.php');
+// Airos Stat graber and DHCP ip getter
+require_once('./airosstatpoller.php');
 set_include_path(get_include_path() . PATH_SEPARATOR . 'ssh');
 include('Net/SSH2.php');
 

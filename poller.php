@@ -61,9 +61,7 @@ require_once('./fileloader.php');
 											  if ($mysqli->query("INSERT INTO `$db`.
 								   `notifications` (`idnotifications`, `readyn`,
 								   `content`, `date`, `fromwho`, `towho`) VALUES (NULL,
-								   '0', 'The Router at $routerip did not allow SSH on
-								   Management VLAN IP. Reason Unknown. Some Stats were
-								   not collected. ID of CPE AFFECTED = $cpeid', CURRENT_TIMESTAMP, 'system', 'all');")
+								   '0', 'The Router at $routerip did not allow SSH on Management VLAN IP. Reason Unknown. Some Stats were not collected. ID of CPE AFFECTED = $cpeid', CURRENT_TIMESTAMP, 'system', 'all');")
 								   === TRUE) {
 								   //Will notify admins of error 
 								   }
@@ -167,8 +165,7 @@ require_once('./fileloader.php');
 								   // Radio has wrong auth info
 								   
 								   if ($result5 = $mysqli->query("SELECT * FROM `notifications`
-								   WHERE `readyn` = '0' and `content` = 'A Radio has a ssh error it is online and did not allow login
-								   ID of CPE AFFECTED = $cpeid'")) {
+								   WHERE `readyn` = '0' and `content` = 'A Radio has a ssh error it is online and did not allow login ID of CPE AFFECTED = $cpeid'")) {
 										if ($result5->num_rows == 1){
 										// Error is open no need to make again
 										
@@ -177,8 +174,7 @@ require_once('./fileloader.php');
 											 if ($mysqli->query("INSERT INTO `$db`.
 								   `notifications` (`idnotifications`, `readyn`,
 								   `content`, `date`, `fromwho`, `towho`) VALUES (NULL,
-								   '0', 'A Radio has a ssh error it is online and did not allow login
-								   ID of CPE AFFECTED = $cpeid', CURRENT_TIMESTAMP, 'system', 'all');")
+								   '0', 'A Radio has a ssh error it is online and did not allow login ID of CPE AFFECTED = $cpeid', CURRENT_TIMESTAMP, 'system', 'all');")
 								   === TRUE) {
 								   //Will notify admins of error 
 								   }
@@ -190,8 +186,7 @@ require_once('./fileloader.php');
 								   // Radio had error with command
 								   
 								   if ($result5 = $mysqli->query("SELECT * FROM `notifications`
-								   WHERE `readyn` = '0' and `content` = 'A Radio has a unknown ssh error it is online and did allow login
-								   ID of CPE AFFECTED = $cpeid'")) {
+								   WHERE `readyn` = '0' and `content` = 'A Radio has a unknown ssh error it is online and did allow login ID of CPE AFFECTED = $cpeid'")) {
 										if ($result5->num_rows == 1){
 										// Error is open no need to make again
 										
@@ -200,8 +195,7 @@ require_once('./fileloader.php');
 											 if ($mysqli->query("INSERT INTO `$db`.
 								   `notifications` (`idnotifications`, `readyn`,
 								   `content`, `date`, `fromwho`, `towho`) VALUES (NULL,
-								   '0', 'A Radio has a unknown ssh error it is online and did allow login
-								   ID of CPE AFFECTED = $cpeid', CURRENT_TIMESTAMP, 'system', 'all');")
+								   '0', 'A Radio has a unknown ssh error it is online and did allow login ID of CPE AFFECTED = $cpeid', CURRENT_TIMESTAMP, 'system', 'all');")
 								   === TRUE) {
 								   //Will notify admins of error 
 								   }
@@ -214,8 +208,7 @@ require_once('./fileloader.php');
 							  //SSH works but IP not found
 							  
 								   if ($result5 = $mysqli->query("SELECT * FROM `notifications`
-								   WHERE `readyn` = '0' and `content` = 'The Router at $routerip did not have IP lease data for a radio
-								   ID of CPE AFFECTED = $cpeid'")) {
+								   WHERE `readyn` = '0' and `content` = 'The Router at $routerip did not have IP lease data for a radio ID of CPE AFFECTED = $cpeid'")) {
 										if ($result5->num_rows == 1){
 										// Error is open no need to make again
 										
@@ -224,8 +217,7 @@ require_once('./fileloader.php');
 											 if ($mysqli->query("INSERT INTO `$db`.
 								   `notifications` (`idnotifications`, `readyn`,
 								   `content`, `date`, `fromwho`, `towho`) VALUES (NULL,
-								   '0', 'The Router at $routerip did not have IP lease data for a radio
-								   ID of CPE AFFECTED = $cpeid', CURRENT_TIMESTAMP, 'system', 'all');")
+								   '0', 'The Router at $routerip did not have IP lease data for a radio ID of CPE AFFECTED = $cpeid', CURRENT_TIMESTAMP, 'system', 'all');")
 								   === TRUE) {
 								   //Will notify admins of error 
 								   }

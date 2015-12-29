@@ -52,6 +52,7 @@ if ($result = $mysqli->query("SELECT * FROM `notifications` WHERE `readyn`
     
       if ($result = $mysqli->query("SELECT * FROM `notifications` WHERE `readyn`
 = '0' and `towho` = 'all' or `towho` = '$adminid' ORDER BY `notifications`.`idnotifications` DESC limit 1;")) {
+        
     while ($row = $result->fetch_assoc()) {
      $source= $row["fromwho"];
      $notiid= $row["idnotifications"];

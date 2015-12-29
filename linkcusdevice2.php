@@ -22,7 +22,7 @@ require_once('./session.php');
 require_once('./fileloader.php');
 require_once('./billingcon.php');
 $mysqli = new mysqli("$ip", "$username", "$password", "$db");
-$mysqlil = new mysqli("$ip", "$username", "$password", "$dbl");
+$mysqlil = new mysqli("$ipl", "$usernamel", "$passwordl", "$dbl");
 // start of post
 $id= $_POST["id"];
 $phone = $_POST["tel"];
@@ -60,7 +60,7 @@ if (empty($id)) {
 $emailc = $mysqli->real_escape_string($email);
 $phonec = $mysqli->real_escape_string($phone);
 $l4c = $mysqli->real_escape_string($l4);
-$lid = $mysqli->real_escape_string($lid);
+$site = $mysqli->real_escape_string($lid);
 if(!filter_var($emailc, FILTER_VALIDATE_EMAIL)){
          $_SESSION['exitcodev2'] = 'Email is Not Valid';
     header('Location: linkcusdevice.php');
@@ -99,11 +99,199 @@ if ($result2 = $mysqli->query("SELECT * FROM `customer_users` WHERE `idcustomer_
  
          }// end if
          if ($result = $mysqli->query("UPDATE `$db`.`devices` SET
-                                      `location_idlocation` = '$lid',
+                                      `location_idlocation` = '$site',
                                       `field_status` = 'customer' WHERE
                                       `devices`.`iddevices` = $id;")) {
  
          }// end if
+         
+         if ($result14 = $mysqli->query("SELECT * FROM `devices` WHERE `iddevices` = '$id'")) {
+    /* fetch associative array */
+     while ($row14 = $result14->fetch_assoc()) {
+     $mac= $row14["mac"];
+}
+       /* free result set */
+    $result14->close();
+}// end if
+         
+         $cpeid = $id;
+          if ($result2 = $mysqli->query("SELECT * FROM `devices` WHERE `location_idlocation` = '$site'and `type` = 'router'")) {
+				/* fetch associative array */
+				 while ($row2 = $result2->fetch_assoc()) {
+					 $lid= $row2["librenms_id"];
+					 $did= $row2["iddevices"];
+					 }
+					 if ($result3 = $mysqli->query("SELECT * FROM `device_ports` WHERE `use` = 'mgmt' and `devices_iddevices` = '$did'")) {
+				/* fetch associative array */
+				 while ($row3 = $result3->fetch_assoc()) {
+					 $portid= $row3["port id"];
+					 }
+						 if ($resultl = $mysqlil->query("SELECT * FROM `ipv4_addresses` WHERE `port_id` = '$portid'")) {
+				/* fetch associative array */
+				 while ($rowl = $resultl->fetch_assoc()) {
+					 $routerip= $rowl["ipv4_address"];
+					 }
+                           $mac = strtolower($mac);
+						 $radioip = getdhcpip($routerip,$rname,$rpass,$mac);
+						 
+						 if ($radioip["error"] =='router error'){
+							  // Could not SSH into router
+								  
+								   if ($result5 = $mysqli->query("SELECT * FROM `notifications`
+								   WHERE `readyn` = '0' and `content` = 'The Router at $routerip did not allow SSH on
+								   Management VLAN IP. Reason Unknown. Some Stats were
+								   not collected. ID of CPE AFFECTED = $cpeid'")) {
+										if ($result5->num_rows == 1){
+										// Error is open no need to make again
+										
+										} elseif ($result5->num_rows == 0){
+										// No open error have to make one
+											  if ($mysqli->query("INSERT INTO `$db`.
+								   `notifications` (`idnotifications`, `readyn`,
+								   `content`, `date`, `fromwho`, `towho`) VALUES (NULL,
+								   '0', 'The Router at $routerip did not allow SSH on Management VLAN IP. Reason Unknown. Some Stats were not collected. ID of CPE AFFECTED = $cpeid', CURRENT_TIMESTAMP, 'system', 'all');")
+								   === TRUE) {
+								   //Will notify admins of error 
+								   }
+										}
+										/* free result set */
+										$result5->close();
+								   }
+						 }elseif($radioip["mac"] == "$mac"){
+							  // Found IP
+							  $radiosship = $radioip["ip"];
+                              
+							  $stat = getAirOSstat("$radiosship", "$radiouname", "$radiopass");
+							  if ($stat["error"] == 'none'){
+								   // DATA entry and calc
+								   $freq = $stat["frequency"];
+								   $txpower = $stat["txPower"];
+								   $signal =  $stat["signal"];
+								   $noise = $stat["noise"];
+								   $ccq = $stat["ccq"];
+								   $latency = $stat["latency"];
+								   $rxbytes = $stat["rxbtyes"];
+								   $txbytes =  $stat["txbtyes"];
+								   $time =  $stat["time"];
+								   
+								   //DATE ENTRY
+								   if ($mysqli->query("INSERT INTO `$db`.`cpe_data`
+								   (`frequency`, `txpower`, `signallev`, `noise`, `ccq`,
+								   `latency`, `rxbtyes`, `txbtyes`, `rxrate`, `txrate`,
+								   `datetime`, `idcpedata`, `devices_iddevices`) VALUES
+								   ('$freq', '$txpower', '$signal', '$noise', '$ccq', '$latency',
+								   '$rxbytes', '$txbytes', NULL, NULL, '$time', NULL, '$cpeid');")
+								   === TRUE) {
+								   // Nothing
+								   }
+								   if ($result5 = $mysqli->query("SELECT * FROM `notifications`
+								   WHERE `readyn` = '0' and `content` = 'A Radio is offline ID of CPE AFFECTED = $cpeid'")) {
+										if ($result5->num_rows == 1){
+										// Error is open should be closed
+										while ($row5 = $result5->fetch_assoc()) {
+										$notiid= $row5["idnotifications"];
+											 if ($mysqli->query("UPDATE `$db`.`notifications`
+											 SET `readyn` = '1' WHERE `notifications`.`idnotifications` = '$notiid';")
+								   === TRUE) {
+								   // Nothing
+								   }
+										}
+										} elseif ($result->num_rows == 0){
+										// No open error nothing to do
+										}
+										/* free result set */
+										$result5->close();
+										}
+								      
+							  } elseif($stat["error"] == 'conerror'){
+								   // Radio is offline
+								   if ($result5 = $mysqli->query("SELECT * FROM `notifications`
+								   WHERE `readyn` = '0' and `content` = 'A Radio is offline ID of CPE AFFECTED = $cpeid'")) {
+										if ($result5->num_rows == 1){
+										// Error is open no need to make again
+										
+										} elseif ($result5->num_rows == 0){
+										// No open error have to make one
+											 if ($mysqli->query("INSERT INTO `$db`.
+								   `notifications` (`idnotifications`, `readyn`,
+								   `content`, `date`, `fromwho`, `towho`) VALUES (NULL,
+								   '0', 'A Radio is offline ID of CPE AFFECTED = $cpeid', CURRENT_TIMESTAMP, 'system', 'all');")
+								   === TRUE) {
+								   //Will notify admins of error 
+								   }
+										}
+										/* free result set */
+										$result5->close();
+								   }
+								   
+							  }elseif($stat["error"] == 'autherror'){
+								   // Radio has wrong auth info
+								   
+								   if ($result5 = $mysqli->query("SELECT * FROM `notifications`
+								   WHERE `readyn` = '0' and `content` = 'A Radio has a ssh error it is online and did not allow login ID of CPE AFFECTED = $cpeid'")) {
+										if ($result5->num_rows == 1){
+										// Error is open no need to make again
+										
+										} elseif ($result5->num_rows == 0){
+										// No open error have to make one
+											 if ($mysqli->query("INSERT INTO `$db`.
+								   `notifications` (`idnotifications`, `readyn`,
+								   `content`, `date`, `fromwho`, `towho`) VALUES (NULL,
+								   '0', 'A Radio has a ssh error it is online and did not allow login ID of CPE AFFECTED = $cpeid', CURRENT_TIMESTAMP, 'system', 'all');")
+								   === TRUE) {
+								   //Will notify admins of error 
+								   }
+										}
+										/* free result set */
+										$result5->close();
+								   }
+							  }elseif($stat["error"] == 'exeerror'){
+								   // Radio had error with command
+								   
+								   if ($result5 = $mysqli->query("SELECT * FROM `notifications`
+								   WHERE `readyn` = '0' and `content` = 'A Radio has a unknown ssh error it is online and did allow login ID of CPE AFFECTED = $cpeid'")) {
+										if ($result5->num_rows == 1){
+										// Error is open no need to make again
+										
+										} elseif ($result5->num_rows == 0){
+										// No open error have to make one
+											 if ($mysqli->query("INSERT INTO `$db`.
+								   `notifications` (`idnotifications`, `readyn`,
+								   `content`, `date`, `fromwho`, `towho`) VALUES (NULL,
+								   '0', 'A Radio has a unknown ssh error it is online and did allow login ID of CPE AFFECTED = $cpeid', CURRENT_TIMESTAMP, 'system', 'all');")
+								   === TRUE) {
+								   //Will notify admins of error 
+								   }
+										}
+										/* free result set */
+										$result5->close();
+								   }
+							  }
+						 }else{
+							  //SSH works but IP not found
+							  
+								   if ($result5 = $mysqli->query("SELECT * FROM `notifications`
+								   WHERE `readyn` = '0' and `content` = 'The Router at $routerip did not have IP lease data for a radio ID of CPE AFFECTED = $cpeid'")) {
+										if ($result5->num_rows == 1){
+										// Error is open no need to make again
+										
+										} elseif ($result5->num_rows == 0){
+										// No open error have to make one
+											 if ($mysqli->query("INSERT INTO `$db`.
+								   `notifications` (`idnotifications`, `readyn`,
+								   `content`, `date`, `fromwho`, `towho`) VALUES (NULL,
+								   '0', 'The Router at $routerip did not have IP lease data for a radio ID of CPE AFFECTED = $cpeid', CURRENT_TIMESTAMP, 'system', 'all');")
+								   === TRUE) {
+								   //Will notify admins of error 
+								   }
+										}
+										/* free result set */
+										$result5->close();
+								   }
+						 }
+						 }// end if
+					 } // End of If	 
+         } // End of If
  }else{
      $_SESSION['exitcodev2'] = 'The Last 4 Digits are Wrong';
     header('linkcusdevice.php');

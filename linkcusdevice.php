@@ -9,8 +9,7 @@ $_SESSION['exitcodev2'] ='';
 
 if ($result = $mysqli->query("SELECT * FROM `devices`
                              WHERE `location_idlocation` is NULL and
-                             `type` = 'cpe' and `field_status` ='inventory'
-                             and `librenms_id` is not NULL")) {
+                             `type` = 'cpe' and `field_status` ='inventory'")) {
       /* fetch associative array */
       echo'<h1>Select a Device to Link it to an Account</h1>
       <form action="linkcusdevice2.php"method="post">

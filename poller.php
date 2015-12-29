@@ -18,11 +18,14 @@
 
 	@turtles2 on ubiquiti community, DSLReports and Netonix
  */
+
+ // ! This will take 7 secs per device if you have allot make copies and adjust cron and limit 
+ 
 require_once('./fileloader.php');
 	 $mysqli = new mysqli("$ip", "$username", "$password", "$db");
 	 $mysqlil = new mysqli("$ipl", "$usernamel", "$passwordl", "$dbl");
  if ($result = $mysqli->query("SELECT * FROM `devices` WHERE `type`
-                              = 'cpe' and `field_status` = 'customer'")) {
+                              = 'cpe' and `field_status` = 'customer' LIMIT 0 , 25")) {
     /* fetch associative array */
     foreach ($result as $row){
          $site = $row["location_idlocation"];
@@ -44,6 +47,7 @@ require_once('./fileloader.php');
 				 while ($rowl = $resultl->fetch_assoc()) {
 					 $routerip= $rowl["ipv4_address"];
 					 }
+						 $mac = strtolower($mac);
 						 $radioip = getdhcpip($routerip,$rname,$rpass,$mac);
 						 
 						 if ($radioip["error"] =='router error'){

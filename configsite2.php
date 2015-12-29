@@ -21,7 +21,7 @@
 require_once('./session.php');
 require_once('./fileloader.php');
 $mysqli = new mysqli("$ip", "$username", "$password", "$db");
-$mysqlil = new mysqli("$ip", "$username", "$password", "$dbl");
+$mysqlil = new mysqli("$ipl", "$usernamel", "$passwordl", "$dbl");
 // start of post
 $id= $_POST["id"];
 $id2= $_POST["id2"];

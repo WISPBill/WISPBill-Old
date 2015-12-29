@@ -138,9 +138,31 @@ function getAirOSstat($radioIP, $username, $password) {
 }
 
 function getdhcpip($routerip, $username, $password,$mac) {
-$radioip["error"] = '';
-$radioip["mac"] = $mac;
-$radioip["ip"] = '192.168.1.150';
-return $radioip;
+
+$ssh = new Net_SSH2("$routerip");
+if (!$ssh->login("$username", "$password")) {
+    return $radioip["error"] ='router error';
 }
+
+$data = $ssh->exec("/opt/vyatta/bin/vyatta-op-cmd-wrapper show dhcp leases");
+	
+	$end = strpos($data, "$mac");
+	$maclenght = strlen($mac);
+	$start = $end - 18; // Get is the longest an IP can be with spaces
+	$length = $end + $maclenght - $start;
+	$data = substr("$data", "$start","$length" );
+		
+		if (preg_match('/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/', $data, $match)) {
+    if (filter_var($match[0], FILTER_VALIDATE_IP)) {
+        $radioip["ip"] = $match[0];
+		$radioip["mac"] ="$mac";
+		$radioip["error"] ='';
+		return $radioip;
+	    
+    }else {
+	return $radioip["error"] ='';
+	}
+}
+		
+} // End of Get DHCP IP
 ?>

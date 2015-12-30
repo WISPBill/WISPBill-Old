@@ -121,6 +121,7 @@ $mailevents = '1';
   <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
   <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
   <![endif]-->
+
 </head>
 <!--
 BODY TAG OPTIONS:
@@ -265,11 +266,11 @@ desired effect
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-       Create a Site
+        Add a DHCP Server   
       </h1>
       <ol class="breadcrumb">
-        <li><a href="dashbored.php"><i class="fa fa-dashboard"></i> Dashbored</a></li>
-        <li class="active">Create Site</li>
+        <li><a href="#"><i class="fa fa-dashboard"></i> Level</a></li>
+        <li class="active">DHCP Server</li>
       </ol>
     </section>
 <?php
@@ -282,88 +283,88 @@ $errorlabel ='<label class="control-label" for="inputError" style="color: red;">
     <!-- Main content -->
     <section class="content">
 
-       <!-- general form elements disabled -->
+         <!-- general form elements disabled -->
           <div class="box box-warning">
             <div class="box-header with-border">
             </div>
             <!-- /.box-header -->
             <div class="box-body">
-              <form role="form" action="createsite2.php"method="post">
+              <form role="form" action="adddhcp2.php"method="post">
                 <!-- text input -->
                 <div class="form-group">
 					<?php
 					if($error == 'name'){
 						echo "$errorlabel";
 					}else{
-						echo '<label>Site Name</label>';
+						echo '<label>Server Name</label>';
 					}
 					?>
-                  <input type="text" class="form-control" name="name" placeholder="Enter Site Name" required>
+                  <input type="text" class="form-control" name="name" placeholder="Enter Server Name without any Whitespace" required>
                 </div>
-               
-			   <div class="form-group">
-                  
-                     <?php
-					if($error == 'lat'){
-						echo "$errorlabel";
-					}else{
-						echo '<label>Latitude</label>';
-					}
-					?>
-                  <input type="text" class="form-control" name="lat" placeholder="Enter Site Latitude" required>
-                </div>
-			   
-			   <div class="form-group">
-                <?php
-					if($error == 'lon'){
-						echo "$errorlabel";
-					}else{
-						echo '<label>Longitude</label>';
-					}
-					?>
-                  
-                  <input type="text" class="form-control" name="lon" placeholder="Enter Site Longitude" required>
-                </div>
-			                 
-                <!-- select -->
+                
+                <!-- text input -->
                 <div class="form-group">
-                  <?php
-					if($error == 'type'){
+					<?php
+					if($error == 'pool'){
 						echo "$errorlabel";
 					}else{
-						echo '<label>Site Type</label>';
+						echo '<label>Number of IPs in Pool Range will start after DHCP server IP</label>';
 					}
 					?>
-                  <select class="form-control" name="type" required>
-					<option value='' selected disabled>Please Select Site Type</option>
-                    <option value="micro pop">Micro POP</option>
-                    <option value="tower">Tower</option>
-                    <option value="backhaul">Backhaul</option>
-                  </select>
+                  <input type="number" class="form-control" name="pool" min="1" placeholder="Enter Number" required>
                 </div>
-				
+            <div class="form-group">
+                <?php
+					if($error == 'dns'){
+						echo "$errorlabel";
+					}else{
+						echo '<label>Enter DNS Server</label>';
+					}
+					?>
+
+                <div class="input-group">
+                  <div class="input-group-addon">
+                    <i class="fa fa-laptop"></i>
+                  </div>
+                  <input name="dns" type="text" class="form-control" data-inputmask="'alias': 'ip'" data-mask>
+                </div>
+                <!-- /.input group -->
+              </div>
+               
 				 <div class="form-group">
                   
 				<?php
-				 if ($result = $mysqli->query("SELECT * FROM `contacts`")) {
+				 if ($result = $mysqli->query("SELECT * 
+FROM  `location` 
+WHERE  `ifconfig` =  'yes'")) {
     /* fetch associative array */
 	
-                if($error == 'con'){
+                if($error == 'site'){
 						echo "$errorlabel";
 					}else{
-						echo '<label>Site Contact</label>';
+						echo '<label>Select the Site</label>';
 					}
-                echo '<select class="form-control" name="contact" required>
-				  <option value="" selected disabled>Please Select Site Contact</option>';
+                echo '<select class="form-control" name="site" id="first-choice" required>
+				  <option value="" selected disabled>Please Select Site</option>';
     while ($row = $result->fetch_assoc()) {
-        $id = $row["idcontacts"];
-        $fname = $row["fname"];
-        $lname = $row["lname"];
-        $org = $row["org"];
-        echo"<option value=$id>$fname $lname with $org</option>";
+        $id = $row["idlocation"];
+        $name = $row["name"];
+        echo"<option value=$id>$name</option>";
         }
  echo ' </select>
+                </div>';
+                if($error == 'port'){
+						echo "$errorlabel";
+					}else{
+						echo '<label>Select port and IP address for the DHCP Server</label>';
+					}
+                    echo '
+                    <div class="form-group">
+                <select class="form-control" name="port" id="second-choice" required>
+				  <option value="" selected disabled>Please Select Site First</option>
+                </select>
                 </div>
+                
 				<div class="box-footer">
                 <button type="submit" class="btn btn-primary">Submit</button>
               </div>';
@@ -376,7 +377,11 @@ $errorlabel ='<label class="control-label" for="inputError" style="color: red;">
 				?>
 				  
               </form>
-
+              <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <script type="text/javascript">
+  $("#first-choice").change(function() {
+  $("#second-choice").load("https://192.168.1.189/adddhcpget.php?choice=" + $("#first-choice").val());});
+  </script>
     </section>
     <!-- /.content -->
   </div>
@@ -407,5 +412,73 @@ $errorlabel ='<label class="control-label" for="inputError" style="color: red;">
      Both of these plugins are recommended to enhance the
      user experience. Slimscroll is required when using the
      fixed layout. -->
+<!-- Select2 -->
+<script src="AdminLTE2/plugins/select2/select2.full.min.js"></script>
+<!-- InputMask -->
+<script src="AdminLTE2/plugins/input-mask/jquery.inputmask.js"></script>
+<script src="AdminLTE2/plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
+<script src="AdminLTE2/plugins/input-mask/jquery.inputmask.extensions.js"></script>
+<script>
+  $(function () {
+    //Initialize Select2 Elements
+    $(".select2").select2();
+
+    //Datemask dd/mm/yyyy
+    $("#datemask").inputmask("dd/mm/yyyy", {"placeholder": "dd/mm/yyyy"});
+    //Datemask2 mm/dd/yyyy
+    $("#datemask2").inputmask("mm/dd/yyyy", {"placeholder": "mm/dd/yyyy"});
+    //Money Euro
+    $("[data-mask]").inputmask();
+
+    //Date range picker
+    $('#reservation').daterangepicker();
+    //Date range picker with time picker
+    $('#reservationtime').daterangepicker({timePicker: true, timePickerIncrement: 30, format: 'MM/DD/YYYY h:mm A'});
+    //Date range as a button
+    $('#daterange-btn').daterangepicker(
+        {
+          ranges: {
+            'Today': [moment(), moment()],
+            'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+            'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+            'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+            'This Month': [moment().startOf('month'), moment().endOf('month')],
+            'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+          },
+          startDate: moment().subtract(29, 'days'),
+          endDate: moment()
+        },
+        function (start, end) {
+          $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+        }
+    );
+
+    //iCheck for checkbox and radio inputs
+    $('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
+      checkboxClass: 'icheckbox_minimal-blue',
+      radioClass: 'iradio_minimal-blue'
+    });
+    //Red color scheme for iCheck
+    $('input[type="checkbox"].minimal-red, input[type="radio"].minimal-red').iCheck({
+      checkboxClass: 'icheckbox_minimal-red',
+      radioClass: 'iradio_minimal-red'
+    });
+    //Flat red color scheme for iCheck
+    $('input[type="checkbox"].flat-red, input[type="radio"].flat-red').iCheck({
+      checkboxClass: 'icheckbox_flat-green',
+      radioClass: 'iradio_flat-green'
+    });
+
+    //Colorpicker
+    $(".my-colorpicker1").colorpicker();
+    //color picker with addon
+    $(".my-colorpicker2").colorpicker();
+
+    //Timepicker
+    $(".timepicker").timepicker({
+      showInputs: false
+    });
+  });
+</script>
 </body>
 </html>

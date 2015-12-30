@@ -1,30 +1,5 @@
 <?php
-function dhcpsetup($sship, $name, $subnet, $defaultrouter,$start,$end,$dns,$portid,$rname,$rpass,$db,$mysqli){
-// This will setup a dhcp server on router at sship it will also save the settings to mysql
-$ssh = new Net_SSH2("$sship");
-if (!$ssh->login("$rname", "$rpass")) {
-    exit('Login Failed');
-}
 
-$ssh->exec("/opt/vyatta/sbin/vyatta-cfg-cmd-wrapper begin\n
-/opt/vyatta/sbin/vyatta-cfg-cmd-wrapper set service dhcp-server shared-network-name $name authoritative disable\n
-/opt/vyatta/sbin/vyatta-cfg-cmd-wrapper set service dhcp-server shared-network-name $name subnet $subnet default-router $defaultrouter\n
-/opt/vyatta/sbin/vyatta-cfg-cmd-wrapper set service dhcp-server shared-network-name $name subnet $subnet dns-server $dns\n
-/opt/vyatta/sbin/vyatta-cfg-cmd-wrapper set service dhcp-server shared-network-name $name subnet $subnet lease 86400\n
-/opt/vyatta/sbin/vyatta-cfg-cmd-wrapper set service dhcp-server shared-network-name $name subnet $subnet start $start stop $end\n
-/opt/vyatta/sbin/vyatta-cfg-cmd-wrapper commit\n
-/opt/vyatta/sbin/vyatta-cfg-cmd-wrapper save\n");
-
-if ($mysqli->query("INSERT INTO `$db`.`dhcp_servers` (`idDHCP_Servers`,
-                   `DNS`, `Range_Start`, `Range_Stop`, `subnet`, `name`,
-                   `device_ports_iddevice_ports`) VALUES
-                   (NULL, '$dns', '$start', '$end', '$subnet', '$name', '$portid');") === TRUE) {
-//nothing 
-} else{
-    echo'Something went wrong with the database please contact your webmaster';
-        exit;
-}
-} // End of function dhcpsetup
 
 function staticip($cusid,$rname,$rpass,$db,$mysqli){
 // This will make a statc ip on router and store in mysql

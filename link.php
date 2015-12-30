@@ -44,6 +44,7 @@ echo'
           <ul class="treeview-menu">
             <li><a href="createdevice.php">Add a Device to Inventory</a></li>
             <li><a href="ipview.php">View Static IP Assignments </a></li>
+            <li><a href="adddhcp.php">Add a DHCP Server</a></li>
           </ul>
         </li>
         <li class="treeview">

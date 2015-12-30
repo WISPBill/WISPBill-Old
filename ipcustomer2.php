@@ -20,89 +20,238 @@
  */
 require_once('./session.php');
 require_once('./fileloader.php');
+require_once('./billingcon.php');
 $mysqli = new mysqli("$ip", "$username", "$password", "$db");
+$mysqlil = new mysqli("$ipl", "$usernamel", "$passwordl", "$dbl");
 
 // start of post
 $phone = $_POST["tel"];
 $email = $_POST["email"];
-$ip= $_POST["ip"];
-
+$last4 = $_POST["4"];
 // end of post
 // start of data sanitize and existence check
  if (empty($email)) {
     // If email is empty it goes back to the fourm and informs the user
-    $_SESSION['errorcode'] = 'No Email Enenterd';
+    $_SESSION['exitcodev2']  = 'email';
     header('Location: ipcustomer.php');
     exit;
 } elseif(empty($phone)){
     // If phone is empty it goes back to the fourm and informs the user
-    $_SESSION['errorcode'] = 'No Phone Number Enenterd';
+    $_SESSION['exitcodev2']  = 'tel';
     header('Location: ipcustomer.php');
     exit;
-} elseif(empty($ip)){
+} elseif(empty($last4)){
     // If Last 4 is empty it goes back to the fourm and informs the user
-    $_SESSION['errorcode'] = 'No IP Address Enenterd';
+    $_SESSION['exitcodev2']  = '4';
     header('Location: ipcustomer.php');
     exit;
 }else{
-    // do nothing 
+    $_SESSION['exitcodev2'] = '';
 } // end if
 
 $emailc = $mysqli->real_escape_string($email);
 $phonec = $mysqli->real_escape_string($phone);
-$ipc = $mysqli->real_escape_string($ip);
+$l4c = $mysqli->real_escape_string($last4);
 
 if(!filter_var($emailc, FILTER_VALIDATE_EMAIL)){
-     $_SESSION['errorcode'] = 'Email is Not Valid';
-    header('Location: ipcustomer.php');
-    exit;
-  }elseif(!filter_var($ipc, FILTER_VALIDATE_IP)){
-     $_SESSION['errorcode'] = 'IP Address is Not Valid';
+     $_SESSION['errorcode'] = 'email';
     header('Location: ipcustomer.php');
     exit;
   }else{
   //do nothing 
   }
 // end of data sanitize and existence check
-if ($result = $mysqli->query("SELECT * FROM `customer_info` WHERE `email` = '$emailc' and `phone` = '$phonec'")) {
+if ($result = $mysqli->query("SELECT * FROM  `customer_info` WHERE  `email` =  '$emailc'
+AND  `phone` =  '$phonec' AND  `devices_iddevices` IS NOT NULL ")) {
     /* fetch associative array */
-     while ($row = $result->fetch_assoc()) {
-     $uid= $row["idcustomer_users"];
+     $numsrows = $result->num_rows;
+    if ($numsrows == 0){
+			 $_SESSION['exitcodev2']  = 'email';
+    header('Location: ipcustomer.php');
+    exit;							
+	 } elseif($numsrows == 1){
+		while ($row = $result->fetch_assoc()) {
+        $uid= $row["idcustomer_users"];
+        $cdid= $row["devices_iddevices"];
+        $infoid= $row["idcustomer_info"];
+     }								
 }
        /* free result set */
     $result->close();
 }// end if
+
+$cpeid = $cdid;
 
 if ($result2 = $mysqli->query("SELECT * FROM `customer_users` WHERE `idcustomer_users` = $uid")) {
     /* fetch associative array */
      while ($row = $result2->fetch_assoc()) {
-     $uname= $row["username"];
+     $stripid= $row["stripeid"];
 }
        /* free result set */
     $result2->close();
 }// end if
-$mysqlr = new mysqli("$ipr", "$usernamer", "$passwordr", "$dbr");
 
-if ($result = $mysqlr->query("SELECT * FROM `radreply` WHERE `value` = '$ipc'")) {
-    if ($result->num_rows == 1){
-    $_SESSION['errorcode'] = 'IP Address is Already in Use';
-    header('Location: ipcustomer.php');
-    exit;
-    } elseif ($result->num_rows == 0){
-        // do nothing 
-    } else{
-        echo'Something went wrong with the database please contact your webmaster';
-        exit;
-    }
+ $cus= Stripe_Customer::retrieve("$stripid");
+ $last4 = $cus->sources->data[0]->last4;
+
+ if($last4 == $l4c){
+    // if last 4 match update DB and Stripe 
+     if ($result14 = $mysqli->query("SELECT * FROM `devices` WHERE `iddevices` = '$cdid'")) {
+     /* fetch associative array */
+          while ($row14 = $result14->fetch_assoc()) {
+          $mac= $row14["mac"];
+          $site= $row14["location_idlocation"];
+     }
+       /* free result set */
+     $result14->close();
+}// end if
+         // Get router ip
+          if ($result2 = $mysqli->query("SELECT * FROM `devices` WHERE `location_idlocation` = '$site'and `type` = 'router'")) {
+				/* fetch associative array */
+				 while ($row2 = $result2->fetch_assoc()) {
+					 $lid= $row2["librenms_id"];
+					 $did= $row2["iddevices"];
+					 }
+					 if ($result3 = $mysqli->query("SELECT * FROM `device_ports` WHERE `use` = 'mgmt' and `devices_iddevices` = '$did'")) {
+				/* fetch associative array */
+				 while ($row3 = $result3->fetch_assoc()) {
+					 $portid= $row3["port id"];
+					 }
+						 if ($resultl = $mysqlil->query("SELECT * FROM `ipv4_addresses` WHERE `port_id` = '$portid'")) {
+				/* fetch associative array */
+				 while ($rowl = $resultl->fetch_assoc()) {
+					 $routerip= $rowl["ipv4_address"];
+					 }
+                         }
+                    }               
+          }
+       
+                    $mac = strtolower($mac);
+	$radioip = getdhcpip($routerip,$rname,$rpass,$mac);
+						 
+	if ($radioip["error"] =='router error'){
+	// Could not SSH into router
+								  
+		if ($result5 = $mysqli->query("SELECT * FROM `notifications`
+		WHERE `readyn` = '0' and `content` = 'The Router at $routerip did not allow SSH on
+		Management VLAN IP. Reason Unknown. Some Stats were
+		not collected. ID of CPE AFFECTED = $cpeid'")) {
+		if ($result5->num_rows == 1){
+		// Error is open no need to make again
+										
+		} elseif ($result5->num_rows == 0){
+		// No open error have to make one
+		if ($mysqli->query("INSERT INTO `$db`.`notifications` (`idnotifications`, `readyn`,
+		`content`, `date`, `fromwho`, `towho`) VALUES (NULL,
+        '0', 'The Router at $routerip did not allow SSH on Management VLAN IP. Reason Unknown. Some Stats were not collected. ID of CPE AFFECTED = $cpeid', CURRENT_TIMESTAMP, 'system', 'all');")
+		=== TRUE) {
+		//Will notify admins of error 
+			 }
+		}
+		/* free result set */
+		$result5->close();
+		 }
+	}elseif($radioip["mac"] == "$mac"){
+	// Found IP
+	$ip = $radioip["ip"];
+          
+       if ($resultk = $mysqli->query("SELECT * FROM  `device_ports`
+WHERE  `devices_iddevices` =  '$did'
+AND  `use` =  'ap'")) {
+    /* fetch associative array */
+    foreach ($resultk as $rowk){
+           $apportid= $rowk["iddevice_ports"];
     
-    /* free result set */
-    $result->close();
-}
-if ($result = $mysqlr->query("INSERT INTO `$dbr`.`radreply` (`id`, `username`, `attribute`, `op`, `value`)
-                             VALUES (NULL, '$uname', 'Framed-IP-Address', ':=', '$ipc');")) {
-    } else{
-        echo'Something went wrong with the database please contact your webmaster';
-        exit;
+     if ($result3 = $mysqli->query("SELECT * 
+FROM  `dhcp_servers` 
+WHERE  `device_ports_iddevice_ports` =  '$apportid'")) {
+				/* fetch associative array */
+				 while ($row3 = $result3->fetch_assoc()) {
+					 $name= $row3["name"];
+                     $subnet= $row3["subnet"];
+                     $serverid= $row3["idDHCP_Servers"];
+                     $start= $row3["Range_Start"];
+                     $stop= $row3["Range_Stop"];
+					 }
+           $longip = ip2long($ip);
+           $longstart = ip2long($start);
+           $longstop = ip2long($stop);
+           
+           if($longip > $longstart and $longip < $longstop){
+               // IP is in server range
+               break 3;
+           }else{
+               // IP not in range loop will run until it is
+           }
+     }
     }
-    header('Location: index.php');
+}// End of if 
+     $ssh = new Net_SSH2("$routerip");
+if (!$ssh->login("$rname", "$rpass")) {
+    exit('Login Failed');
+}
+$mapname = "static.ip.set.by.wispbill.for.user.$uid";
+$ssh->exec("/opt/vyatta/sbin/vyatta-cfg-cmd-wrapper begin\n
+/opt/vyatta/sbin/vyatta-cfg-cmd-wrapper set service dhcp-server shared-network-name $name subnet $subnet static-mapping $mapname ip-address $ip/n
+/opt/vyatta/sbin/vyatta-cfg-cmd-wrapper set service dhcp-server shared-network-name $name subnet $subnet static-mapping $mapname mac-address '$mac'/n
+/opt/vyatta/sbin/vyatta-cfg-cmd-wrapper commit\n
+/opt/vyatta/sbin/vyatta-cfg-cmd-wrapper save\n");
+
+// DB entry 
+
+if ($mysqli->query("INSERT INTO `$db`.`static_leases`
+                   (`idstatic_leases`, `ip`, `mac`, `DHCP_Servers_idDHCP_Servers`)
+                   VALUES (NULL, '$ip', '$mac', '$serverid');") === TRUE) {
+//nothing 
+} else{
+    echo'Something went wrong with the database please contact your webmaster';
+        exit;
+}
+
+if ($result2 = $mysqli->query("SELECT * FROM `static_leases` WHERE `ip` ='$ip' and `mac` = '$mac'")) {
+    /* fetch associative array */
+     while ($row = $result2->fetch_assoc()) {
+    $sid = $row["idstatic_leases"];
+}
+       /* free result set */
+    $result2->close();
+}// end if
+
+if ($result = $mysqli->query("UPDATE `$db`.`customer_info` SET
+                             `static_leases_idstatic_leases` = '$sid' WHERE
+                             `customer_info`.`idcustomer_info` = '$infoid';")) {
+}else{
+    echo'Something went wrong with the database please contact your webmaster';
+        exit;
+}
+    header('Location: index.php');                   
+	}else{
+	//SSH works but IP not found
+							  
+		if ($result5 = $mysqli->query("SELECT * FROM `notifications`
+		WHERE `readyn` = '0' and `content` = 'The Router at $routerip did not have IP lease data for a radio ID of CPE AFFECTED = $cpeid'")) {
+		if ($result5->num_rows == 1){
+		// Error is open no need to make again
+										
+		} elseif ($result5->num_rows == 0){
+		// No open error have to make one
+		if ($mysqli->query("INSERT INTO `$db`.
+		`notifications` (`idnotifications`, `readyn`,
+		`content`, `date`, `fromwho`, `towho`) VALUES (NULL,
+		'0', 'The Router at $routerip did not have IP lease data for a radio ID of CPE AFFECTED = $cpeid', CURRENT_TIMESTAMP, 'system', 'all');")
+		=== TRUE) {
+		//Will notify admins of error 
+		}
+		}
+		/* free result set */
+		$result5->close();
+		}
+	}
+
+}else{
+     $_SESSION['exitcodev2']  = '4';
+    header('Location: ipcustomer.php');
+    exit;		
+ }
+
 ?>

@@ -34,22 +34,32 @@ $man = $_POST["manu"];
 // start of data sanitize and existence check
  if (empty($name)) {
     // If input feild is empty it goes back to the fourm and informs the user
-    $_SESSION['exitcodev2'] = 'No Name was Submitted';
+    $_SESSION['exitcodev2'] = 'name';
     header('Location: createdevice.php');
     exit;
 } elseif(empty($serial)){
     // If input feild is empty it goes back to the fourm and informs the user
-    $_SESSION['exitcodev2'] = 'No Serial Number was Submitted';
+    $_SESSION['exitcodev2'] = 'ser';
     header('Location: createdevice.php');
     exit;
 }elseif(empty($modle)){
     // If input feild is empty it goes back to the fourm and informs the user
-    $_SESSION['exitcodev2'] = 'No Modle Number was Submitted';
+    $_SESSION['exitcodev2'] = 'mod';
     header('Location: createdevice.php');
     exit;
 }elseif(empty($mac)){
     // If input feild is empty it goes back to the fourm and informs the user
-    $_SESSION['exitcodev2'] = 'No Mac Address was Submitted';
+    $_SESSION['exitcodev2'] = 'mac';
+    header('Location: createdevice.php');
+    exit;
+}elseif(empty($type)){
+    // If input feild is empty it goes back to the fourm and informs the user
+    $_SESSION['exitcodev2'] = 'type';
+    header('Location: createdevice.php');
+    exit;
+}elseif(empty($man)){
+    // If input feild is empty it goes back to the fourm and informs the user
+    $_SESSION['exitcodev2'] = 'devm';
     header('Location: createdevice.php');
     exit;
 }else{
@@ -57,7 +67,7 @@ $man = $_POST["manu"];
      $_SESSION['exitcodev2'] = '';
 }
 if(!filter_var($mac, FILTER_VALIDATE_MAC)){
-    $_SESSION['exitcodev2'] = 'The Mac Address you submitted was not valid';
+    $_SESSION['exitcodev2'] = 'mac';
     header('Location: createdevice.php');
     exit;
   }
@@ -69,6 +79,8 @@ $name = $mysqli->real_escape_string($name);
 $serial = $mysqli->real_escape_string($serial);
 $modle = $mysqli->real_escape_string($modle);
 $mac = $mysqli->real_escape_string($mac);
+$type = $mysqli->real_escape_string($type);
+$man = $mysqli->real_escape_string($man);
 
 // end of data sanitize and existence check
 // start of data entry

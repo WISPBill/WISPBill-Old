@@ -26,7 +26,7 @@ $mysqlil = new mysqli("$ipl", "$usernamel", "$passwordl", "$dbl");
 $id= $_POST["id"];
 if (empty($id)) {
     // If input feild is empty it goes back to the fourm and informs the user
-    $_SESSION['exitcodev2'] = 'No Device was Selected';
+    $_SESSION['exitcodev2'] = 'dev';
     header('Location: linkdevice.php');
     exit;
 } else {

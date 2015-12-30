@@ -29,16 +29,12 @@ $_SESSION['id3'] = '';
 $_SESSION['email'] = '';
 $_SESSION['errorcode'] ='';
 echo'<br><a href="dashbored.php">Dashboard</a></br>';
-echo"<br><a href='mapcus.php'>Map Customer's</a></br>"; //In Dash
-echo'<br><a href="createdevice.php">Add a Device to Inventory</a></br>'; // In Dash
 echo'<br><a href="createadminuser.php">Create Admin User</a></br>';
 echo'<br><a href="deleteadminuser.php">Delete Admin User</a></br>';
 echo'<br><a href="createplan.php">Create a Service Plan</a></br>'; // In dash
 echo"<br><a href='billcustomer.php'>Change a Customer's Billing Information</a></br>"; // In Dash
 echo"<br><a href='emailcustomer.php'>Change a Customer's Email</a></br>"; // In Dash
 echo"<br><a href='phonecustomer.php'>Change a Customer's Phone Number</a></br>"; // In Dash
-echo"<br><a href='viewcustomer.php'>View Customer's</a></br>"; // In Dash
-echo'<br><a href="viewplan.php">View Service Plans</a></br>'; // In Dash
 echo'<br><a href="createlead.php">Create a Lead</a></br>'; // In Dash
 echo'<br><a href="convertleadin.php">Convert Lead to An Install</a></br>'; // In Dash
 echo'<br><a href="convertlead.php">Convert Lead to An Account</a></br>'; // In Dash
@@ -49,14 +45,10 @@ echo'<br><h1>Anything after this will not work without radius</h1></br>';
 
 echo'<br><a href="deletecustomer.php">Delete a Customer</a></br>'; // In Dash
 echo"<br><a href='changecusser.php'>Change a Customer's Service Plan</a></br>"; // In Dash
-echo"<br><a href='ipcustomer.php'>Give a Customer a Static IP Address</a></br>"; // In Dash
-echo"<br><a href='ipview.php'>View Static IP Assignments </a></br>"; // In Dash
-echo"<br><a href='ipdelete.php'>Delete Static IP Assignments </a></br>";
 echo"<br><a href='speedplan.php'>Change a Service Plan's Speed</a></br>"; // in dash
 echo'<br><a href="deleteplan.php">Delete Service a Plan</a></br>'; // in dash
 
 echo'<br><h1>These need librenms</h1></br>';
-echo'<br><a href="linkdevice.php">Link a Device to LibreNMS</a></br>';
 echo'<br><a href="configsite.php">Configure a Site</a></br>';
 
 ?>

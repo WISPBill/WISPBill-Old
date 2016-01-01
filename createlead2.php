@@ -38,53 +38,53 @@ $source = $_POST["source"];
 // start of data sanitize and existence check
  if (empty($fname)) {
     // If input feild is empty it goes back to the fourm and informs the user
-    $_SESSION['exitcodev2'] = 'No First Name was Submitted';
+    $_SESSION['exitcodev2'] = 'fname';
     header('Location: createlead.php');
     exit;
 } elseif(empty($lname)){
     // If input feild is empty it goes back to the fourm and informs the user
-    $_SESSION['exitcodev2'] = 'No last Name was Submitted';
+    $_SESSION['exitcodev2'] = 'lname';
     header('Location: createlead.php');
     exit;
 }elseif(empty($tel)){
     // If input feild is empty it goes back to the fourm and informs the user
-    $_SESSION['exitcodev2'] = 'No telphone number was Submitted';
+    $_SESSION['exitcodev2'] = 'tel';
     header('Location: createlead.php');
     exit;
 }elseif(empty($add)){
     // If input feild is empty it goes back to the fourm and informs the user
-    $_SESSION['exitcodev2'] = 'No Address was Submitted';
+    $_SESSION['exitcodev2'] = 'add';
     header('Location: createlead.php');
     exit;
 }elseif(empty($city)){
     // If input feild is empty it goes back to the fourm and informs the user
-    $_SESSION['exitcodev2'] = 'No City was Submitted';
+    $_SESSION['exitcodev2'] = 'city';
      header('Location: createlead.php');
     exit;
 }elseif(empty($zip)){
     // If input feild is empty it goes back to the fourm and informs the user
-    $_SESSION['exitcodev2'] = 'No Zip Code was Submitted';
+    $_SESSION['exitcodev2'] = 'zip';
      header('Location: createlead.php');
     exit;
 }elseif(empty($state)){
     // If input feild is empty it goes back to the fourm and informs the user
-    $_SESSION['exitcodev2'] = 'No State was Submitted';
+    $_SESSION['exitcodev2'] = 'state';
      header('Location: createlead.php');
     exit;
 }elseif(empty($email1)){
     // If email is empty it goes back to the fourm and informs the user
-    $_SESSION['exitcodev2'] = 'No Email was Submitted';
+    $_SESSION['exitcodev2'] = 'email';
      header('Location: createlead.php');
     exit;
 }
 elseif(empty($email2)){
     // If email is empty it goes back to the fourm and informs the user 
-    $_SESSION['exitcodev2'] = 'No Email was Submitted';
+    $_SESSION['exitcodev2'] = 'email2';
     header('Location: createlead.php');
     exit;
 } elseif(empty($source)){
     // If email is empty it goes back to the fourm and informs the user 
-    $_SESSION['exitcodev2'] = 'No Source was Submitted';
+    $_SESSION['exitcodev2'] = 'source';
     header('Location: createlead.php');
     exit;
 }else{

@@ -18,7 +18,17 @@
 
 	@turtles2 on ubiquiti community, DSLReports and Netonix 
  */
-// This page is deprecated it will be removed at some point
-header('Location: index.php');
 require_once('./session.php');
+require_once('./fileloader.php');
+$mysqli = new mysqli("$ip", "$username", "$password", "$db");
+
+$id = $_POST["id"];
+
+ if (empty($id)) {
+    $_SESSION['exitcodev2'] = 'id';
+    header('Location: convertleadin.php');
+    exit;
+ }else {
+    // Nothing 
+ }
 ?>

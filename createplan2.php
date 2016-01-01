@@ -33,24 +33,24 @@ $down = $_POST["down"];
 // start of data sanitize and existence check
  if (empty($name)) {
     // If name is empty it goes back to the fourm and informs the user
-    $_SESSION['exitcode'] = 'no name';
+    $_SESSION['exitcodev2'] = 'name';
     header('Location: createplan.php');
     exit;
 } elseif(empty($price)){
     // If price is empty it goes back to the fourm and informs the user
-    $_SESSION['exitcode'] = 'no price';
+    $_SESSION['exitcodev2']= 'price';
     header('Location: createplan.php');
     exit;
 }
 elseif(empty($up)){
     // If up is empty it goes back to the fourm and informs the user
-    $_SESSION['exitcode'] = 'no up';
+    $_SESSION['exitcodev2'] = 'up';
     header('Location: createplan.php');
     exit;
 }
 elseif(empty($down)){
     // If email is empty it goes back to the fourm and informs the user
-    $_SESSION['exitcode'] = 'no down';
+    $_SESSION['exitcodev2'] = 'down';
     header('Location: createplan.php');
     exit;
 } else{
@@ -67,7 +67,7 @@ $down = $mysqli->real_escape_string($down);
 
 if ($result = $mysqli->query("SELECT * FROM `customer_plans` WHERE `name` = '$name'")) {
     if ($result->num_rows == 1){
-    $_SESSION['exitcode'] = 'name already';
+    $_SESSION['exitcodev2'] = 'name';
     header('Location: createplan.php');
     exit;
     } elseif ($result->num_rows == 0){

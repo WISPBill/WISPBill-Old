@@ -33,24 +33,24 @@ $infoid = $_POST["id"];
 // start of data sanitize and existence check
  if (empty($user)) {
     // If username is empty it goes back to the fourm and informs the user
-     $_SESSION['exitcodev2'] = 'No  User Name was Given';
+     $_SESSION['exitcodev2'] = 'name';
     header('Location: convertlead.php');
     exit;
 } elseif(empty($pass1)){
     // If password is empty it goes back to the fourm and informs the user
-    $_SESSION['exitcodev2'] = 'No  Password was Given';
+    $_SESSION['exitcodev2'] = 'pass';
     header('Location: convertlead.php');
     exit;
 }
 elseif(empty($pass2)){
     // If password is empty it goes back to the fourm and informs the user
-    $_SESSION['exitcodev2'] = 'No  Password was Given';
+    $_SESSION['exitcodev2'] = 'pass';
     header('Location: convertlead.php');
     exit;
 }
 elseif(empty($infoid)){
     // If email is empty it goes back to the fourm and informs the user
-   $_SESSION['exitcodev2'] = 'No  Lead was Selected';
+   $_SESSION['exitcodev2'] = 'lead';
     header('Location: convertlead.php');
     exit;
 }
@@ -75,7 +75,7 @@ if($pass1 == $pass2){
     // do nothing 
 } else {
     // If password match fails it goes back to the fourm and informs the user
-    $_SESSION['exitcodev2'] = 'The Passwords do not Match';
+    $_SESSION['exitcodev2'] = 'pass';
     header('Location: convertlead.php');
     exit;
 }
@@ -85,7 +85,7 @@ if($pass1 == $pass2){
 
 if ($result = $mysqli->query("SELECT * FROM `customer_users` WHERE `username` = '$user'")) {
     if ($result->num_rows == 1){
-   $_SESSION['exitcodev2'] = 'Your Username is Already in Use';
+   $_SESSION['exitcodev2'] = 'name';
     header('Location: convertlead.php');
     exit;
     } elseif ($result->num_rows == 0){
@@ -100,7 +100,7 @@ if ($result = $mysqli->query("SELECT * FROM `customer_users` WHERE `username` = 
 }
 if ($result = $mysqli->query("SELECT * FROM `customer_users` WHERE `email` = '$email'")) {
     if ($result->num_rows == 1){
-   $_SESSION['exitcodev2'] = 'Your Email is already in use';
+   $_SESSION['exitcodev2'] = 'name';
     header('Location: convertlead.php');
     exit;
     } elseif ($result->num_rows == 0){

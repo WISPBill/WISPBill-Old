@@ -26,22 +26,22 @@ $mysqli = new mysqli("$ip", "$username", "$password", "$db");
 // start of post
 $phone = $_POST["tel"];
 $email = $_POST["email"];
-$l4= $_POST["l4"];
+$l4= $_POST["4"];
 // end of post
 // start of data sanitize and existence check
  if (empty($email)) {
     // If email is empty it goes back to the fourm and informs the user
-    $_SESSION['errorcode'] = 'No Email Enenterd';
+    $_SESSION['exitcodev2'] = 'email';
     header('Location: deletecustomer.php');
     exit;
 } elseif(empty($phone)){
     // If phone is empty it goes back to the fourm and informs the user
-    $_SESSION['errorcode'] = 'No Phone Number Enenterd';
+    $_SESSION['exitcodev2'] = 'tel';
     header('Location: deletecustomer.php');
     exit;
 } elseif(empty($l4)){
     // If Last 4 is empty it goes back to the fourm and informs the user
-    $_SESSION['errorcode'] = 'No Last 4 Digits Enenterd';
+    $_SESSION['exitcodev2'] = '4';
     header('Location: deletecustomer.php');
     exit;
 }else{
@@ -52,13 +52,31 @@ $emailc = $mysqli->real_escape_string($email);
 $phonec = $mysqli->real_escape_string($phone);
 $l4c = $mysqli->real_escape_string($l4);
 if(!filter_var($emailc, FILTER_VALIDATE_EMAIL)){
-     $_SESSION['errorcode'] = 'Email is Not Valid';
+     $_SESSION['exitcodev2'] = 'email';
     header('Location: deletecustomer.php');
     exit;
   }
 else{
   //do nothing 
   }
+if ($result = $mysqli->query("SELECT * FROM  `customer_info` WHERE  `email` =  '$emailc'
+AND  `phone` =  '$phonec' AND  `devices_iddevices` IS NOT NULL ")) {
+    /* fetch associative array */
+     $numsrows = $result->num_rows;
+    if ($numsrows == 0){
+			 $_SESSION['exitcodev2']  = 'emailphone';
+    header('Location: deletecustomer.php');
+    exit;							
+	 } elseif($numsrows == 1){
+		while ($row = $result->fetch_assoc()) {
+        $uid= $row["idcustomer_users"];
+        $cdid= $row["devices_iddevices"];
+        $infoid= $row["idcustomer_info"];
+     }								
+}
+       /* free result set */
+    $result->close();
+}// end if  
 // end of data sanitize and existence check
 if ($result = $mysqli->query("SELECT * FROM `customer_info` WHERE `email` = '$emailc' and `phone` = '$phonec'")) {
     /* fetch associative array */
@@ -87,17 +105,13 @@ if ($result2 = $mysqli->query("SELECT * FROM `customer_users` WHERE `idcustomer_
     if ($result = $mysqli->query("DELETE FROM `customer_info` WHERE `idcustomer_info` ='$iid'")) {
       if ($result = $mysqli->query("DELETE FROM `customer_users` WHERE `idcustomer_users` ='$uid'")) {
        $mysqlir = new mysqli("$ipr", "$usernamer", "$passwordr", "$dbr");
-        if ($result = $mysqlir->query("DELETE FROM `radreply` WHERE `username`='$uname'")) {
-               if ($result = $mysqlir->query("DELETE FROM `radusergroup` WHERE `username`='$uname'")) {
-                if ($result = $mysqlir->query("DELETE FROM `radcheck` WHERE `username`='$uname'")) {
+      
                     $cus->delete();
+    
     }
-    }
-    }
-      }
-    } 
+    }    
  }else{
-    $_SESSION['errorcode'] = 'The Last 4 Digits are Wrong';
+    $_SESSION['exitcodev2'] = '4';
     header('Location: deletecustomer.php');
     exit;
  }

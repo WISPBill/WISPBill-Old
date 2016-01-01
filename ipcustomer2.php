@@ -66,7 +66,7 @@ AND  `phone` =  '$phonec' AND  `devices_iddevices` IS NOT NULL ")) {
     /* fetch associative array */
      $numsrows = $result->num_rows;
     if ($numsrows == 0){
-			 $_SESSION['exitcodev2']  = 'email';
+			 $_SESSION['exitcodev2']  = 'emailphone';
     header('Location: ipcustomer.php');
     exit;							
 	 } elseif($numsrows == 1){

@@ -27,27 +27,27 @@ $mysqli = new mysqli("$ip", "$username", "$password", "$db");
 $phone = $_POST["tel"];
 $nphone = $_POST["ntel"];
 $email = $_POST["email"];
-$l4= $_POST["l4"];
+$l4= $_POST["4"];
 // end of post
 // start of data sanitize and existence check
  if (empty($email)) {
     // If email is empty it goes back to the fourm and informs the user
-    $_SESSION['errorcode'] = 'No Email Enenterd';
+    $_SESSION['exitcodev2'] = 'email';
     header('Location: phonecustomer.php');
     exit;
 } elseif(empty($phone)){
     // If phone is empty it goes back to the fourm and informs the user
-    $_SESSION['errorcode'] = 'No Phone Number Enenterd';
+    $_SESSION['exitcodev2'] = 'tel';
     header('Location: phonecustomer.php');
     exit;
 } elseif(empty($l4)){
     // If Last 4 is empty it goes back to the fourm and informs the user
-    $_SESSION['errorcode'] = 'No Last 4 Digits Enenterd';
+    $_SESSION['exitcodev2'] = '4';
     header('Location: phonecustomer.php');
     exit;
 } elseif(empty($nphone)){
     // If phone is empty it goes back to the fourm and informs the user
-    $_SESSION['errorcode'] = 'No New Phone Number Enenterd';
+    $_SESSION['exitcodev2'] = 'ntel';
     header('Location:phonecustomer.php');
     exit;
 }else{
@@ -59,13 +59,27 @@ $nphonec = $mysqli->real_escape_string($nphone);
 $phonec = $mysqli->real_escape_string($phone);
 $l4c = $mysqli->real_escape_string($l4);
 if(!filter_var($emailc, FILTER_VALIDATE_EMAIL)){
-     $_SESSION['errorcode'] = 'Email is Not Valid';
+     $_SESSION['exitcodev2'] = 'email';
     header('Location: phonecustomer.php');
     exit;
   }
 else{
   //do nothing 
   }
+  if ($result = $mysqli->query("SELECT * FROM  `customer_info` WHERE  `email` =  '$emailc'
+AND  `phone` =  '$phonec'")) {
+    /* fetch associative array */
+     $numsrows = $result->num_rows;
+    if ($numsrows == 0){
+			 $_SESSION['exitcodev2']  = 'emailphone';
+    header('Location: phonecustomer.php');
+    exit;							
+	 } elseif($numsrows == 1){
+		// Nothing								
+}
+       /* free result set */
+    $result->close();
+}// end if
 // end of data sanitize and existence check
 if ($result = $mysqli->query("SELECT * FROM `customer_info` WHERE `email` = '$emailc' and `phone` = '$phonec'")) {
     /* fetch associative array */
@@ -95,7 +109,7 @@ if ($result2 = $mysqli->query("SELECT * FROM `customer_users` WHERE `idcustomer_
  
 }// end if
  }else{
-    $_SESSION['errorcode'] = 'The Last 4 Digits are Wrong';
+    $_SESSION['exitcodev2'] = '4';
     header('phonecustomer.php');
     exit;
  }

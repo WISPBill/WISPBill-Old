@@ -292,7 +292,7 @@ $errorlabel ='<label class="control-label" for="inputError" style="color: red;">
                 <div class="form-group">
                     <h4>The IP will automatically be chosen from address pool</h4>
 					<?php
-					if($error == 'email'){
+					if($error == 'email' or $error == 'emailphone'){
 						echo "$errorlabel";
 					}else{
 						echo '<label>Email</label>';
@@ -304,7 +304,7 @@ $errorlabel ='<label class="control-label" for="inputError" style="color: red;">
 			   <div class="form-group">
                   
                      <?php
-					if($error == 'tel'){
+					if($error == 'tel' or $error == 'emailphone'){
 						echo "$errorlabel";
 					}else{
 						echo '<label>Telephone</label>';

@@ -21,7 +21,16 @@
 require_once('./session.php');
 require_once('./fileloader.php');
 $mysqli = new mysqli("$ip", "$username", "$password", "$db");
-
+// Start of Clean up At some point this will be simpiler
+$_SESSION['exitcode'] = '';
+$_SESSION['exitcodev2'] = '';
+$_SESSION['errorcode'] = '';
+$_SESSION['id'] = '';
+$_SESSION['id2'] = '';
+$_SESSION['id3'] = '';
+$_SESSION['email'] = '';
+$_SESSION['errorcode'] ='';
+// End of cleanup
 $adminid = $_SESSION['adminid'];
 
 if ($result = $mysqli->query("SELECT * FROM `admin_users` WHERE `idadmin` = $adminid")) {
@@ -89,9 +98,20 @@ if ($result = $mysqli->query("SELECT * FROM `notifications` WHERE `readyn`
     $result->close();
       }
 }
-
+if ($result = $mysqli->query("SELECT * FROM `customer_info` WHERE
+                             `idcustomer_users` is not NULL
+                             and `idcustomer_plans` is not NULL")) {
+      /* fetch associative array */
+      $custotal = $result->num_rows;
+}
+if ($result = $mysqli->query("SELECT * FROM `customer_info` WHERE `idcustomer_users` is NULL")) {
+      /* fetch associative array */
+      $leadtotal = $result->num_rows;
+}
 $calevents = '1';
 $mailevents = '1';
+$calltotal = '7';
+$devicedown = '1';
 ?>
 <!DOCTYPE html>
 <html>
@@ -265,8 +285,7 @@ desired effect
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Page Header
-        <small>Optional description</small>
+        Dashboard
       </h1>
       <ol class="breadcrumb">
         <li><a href="dashbored.php"><i class="fa fa-dashboard"></i> Dashbored</a></li>
@@ -277,8 +296,81 @@ desired effect
     <!-- Main content -->
     <section class="content">
 
-      <!-- Your Page Content Here -->
+       <!-- Small boxes (Stat box) -->
+      <div class="row">
+        <div class="col-lg-3 col-xs-6">
+          <!-- small box -->
+          <div class="small-box bg-aqua">
+            <div class="inner">
+              <h3><?php echo "$leadtotal"?></h3>
 
+              <p>Leads</p>
+            </div>
+            <div class="icon">
+              <i class="ion ion-person-add"></i>
+            </div>
+            <a href="viewlead.php" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+          </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-3 col-xs-6">
+          <!-- small box -->
+          <div class="small-box bg-green">
+            <div class="inner">
+              <h3><?php echo "$custotal";?></h3>
+
+              <p>Customers</p>
+            </div>
+            <div class="icon">
+              <i class="ion ion-person-stalker"></i>
+            </div>
+            <a href="viewcustomer.php" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+          </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-3 col-xs-6">
+          <!-- small box -->
+          <div class="small-box bg-yellow">
+            <div class="inner">
+              <h3><?php echo "$calltotal";?></h3>
+
+              <p>Calls Yesterday</p>
+            </div>
+            <div class="icon">
+              <i class="ion ion-android-call"></i>
+            </div>
+            <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+          </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-3 col-xs-6">
+          <!-- small box -->
+          <div class="small-box bg-red">
+            <div class="inner">
+              <h3><?php echo "$devicedown";?></h3>
+
+              <p>Devices Down</p>
+            </div>
+            <div class="icon">
+              <i class="ion ion-alert-circled"></i>
+            </div>
+            <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+          </div>
+        </div>
+        <!-- ./col -->
+      </div>
+      <!-- /.row -->
+<div class="box box-primary">
+            <div class="box-header with-border">
+              <h3 class="box-title">Network Traffic in the last day</h3>
+
+            <div class="box-body">
+              <div class="chart">
+                <canvas id="areaChart" style="height:250px"></canvas>
+              </div>
+            </div>
+            <!-- /.box-body -->
+          </div>
     </section>
     <!-- /.content -->
   </div>
@@ -304,10 +396,203 @@ desired effect
 <script src="AdminLTE2/bootstrap/js/bootstrap.min.js"></script>
 <!-- AdminLTE App -->
 <script src="AdminLTE2/dist/js/app.min.js"></script>
+<script src="AdminLTE2/plugins/chartjs/Chart.min.js"></script>
+<script>
+  <?php
+$time = time();
+  $time1dayago = $time-86400;
 
-<!-- Optionally, you can add Slimscroll and FastClick plugins.
-     Both of these plugins are recommended to enhance the
-     user experience. Slimscroll is required when using the
-     fixed layout. -->
+// Bulid array of Devcices
+
+if ($result = $mysqli->query("SELECT * FROM `devices` WHERE `type`
+                              = 'cpe' and `field_status` = 'customer' limit 0,1")) {
+       /* fetch associative array */
+     while ($row = $result->fetch_assoc()) {
+    $id = $row["iddevices"];
+}
+}
+
+$master = array();
+	if ($result = $mysqli->query("SELECT * FROM  `cpe_data` WHERE  `datetime` >=  '$time1dayago' and `devices_iddevices` = '$id'")) {
+       /* fetch associative array */
+	   
+     while ($row = $result->fetch_assoc()) {
+		array_push($master, $row["datetime"]);
+}
+	}
+	$master2 = (array_chunk($master, 2));
+	$stamp = array();
+	$down  = array();
+	$up = array();
+	
+	foreach($master2 as $key=>$set){
+      
+		$start = $set["0"];
+        if(isset($set["1"])){
+		$end = $set["1"];
+		if ($result = $mysqli->query("SELECT avg(datetime) as datetime FROM `cpe_data` WHERE  `datetime` >=  '$start' and `datetime` <  '$end'")) {
+       /* fetch associative array */
+	          while ($row = $result->fetch_assoc()) {
+		     $avgtime = $row["datetime"];
+			 $avgtime = round($avgtime);
+			 array_push($stamp, $avgtime);
+}
+}
+if ($result = $mysqli->query("select sum(rxrate) as down from `cpe_data` WHERE  `datetime` >=  '$start' and `datetime` <  '$end'")) {
+       /* fetch associative array */
+	          while ($row = $result->fetch_assoc()) {
+		     $rxrate = $row["down"];
+			  array_push($down, $rxrate);
+}
+}
+if ($result = $mysqli->query("select sum(txrate) as up from `cpe_data` WHERE  `datetime` >=  '$start' and `datetime` <  '$end'")) {
+       /* fetch associative array */
+	          while ($row = $result->fetch_assoc()) {
+		     $txrate = $row["up"];
+			  array_push($up, $txrate);
+}
+}
+$next = $key + 1;
+if(isset($master2["$next"])){
+$nextset = $master2["$next"];
+$start = $end;
+$end = $nextset["0"];
+	if ($result = $mysqli->query("SELECT avg(datetime) as datetime FROM `cpe_data` WHERE  `datetime` >=  '$start' and `datetime` <  '$end'")) {
+       /* fetch associative array */
+	          while ($row = $result->fetch_assoc()) {
+		     $avgtime = $row["datetime"];
+			 $avgtime = round($avgtime);
+			 array_push($stamp, $avgtime);
+}
+}
+if ($result = $mysqli->query("select sum(rxrate) as down from `cpe_data` WHERE  `datetime` >=  '$start' and `datetime` <  '$end'")) {
+       /* fetch associative array */
+	          while ($row = $result->fetch_assoc()) {
+		     $rxrate = $row["down"];
+			  array_push($down, $rxrate);
+}
+}
+if ($result = $mysqli->query("select sum(txrate) as up from `cpe_data` WHERE  `datetime` >=  '$start' and `datetime` <  '$end'")) {
+       /* fetch associative array */
+	          while ($row = $result->fetch_assoc()) {
+		     $txrate = $row["up"];
+			  array_push($up, $txrate);
+}
+}
+}// End if
+        }else{
+          
+        }// End set loop
+	}// End loop
+  ?>
+  $(function () {
+    /* ChartJS
+     * -------
+     * Here we will create a few charts using ChartJS
+     */
+
+    //--------------
+    //- AREA CHART -
+    //--------------
+
+    // Get context with jQuery - using jQuery's .get() method.
+    var areaChartCanvas = $("#areaChart").get(0).getContext("2d");
+    // This will get the first returned node in the jQuery collection.
+    var areaChart = new Chart(areaChartCanvas);
+
+    var areaChartData = {
+      labels: [<?php foreach($stamp as $value){
+       echo "\"$value\",";
+      }
+      ?>],
+      datasets: [
+        {
+          label: "Download in Mbps",
+          fillColor: "rgba(210, 214, 222, 1)",
+          strokeColor: "rgba(210, 214, 222, 1)",
+          pointColor: "rgba(210, 214, 222, 1)",
+          pointStrokeColor: "#c1c7d1",
+          pointHighlightFill: "#fff",
+          pointHighlightStroke: "rgba(220,220,220,1)",
+          data: [<?php foreach($down as $value){
+       echo "$value,";
+      }
+      ?>]
+        },
+        {
+          label: "Upload in Mbps",
+          fillColor: "rgba(60,141,188,0.9)",
+          strokeColor: "rgba(60,141,188,0.8)",
+          pointColor: "#3b8bba",
+          pointStrokeColor: "rgba(60,141,188,1)",
+          pointHighlightFill: "#fff",
+          pointHighlightStroke: "rgba(60,141,188,1)",
+          data: [<?php foreach($up as $value){
+       echo "$value,";
+      }
+      ?>]
+        }
+      ]
+    };
+
+    var areaChartOptions = {
+      
+      //Boolean - If we should show the scale at all
+      showTooltips: false,
+      showScale: false,
+      //Boolean - Whether grid lines are shown across the chart
+      scaleShowGridLines: false,
+      //String - Colour of the grid lines
+      scaleGridLineColor: "rgba(0,0,0,.05)",
+      //Number - Width of the grid lines
+      scaleGridLineWidth: 1,
+      //Boolean - Whether to show horizontal lines (except X axis)
+      scaleShowHorizontalLines: true,
+      //Boolean - Whether to show vertical lines (except Y axis)
+      scaleShowVerticalLines: true,
+      //Boolean - Whether the line is curved between points
+      bezierCurve: true,
+      //Number - Tension of the bezier curve between points
+      bezierCurveTension: 0.3,
+      //Boolean - Whether to show a dot for each point
+      pointDot: false,
+      //Number - Radius of each point dot in pixels
+      pointDotRadius: 4,
+      //Number - Pixel width of point dot stroke
+      pointDotStrokeWidth: 1,
+      //Number - amount extra to add to the radius to cater for hit detection outside the drawn point
+      pointHitDetectionRadius: 20,
+      //Boolean - Whether to show a stroke for datasets
+      datasetStroke: false,
+      //Number - Pixel width of dataset stroke
+      datasetStrokeWidth: 2,
+      //Boolean - Whether to fill the dataset with a color
+      datasetFill: true,
+      //String - A legend template
+      legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].lineColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>",
+      //Boolean - whether to maintain the starting aspect ratio or not when responsive, if set to false, will take up entire container
+      maintainAspectRatio: true,
+      //Boolean - whether to make the chart responsive to window resizing
+      responsive: true
+    };
+
+    //Create the line chart
+    areaChart.Line(areaChartData, areaChartOptions);
+
+    //-------------
+    //- LINE CHART -
+    //--------------
+    var lineChartCanvas = $("#lineChart").get(0).getContext("2d");
+    var lineChart = new Chart(lineChartCanvas);
+    var lineChartOptions = areaChartOptions;
+    lineChartOptions.datasetFill = false;
+    lineChart.Line(areaChartData, lineChartOptions);
+
+    
+
+    
+  });
+</script>
+
 </body>
 </html>

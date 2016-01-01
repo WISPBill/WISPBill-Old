@@ -25,7 +25,7 @@ if (isset($_SESSION['logged'])){
 if($ses=='yes'){
     //user is logged in
     session_regenerate_id();
-    header('Location: menue.php');
+    header('Location: dashbored.php');
         exit;
 } else{
     // user is not logged in so do nothing

@@ -22,23 +22,290 @@ require_once('./session.php');
 require_once('./fileloader.php');
 $mysqli = new mysqli("$ip", "$username", "$password", "$db");
 
-$error = $_SESSION['exitcodev2'];
-echo "<h1>$error</h1>";
-$_SESSION['exitcodev2'] ='';
+$adminid = $_SESSION['adminid'];
 
-if ($result = $mysqli->query("SELECT * FROM `customer_info` WHERE `idcustomer_users` is NULL")) {
+if ($result = $mysqli->query("SELECT * FROM `admin_users` WHERE `idadmin` = $adminid")) {
+    /* fetch associative array */
+     while ($row = $result->fetch_assoc()) {
+    $fname = $row["fname"];
+    $lname = $row["lname"];
+    $userimage = $row["img"];
+}
+       /* free result set */
+    $result->close();
+}// end if
+if ($result = $mysqli->query("SELECT * FROM `notifications` WHERE `readyn`
+= '0' and `towho` = 'all' or `towho` = '$adminid' ORDER BY `notifications`.`idnotifications` DESC")) {
+    $notitotal = mysqli_num_rows($result);
+         
+     if($notitotal < 7){
+      $noticode = 'success'; // Green
+     }elseif(7< $notitotal and $notitotal < 15){
+      $noticode = 'warning'; //Orange
+     }elseif($notitotal > 15){
+      $noticode = 'danger'; // Red
+     }
+     
+    /* free result set */
+    $result->close();
+    
+      if ($result = $mysqli->query("SELECT * FROM `notifications` WHERE `readyn`
+= '0' and `towho` = 'all' or `towho` = '$adminid' ORDER BY `notifications`.`idnotifications` DESC limit 1;")) {
+    while ($row = $result->fetch_assoc()) {
+     $source= $row["fromwho"];
+     $notiid= $row["idnotifications"];
+     $notimesg= $row["content"];
+     $notitimestamp = $row["date"];
+      }
+      $unixTimestamp = strtotime("$notitimestamp");
+      $currenttime = time();
+      
+      $stime = $currenttime - $unixTimestamp;
+      
+      $notitime = $stime/60;
+      $notitime = round($notitime);
+      $notitime = $notitime.' Mins';
+      if($source == 'system'){
+        $notisource = 'System Automatic Alert';
+        $notiimage = $sysimg;
+      }elseif(is_numeric($source)){
+        if ($result3 = $mysqli->query("SELECT * FROM `admin_users` WHERE `idadmin` = $source")) {
+				/* fetch associative array */
+				 while ($row3 = $result3->fetch_assoc()) {
+					 $notisource = $row3["fname"];
+                     $notiimage = $row3["img"];
+					 }
+  
+					$result3->close();
+						}
+      }else {
+        $notisource = $source;
+         $notiimage = $unkownimg;
+      }
+      
+      /* free result set */
+    $result->close();
+      }
+}
+$calevents = '1';
+$mailevents = '1';
+?>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>WISP Bill</title>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <!-- Bootstrap 3.3.5 -->
+  <link rel="stylesheet" href="AdminLTE2/bootstrap/css/bootstrap.min.css">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+  <!-- Ionicons -->
+  <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+  <link rel="stylesheet" href="AdminLTE2/plugins/datatables/dataTables.bootstrap.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="AdminLTE2/dist/css/AdminLTE.min.css">
+  <!-- AdminLTE Skins. We have chosen the skin-blue for this starter
+        page. However, you can choose any other skin. Make sure you
+        apply the skin class to the body tag so the changes take effect.
+  -->
+  <link rel="stylesheet" href="AdminLTE2/dist/css/skins/skin-blue.min.css">
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+  <![endif]-->
+</head>
+<!--
+BODY TAG OPTIONS:
+=================
+Apply one or more of the following classes to get the
+desired effect
+|---------------------------------------------------------|
+| SKINS         | skin-blue                               |
+|               | skin-black                              |
+|               | skin-purple                             |
+|               | skin-yellow                             |
+|               | skin-red                                |
+|               | skin-green                              |
+|---------------------------------------------------------|
+|LAYOUT OPTIONS | fixed                                   |
+|               | layout-boxed                            |
+|               | layout-top-nav                          |
+|               | sidebar-collapse                        |
+|               | sidebar-mini                            |
+|---------------------------------------------------------|
+-->
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+
+  <!-- Main Header -->
+  <header class="main-header">
+
+    <!-- Logo -->
+    <a href="dashbored.php" class="logo">
+      <!-- mini logo for sidebar mini 50x50 pixels -->
+      <span class="logo-mini"><b>WISP</b> Bill</span>
+      <!-- logo for regular state and mobile devices -->
+      <span class="logo-lg"><b>WISP</b> Bill</span>
+    </a>
+
+    <!-- Header Navbar -->
+    <nav class="navbar navbar-static-top" role="navigation">
+      <!-- Sidebar toggle button-->
+      <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+        <span class="sr-only">Toggle navigation</span>
+      </a>
+      <!-- Navbar Right Menu -->
+      <div class="navbar-custom-menu">
+        <ul class="nav navbar-nav">
+          <!-- Messages: style can be found in dropdown.less-->
+          <li class="dropdown messages-menu">
+            <!-- Menu toggle button -->
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <i class="fa fa-bell-o"></i>
+              <span class="label label-<?php echo "$noticode"; ?>"><?php echo "$notitotal"; ?></span>
+            </a>
+            <ul class="dropdown-menu">
+              <li class="header">You have <?php echo "$notitotal"; ?> messages</li>
+              <li>
+                <!-- inner menu: contains the messages -->
+                <ul class="menu">
+                  <li><!-- start message -->
+                    <a href="viewnotifications.php?id=<?php echo "$notiid"; ?>">
+                      <div class="pull-left">
+                        <!-- User Image -->
+                        <img src="<?php echo "$notiimage"; ?>" class="img-circle" alt="User Image">
+                      </div>
+                      <!-- Message title and timestamp -->
+                      <h4>
+                        <?php echo "$notisource"; ?>
+                        <small><i class="fa fa-clock-o"></i><?php echo "$notitime"; ?></small>
+                      </h4>
+                      <!-- The message -->
+                      <p><?php echo "$notimesg"; ?></p>
+                    </a>
+                  </li>
+                  <!-- end message -->
+                </ul>
+                <!-- /.menu -->
+              </li>
+              <li class="footer"><a href="viewnotifications.php">See All Messages</a></li>
+            </ul>
+          </li>
+          <!-- /.messages-menu -->
+ 
+          <!-- User Account Menu -->
+          <li class="dropdown user user-menu">
+            <!-- Menu Toggle Button -->
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <!-- The user image in the navbar-->
+              <img src="<?php echo "$userimage"; ?>" class="user-image" alt="User Image">
+              <!-- hidden-xs hides the username on small devices so only the image appears. -->
+              <span class="hidden-xs"><?php echo "$fname $lname"; ?></span>
+            </a>
+            <ul class="dropdown-menu">
+              <!-- The user image in the menu -->
+              <li class="user-header">
+                <img src="<?php echo "$userimage"; ?>" class="img-circle" alt="User Image">
+                <p>
+                  <?php echo "$fname $lname"; ?> 
+                </p>
+              </li>
+              <!-- Menu Body -->    
+              <!-- Menu Footer-->
+              <li class="user-footer">
+                <div class="pull-left">
+                  <a href="settings.php" class="btn btn-default btn-flat">Settings</a>
+                </div>
+                <div class="pull-right">
+                  <a href="logout.php" class="btn btn-default btn-flat">Sign out</a>
+                </div>
+              </li>
+            </ul>
+          </li>
+          <!-- Control Sidebar Toggle Button -->
+          <li>
+            <a href="settings.php" ><i class="fa fa-gears"></i></a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+  <!-- Left side column. contains the logo and sidebar -->
+  <aside class="main-sidebar">
+
+    <!-- sidebar: style can be found in sidebar.less -->
+    <section class="sidebar">
+
+      <!-- Sidebar user panel (optional) -->
+      <div class="user-panel">
+        <div class="pull-left image">
+          <img src="<?php echo "$userimage"; ?>" class="img-circle" alt="User Image">
+        </div>
+        <div class="pull-left info">
+          <p><?php echo "$fname $lname"; ?></p>
+          
+        </div>
+      </div>
+<?php
+// Get Menu all echo login is in file
+ require_once("$menue");
+?>
+     
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+      Covert Lead to Install
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="dashbored.php"><i class="fa fa-dashboard"></i> Dashbored</a></li>
+        <li class="active">Convert Lead</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+	 <form role="form" action="convertleadin2.php"method="post">
+	<div class="row">
+        <div class="col-xs-12">
+    <section class="content">
+	<div class="box">
+            <div class="box-header">
+			 <?php
+// get error 
+$error = $_SESSION['exitcodev2'];
+                if($error =='lead'){
+				 echo '<h3 class="box-title" style="color: red;">You need to Select a Lead</h3>';
+				}else{
+				 echo '<h3 class="box-title">Select a Lead</h3>';
+				}
+?> 
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+              <table id="example1" class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                  <th>Select</th>
+				  <th>Name</th> 
+				   <th>Phone</th>
+				  <th>Email</th>
+				 <th>Address</th>
+				  <th>City</th>
+                </tr>
+                </thead>
+                <tbody>
+				 <?php
+                if ($result = $mysqli->query("SELECT * FROM `customer_info` WHERE `idcustomer_users` is NULL")) {
       /* fetch associative array */
-      echo'<h1>Select a A lead to Convert to An Install</h1>
-      <form action="convertleadin2.php"method="post">
-      <table border="1" style="width:100%">
-      <tr>
-    <td>Select</td>
-    <td>Name</td> 
-    <td>Phone</td>
-    <td>Email</td>
-    <td>Address</td>
-    <td>City</td>
-  </tr>';
+         
     while ($row = $result->fetch_assoc()) {
      $id= $row["idcustomer_info"];
      $fname= $row["fname"];
@@ -57,11 +324,76 @@ if ($result = $mysqli->query("SELECT * FROM `customer_info` WHERE `idcustomer_us
   </tr>";
     }
 }
-    
-    echo' </table>
-  	            <br><button type="submit">
-  	                Submit Info
-  	            </button></br>   
-  	    </fieldset>
-  	    </form>';
+
 ?>
+                </tbody>
+                <tfoot>
+                <tr>
+                  <th>Select</th>
+				  <th>Name</th> 
+				   <th>Phone</th>
+				  <th>Email</th>
+				 <th>Address</th>
+				  <th>City</th>
+                </tr>
+                </tfoot>
+              </table>
+			  <div class="box-footer">
+                <button type="submit" class="btn btn-primary">Submit</button>
+              </div>
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- Main Footer -->
+  <footer class="main-footer">
+    <!-- To the right -->
+    <div class="pull-right hidden-xs">
+      <?php echo "$rightfooter";?>
+    </div>
+    <!-- Default to the left -->
+    <strong>Copyright &copy; 2015 <a href="<?php echo "$companysite";?>"><?php echo "$company";?></a>.</strong> All rights reserved.
+  </footer>
+
+<!-- ./wrapper -->
+
+<!-- REQUIRED JS SCRIPTS -->
+
+<!-- jQuery 2.1.4 -->
+<script src="AdminLTE2/plugins/jQuery/jQuery-2.1.4.min.js"></script>
+<!-- Bootstrap 3.3.5 -->
+<script src="AdminLTE2/bootstrap/js/bootstrap.min.js"></script>
+<!-- AdminLTE App -->
+<script src="AdminLTE2/dist/js/app.min.js"></script>
+<!-- DataTables -->
+<script src="AdminLTE2/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="AdminLTE2/plugins/datatables/dataTables.bootstrap.min.js"></script>
+
+<!-- Optionally, you can add Slimscroll and FastClick plugins.
+     Both of these plugins are recommended to enhance the
+     user experience. Slimscroll is required when using the
+     fixed layout. -->
+<script>
+  $(function () {
+    $("#example1").DataTable();
+    $('#example2').DataTable({
+      "paging": true,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": true,
+      "info": true,
+      "autoWidth": false
+    });
+  });
+</script>
+</body>
+</html>

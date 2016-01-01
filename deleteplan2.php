@@ -67,17 +67,14 @@ foreach ($_POST['id'] as $id) {
     $result->close();
     // Remove Plan form Databases
       if ($result = $mysqli->query("UPDATE `customer_info` SET `idcustomer_plans` = '$newplanid' WHERE `idcustomer_plans` = '$id'")){
-          $mysqlr = new mysqli("$ipr", "$usernamer", "$passwordr", "$dbr");
-     if ($result = $mysqlr->query("UPDATE `radusergroup` SET `groupname` = '$newpname' WHERE `groupname`  = '$pname'")){
-        if ($result = $mysqlr->query("DELETE FROM `radgroupreply` WHERE `groupname` = '$pname'")){
+        }
      if ($result = $mysqli->query("DELETE FROM `customer_plans` WHERE `idcustomer_plans` = '$id'")){
         // Delete Stripe Plan
         $plan = Stripe_Plan::retrieve("$pname");
       $plan->delete();
      }
-      }
-      }
-}
+      
+
 } // end of foreach 
 header('Location: index.php');
 ?>

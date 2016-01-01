@@ -27,31 +27,31 @@ $mysqlil = new mysqli("$ipl", "$usernamel", "$passwordl", "$dbl");
 $id= $_POST["id"];
 $phone = $_POST["tel"];
 $email = $_POST["email"];
-$l4= $_POST["l4"];
+$l4= $_POST["4"];
 $lid= $_POST["site"];
 if (empty($id)) {
     // If input feild is empty it goes back to the fourm and informs the user
-    $_SESSION['exitcodev2'] = 'No Device was Selected';
+    $_SESSION['exitcodev2'] = 'dev';
     header('Location: linkcusdevice.php');
     exit;
 }elseif (empty($email)) {
     // If email is empty it goes back to the fourm and informs the user
-    $_SESSION['exitcodev2'] = 'No Email Enenterd';
+    $_SESSION['exitcodev2'] = 'email';
     header('Location: linkcusdevice.php');
     exit;
 } elseif(empty($phone)){
     // If phone is empty it goes back to the fourm and informs the user
-    $_SESSION['exitcodev2'] = 'No Phone Number Enenterd';
+    $_SESSION['exitcodev2'] = 'tel';
     header('Location: linkcusdevice.php');
     exit;
 } elseif(empty($l4)){
     // If Last 4 is empty it goes back to the fourm and informs the user
-    $_SESSION['exitcodev2'] = 'No Last 4 Digits Enenterd';
+    $_SESSION['exitcodev2'] = '4';
     header('Location: linkcusdevice.php');
     exit;
 } elseif(empty($lid)){
     // If Last 4 is empty it goes back to the fourm and informs the user
-    $_SESSION['exitcodev2'] = 'No Site was Selected';
+    $_SESSION['exitcodev2'] = 'site';
     header('Location: linkcusdevice.php');
     exit;
 }  else {
@@ -62,13 +62,27 @@ $phonec = $mysqli->real_escape_string($phone);
 $l4c = $mysqli->real_escape_string($l4);
 $site = $mysqli->real_escape_string($lid);
 if(!filter_var($emailc, FILTER_VALIDATE_EMAIL)){
-         $_SESSION['exitcodev2'] = 'Email is Not Valid';
+         $_SESSION['exitcodev2'] = 'email';
     header('Location: linkcusdevice.php');
     exit;
   }
 else{
   //do nothing 
   }
+     if ($result = $mysqli->query("SELECT * FROM  `customer_info` WHERE  `email` =  '$emailc'
+AND  `phone` =  '$phonec'")) {
+    /* fetch associative array */
+     $numsrows = $result->num_rows;
+    if ($numsrows == 0){
+			 $_SESSION['exitcodev2']  = 'emailphone';
+     header('Location: linkcusdevice.php');
+    exit;							
+	 } elseif($numsrows == 1){
+		// Nothing								
+}
+       /* free result set */
+    $result->close();
+}// end if
 if ($result = $mysqli->query("SELECT * FROM `customer_info` WHERE `email` = '$emailc' and `phone` = '$phonec'")) {
     /* fetch associative array */
      while ($row = $result->fetch_assoc()) {
@@ -105,14 +119,21 @@ if ($result2 = $mysqli->query("SELECT * FROM `customer_users` WHERE `idcustomer_
  
          }// end if
          
-         if ($result14 = $mysqli->query("SELECT * FROM `devices` WHERE `iddevices` = '$id'")) {
+         if ($result14 = $mysqli->query("SELECT * FROM `devices` WHERE `iddevices` = '$id' AND  `manufacturer` =  'Ubiquiti Networks'")) {
     /* fetch associative array */
-     while ($row14 = $result14->fetch_assoc()) {
+    $numsrows = $result14->num_rows;
+    if ($numsrows == 0){
+		header('Location: index.php');
+        exit;						
+	 } elseif($numsrows == 1){
+		   while ($row14 = $result14->fetch_assoc()) {
      $mac= $row14["mac"];
+  
 }
        /* free result set */
     $result14->close();
 }// end if
+         }
          
          $cpeid = $id;
           if ($result2 = $mysqli->query("SELECT * FROM `devices` WHERE `location_idlocation` = '$site'and `type` = 'router'")) {
@@ -293,7 +314,7 @@ if ($result2 = $mysqli->query("SELECT * FROM `customer_users` WHERE `idcustomer_
 					 } // End of If	 
          } // End of If
  }else{
-     $_SESSION['exitcodev2'] = 'The Last 4 Digits are Wrong';
+     $_SESSION['exitcodev2'] = '4';
     header('linkcusdevice.php');
     exit;
  }

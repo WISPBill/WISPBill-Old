@@ -63,6 +63,7 @@ echo'
             <li><a href="mapsites.php">Map Sites</a></li>
             <li><a href="drawcova.php">Draw Coverage</a></li>
             <li><a href="mapcov.php">Map Coverage</a></li>
+            <li><a href="configsite.php">Initial Site Configuration</a></li>
           </ul>
         </li>
         </li>

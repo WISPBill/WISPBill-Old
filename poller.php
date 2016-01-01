@@ -24,8 +24,9 @@
 require_once('./fileloader.php');
 	 $mysqli = new mysqli("$ip", "$username", "$password", "$db");
 	 $mysqlil = new mysqli("$ipl", "$usernamel", "$passwordl", "$dbl");
- if ($result = $mysqli->query("SELECT * FROM `devices` WHERE `type`
-                              = 'cpe' and `field_status` = 'customer' LIMIT 0 , 25")) {
+ if ($result = $mysqli->query("SELECT * FROM  `devices` WHERE  `type` =  'cpe'
+AND  `field_status` =  'customer' AND  `manufacturer` =  'Ubiquiti Networks'
+LIMIT 0 , 25")) {
     /* fetch associative array */
     foreach ($result as $row){
          $site = $row["location_idlocation"];

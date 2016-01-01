@@ -31,18 +31,18 @@ $id = $_POST["id"];
 // start of data sanitize and existence check
 if(empty($up)){
     // If up is empty it goes back to the fourm and informs the user
-    $_SESSION['exitcode'] = 'no up';
+    $_SESSION['exitcode'] = 'up';
     header('Location: speedplan.php');
     exit;
 }
 elseif(empty($down)){
     // If email is empty it goes back to the fourm and informs the user
-    $_SESSION['exitcode'] = 'no down';
+    $_SESSION['exitcode'] = 'down';
     header('Location: speedplan.php');
     exit;
 } elseif(empty($id)){
     // If email is empty it goes back to the fourm and informs the user
-    $_SESSION['exitcode'] = 'no id';
+    $_SESSION['exitcode'] = 'plan';
     header('Location: speedplan.php');
     exit;
 }else{
@@ -60,34 +60,13 @@ if ($result = $mysqli->query("SELECT * FROM `customer_plans` WHERE `idcustomer_p
     }
 }
 //start of data entry for system DB
-if ($mysqli->query("UPDATE `wispbill`.`customer_plans` SET `max_bandwith_up_kilo` = '$up', `max_bandwith_down_kilo`
+if ($mysqli->query("UPDATE `$db`.`customer_plans` SET `max_bandwith_up_kilo` = '$up', `max_bandwith_down_kilo`
                    = '$down' WHERE `customer_plans`.`idcustomer_plans` = $id;") === TRUE) {
 } else{
    echo'Something went wrong with the database please contact your webmaster';
       exit;
 }
 // end of data entry for system DB
-// start of bandwith convert for radius
-$upr = $up*1000;
-$downr = $down*1000;
-// end of bandwith convert for radius
-//start of data entry for radius 
-$mysqlir = new mysqli("$ipr", "$usernamer", "$passwordr", "$dbr");
-//bandwith up
-if ($mysqlir->query("UPDATE `radgroupreply` SET `value` = '$upr' WHERE
-                    `groupname` ='$name' and `attribute` = 'WISPr-Bandwidth-Max-Up'") === TRUE) {
-} else{
-   echo'Something went wrong with the database please contact your webmaster';
-      exit;
-}
-//bandwith down
-if ($mysqlir->query("UPDATE `radgroupreply` SET `value` = '$downr' WHERE
-                    `groupname` ='$name' and `attribute` = 'WISPr-Bandwidth-Max-Down'") === TRUE) {
-} else{
-   echo'Something went wrong with the database please contact your webmaster';
-      exit;
-}
-// end of data entry for radius
 
 header('Location: index.php');
 // end of file

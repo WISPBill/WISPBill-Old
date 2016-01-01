@@ -26,23 +26,23 @@ $mysqli = new mysqli("$ip", "$username", "$password", "$db");
 // start of post
 $phone = $_POST["tel"];
 $email = $_POST["email"];
-$l4= $_POST["l4"];
+$l4= $_POST["4"];
 $plan = $_POST["plan"];
 // end of post
 // start of data sanitize and existence check
  if (empty($email)) {
     // If email is empty it goes back to the fourm and informs the user
-    $_SESSION['errorcode'] = 'No Email Enenterd';
+    $_SESSION['exitcodev2'] = 'email';
     header('Location: changecusser.php');
     exit;
 } elseif(empty($phone)){
     // If phone is empty it goes back to the fourm and informs the user
-    $_SESSION['errorcode'] = 'No Phone Number Enenterd';
+    $_SESSION['exitcodev2'] = 'tel';
     header('Location: changecusser.php');
     exit;
 } elseif(empty($l4)){
     // If Last 4 is empty it goes back to the fourm and informs the user
-    $_SESSION['errorcode'] = 'No Last 4 Digits Enenterd';
+    $_SESSION['exitcodev2'] = '4';
     header('Location: changecusser.php');
     exit;
 }else{
@@ -53,13 +53,27 @@ $emailc = $mysqli->real_escape_string($email);
 $phonec = $mysqli->real_escape_string($phone);
 $l4c = $mysqli->real_escape_string($l4);
 if(!filter_var($emailc, FILTER_VALIDATE_EMAIL)){
-     $_SESSION['errorcode'] = 'Email is Not Valid';
+     $_SESSION['exitcodev2'] = 'email';
     header('Location: changecusser.php');
     exit;
   }
 else{
   //do nothing 
   }
+     if ($result = $mysqli->query("SELECT * FROM  `customer_info` WHERE  `email` =  '$emailc'
+AND  `phone` =  '$phonec'")) {
+    /* fetch associative array */
+     $numsrows = $result->num_rows;
+    if ($numsrows == 0){
+			 $_SESSION['exitcodev2']  = 'emailphone';
+     header('Location: changecusser.php');
+    exit;							
+	 } elseif($numsrows == 1){
+		// Nothing								
+}
+       /* free result set */
+    $result->close();
+}// end if
 // end of data sanitize and existence check
 if ($result = $mysqli->query("SELECT * FROM `customer_info` WHERE `email` = '$emailc' and `phone` = '$phonec'")) {
     /* fetch associative array */
@@ -95,17 +109,16 @@ if ($result3 = $mysqli->query("SELECT * FROM `customer_plans` WHERE `idcustomer_
 
  if($last4 == $l4c){
     if ($result = $mysqli->query("UPDATE `customer_info` SET `idcustomer_plans` = '$plan' WHERE `idcustomer_info` = '$iid'")) {
-        $mysqlr = new mysqli("$ipr", "$usernamer", "$passwordr", "$dbr");
-     if ($result = $mysqlr->query("UPDATE `radusergroup` SET `groupname` = '$pname' WHERE `username` = '$uname'")) {
+     
      $subid = $cus->subscriptions->data[0]->id;
      $subscription = $cus->subscriptions->retrieve("$subid");
      $subscription->plan = "$pname";
      $subscription->save();
        header('Location: index.php');
-}
+
 }
  }else{
-    $_SESSION['errorcode'] = 'The Last 4 Digits are Wrong';
+    $_SESSION['exitcodev2'] = '4';
     header('Location: changecusser.php');
     exit;
  }

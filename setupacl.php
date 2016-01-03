@@ -21,16 +21,7 @@
 require_once('./session.php');
 require_once('./fileloader.php');
 $mysqli = new mysqli("$ip", "$username", "$password", "$db");
-// Start of Clean up At some point this will be simpiler
-$_SESSION['exitcode'] = '';
-$_SESSION['exitcodev2'] = '';
-$_SESSION['errorcode'] = '';
-$_SESSION['id'] = '';
-$_SESSION['id2'] = '';
-$_SESSION['id3'] = '';
-$_SESSION['email'] = '';
-$_SESSION['errorcode'] ='';
-// End of cleanup
+
 $adminid = $_SESSION['adminid'];
 
 if ($result = $mysqli->query("SELECT * FROM `admin_users` WHERE `idadmin` = $adminid")) {
@@ -98,20 +89,9 @@ if ($result = $mysqli->query("SELECT * FROM `notifications` WHERE `readyn`
     $result->close();
       }
 }
-if ($result = $mysqli->query("SELECT * FROM `customer_info` WHERE
-                             `idcustomer_users` is not NULL
-                             and `idcustomer_plans` is not NULL")) {
-      /* fetch associative array */
-      $custotal = $result->num_rows;
-}
-if ($result = $mysqli->query("SELECT * FROM `customer_info` WHERE `idcustomer_users` is NULL")) {
-      /* fetch associative array */
-      $leadtotal = $result->num_rows;
-}
+
 $calevents = '1';
 $mailevents = '1';
-$calltotal = '7';
-$devicedown = '1';
 ?>
 <!DOCTYPE html>
 <html>
@@ -140,8 +120,8 @@ $devicedown = '1';
   <!--[if lt IE 9]>
   <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
   <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-
   <![endif]-->
+
 </head>
 <!--
 BODY TAG OPTIONS:
@@ -286,92 +266,93 @@ desired effect
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Dashboard
+        Set up ACL Firewall  
       </h1>
       <ol class="breadcrumb">
-        <li><a href="dashbored.php"><i class="fa fa-dashboard"></i> Dashbored</a></li>
-        <li class="active">Here</li>
+        <li><a href="#"><i class="fa fa-dashboard"></i> Level</a></li>
+        <li class="active">ACL Firewall</li>
       </ol>
     </section>
-
+<?php
+// get error 
+$error = $_SESSION['exitcodev2'];
+$_SESSION['exitcodev2'] ='';
+$errorlabel ='<label class="control-label" for="inputError" style="color: red;"><i class="fa fa-times-circle-o"></i> Input with
+    error</label>';
+?>
     <!-- Main content -->
     <section class="content">
 
-       <!-- Small boxes (Stat box) -->
-      <div class="row">
-        <div class="col-lg-3 col-xs-6">
-          <!-- small box -->
-          <div class="small-box bg-aqua">
-            <div class="inner">
-              <h3><?php echo "$leadtotal"?></h3>
-
-              <p>Leads</p>
-            </div>
-            <div class="icon">
-              <i class="ion ion-person-add"></i>
-            </div>
-            <a href="viewlead.php" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-          </div>
-        </div>
-        <!-- ./col -->
-        <div class="col-lg-3 col-xs-6">
-          <!-- small box -->
-          <div class="small-box bg-green">
-            <div class="inner">
-              <h3><?php echo "$custotal";?></h3>
-
-              <p>Customers</p>
-            </div>
-            <div class="icon">
-              <i class="ion ion-person-stalker"></i>
-            </div>
-            <a href="viewcustomer.php" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-          </div>
-        </div>
-        <!-- ./col -->
-        <div class="col-lg-3 col-xs-6">
-          <!-- small box -->
-          <div class="small-box bg-yellow">
-            <div class="inner">
-              <h3><?php echo "$calltotal";?></h3>
-
-              <p>Calls Yesterday</p>
-            </div>
-            <div class="icon">
-              <i class="ion ion-android-call"></i>
-            </div>
-            <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-          </div>
-        </div>
-        <!-- ./col -->
-        <div class="col-lg-3 col-xs-6">
-          <!-- small box -->
-          <div class="small-box bg-red">
-            <div class="inner">
-              <h3><?php echo "$devicedown";?></h3>
-
-              <p>Devices Down</p>
-            </div>
-            <div class="icon">
-              <i class="ion ion-alert-circled"></i>
-            </div>
-            <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-          </div>
-        </div>
-        <!-- ./col -->
-      </div>
-      <!-- /.row -->
-<div class="box box-primary">
+         <!-- general form elements disabled -->
+          <div class="box box-warning">
             <div class="box-header with-border">
-              <h3 class="box-title">Network Traffic in the last day</h3>
-
-            <div class="box-body">
-              <div class="chart">
-                <canvas id="canvas" ></canvas>
-              </div>
             </div>
-            <!-- /.box-body -->
-          </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+              <form role="form" action="setupacl2.php"method="post">
+                <!-- text input -->
+                <div class="form-group">
+					<?php
+					if($error == 'name'){
+						echo "$errorlabel";
+					}else{
+						echo '<label>Enter Firewall Name</label>';
+					}
+					?>
+                  <input type="text" class="form-control" name="name" placeholder="Enter Firewall Name without any Whitespace" required>
+                </div>
+                
+				 <div class="form-group">
+                  
+				<?php
+				 if ($result = $mysqli->query("SELECT * 
+FROM  `location` 
+WHERE  `ifconfig` =  'yes'")) {
+    /* fetch associative array */
+	
+                if($error == 'site'){
+						echo "$errorlabel";
+					}else{
+						echo '<label>Select the Site</label>';
+					}
+                echo '<select class="form-control" name="site" id="first-choice" required>
+				  <option value="" selected disabled>Please Select Site</option>';
+    while ($row = $result->fetch_assoc()) {
+        $id = $row["idlocation"];
+        $name = $row["name"];
+        echo"<option value=$id>$name</option>";
+        }
+ echo ' </select>
+                </div>';
+                if($error == 'port'){
+						echo "$errorlabel";
+					}else{
+						echo '<label>Select a Port for the Firewall</label>';
+					}
+                    echo '
+                    <div class="form-group">
+                <select class="form-control" name="port" id="second-choice" required>
+				  <option value="" selected disabled>Please Select Site First</option>
+                </select>
+                </div>
+                
+				<div class="box-footer">
+                <button type="submit" class="btn btn-primary">Submit</button>
+              </div>';
+    /* free result set */
+    $result->close();
+	}else{
+        echo'  <label class="control-label" for="inputError">Datebase
+                    error contact your webmaster</label>';
+    }
+				?>
+				  
+              </form>
+              <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <script type="text/javascript">
+  $("#first-choice").change(function() {
+  $("#second-choice").load("https://192.168.1.189/portget.php?choice=" + $("#first-choice").val());});
+  </script>
     </section>
     <!-- /.content -->
   </div>
@@ -397,212 +378,78 @@ desired effect
 <script src="AdminLTE2/bootstrap/js/bootstrap.min.js"></script>
 <!-- AdminLTE App -->
 <script src="AdminLTE2/dist/js/app.min.js"></script>
- <script src="AdminLTE2/plugins/chartjs/beta2.js"></script>
 
-  <?php
-  require_once('./fileloader.php');
-  $mysqli = new mysqli("$ip", "$username", "$password", "$db");
-$time = time();
-  $time1dayago = $time-86400;
+<!-- Optionally, you can add Slimscroll and FastClick plugins.
+     Both of these plugins are recommended to enhance the
+     user experience. Slimscroll is required when using the
+     fixed layout. -->
+<!-- Select2 -->
+<script src="AdminLTE2/plugins/select2/select2.full.min.js"></script>
+<!-- InputMask -->
+<script src="AdminLTE2/plugins/input-mask/jquery.inputmask.js"></script>
+<script src="AdminLTE2/plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
+<script src="AdminLTE2/plugins/input-mask/jquery.inputmask.extensions.js"></script>
+<script>
+  $(function () {
+    //Initialize Select2 Elements
+    $(".select2").select2();
 
-// Bulid array of Devcices
+    //Datemask dd/mm/yyyy
+    $("#datemask").inputmask("dd/mm/yyyy", {"placeholder": "dd/mm/yyyy"});
+    //Datemask2 mm/dd/yyyy
+    $("#datemask2").inputmask("mm/dd/yyyy", {"placeholder": "mm/dd/yyyy"});
+    //Money Euro
+    $("[data-mask]").inputmask();
 
-if ($result = $mysqli->query("SELECT * FROM `devices` WHERE `type`
-                              = 'cpe' and `field_status` = 'customer' limit 0,1")) {
-       /* fetch associative array */
-     while ($row = $result->fetch_assoc()) {
-    $id = $row["iddevices"];
-}
-}
+    //Date range picker
+    $('#reservation').daterangepicker();
+    //Date range picker with time picker
+    $('#reservationtime').daterangepicker({timePicker: true, timePickerIncrement: 30, format: 'MM/DD/YYYY h:mm A'});
+    //Date range as a button
+    $('#daterange-btn').daterangepicker(
+        {
+          ranges: {
+            'Today': [moment(), moment()],
+            'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+            'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+            'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+            'This Month': [moment().startOf('month'), moment().endOf('month')],
+            'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+          },
+          startDate: moment().subtract(29, 'days'),
+          endDate: moment()
+        },
+        function (start, end) {
+          $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+        }
+    );
 
-$master = array();
-	if ($result = $mysqli->query("SELECT * FROM  `cpe_data` WHERE  `datetime` >=  '$time1dayago' and `devices_iddevices` = '$id'")) {
-       /* fetch associative array */
-	   
-     while ($row = $result->fetch_assoc()) {
-		array_push($master, $row["datetime"]);
-}
-	}
-	$master2 = (array_chunk($master, 2));
-	$stamp = array();
-	$down  = array();
-	$up = array();
-	
-	foreach($master2 as $key=>$set){
-      
-		$start = $set["0"];
-        if(isset($set["1"])){
-		$end = $set["1"];
-		if ($result = $mysqli->query("SELECT avg(datetime) as datetime FROM `cpe_data` WHERE  `datetime` >=  '$start' and `datetime` <  '$end'")) {
-       /* fetch associative array */
-	          while ($row = $result->fetch_assoc()) {
-		     $avgtime = $row["datetime"];
-			 $avgtime = round($avgtime);
-			 array_push($stamp, $avgtime);
-}
-}
-if ($result = $mysqli->query("select sum(rxrate) as down from `cpe_data` WHERE  `datetime` >=  '$start' and `datetime` <  '$end'")) {
-       /* fetch associative array */
-	          while ($row = $result->fetch_assoc()) {
-		     $rxrate = $row["down"];
-			  array_push($down, $rxrate);
-}
-}
-if ($result = $mysqli->query("select sum(txrate) as up from `cpe_data` WHERE  `datetime` >=  '$start' and `datetime` <  '$end'")) {
-       /* fetch associative array */
-	          while ($row = $result->fetch_assoc()) {
-		     $txrate = $row["up"];
-			  array_push($up, $txrate);
-}
-}
-$next = $key + 1;
-if(isset($master2["$next"])){
-$nextset = $master2["$next"];
-$start = $end;
-$end = $nextset["0"];
-	if ($result = $mysqli->query("SELECT avg(datetime) as datetime FROM `cpe_data` WHERE  `datetime` >=  '$start' and `datetime` <  '$end'")) {
-       /* fetch associative array */
-	          while ($row = $result->fetch_assoc()) {
-		     $avgtime = $row["datetime"];
-			 $avgtime = round($avgtime);
-			 array_push($stamp, $avgtime);
-}
-}
-if ($result = $mysqli->query("select sum(rxrate) as down from `cpe_data` WHERE  `datetime` >=  '$start' and `datetime` <  '$end'")) {
-       /* fetch associative array */
-	          while ($row = $result->fetch_assoc()) {
-		     $rxrate = $row["down"];
-			  array_push($down, $rxrate);
-}
-}
-if ($result = $mysqli->query("select sum(txrate) as up from `cpe_data` WHERE  `datetime` >=  '$start' and `datetime` <  '$end'")) {
-       /* fetch associative array */
-	          while ($row = $result->fetch_assoc()) {
-		     $txrate = $row["up"];
-			  array_push($up, $txrate);
-}
-}
-}// End if
-        }else{
-          
-        }// End set loop
-	}// End loop
-  ?>  
-    <script>
+    //iCheck for checkbox and radio inputs
+    $('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
+      checkboxClass: 'icheckbox_minimal-blue',
+      radioClass: 'iradio_minimal-blue'
+    });
+    //Red color scheme for iCheck
+    $('input[type="checkbox"].minimal-red, input[type="radio"].minimal-red').iCheck({
+      checkboxClass: 'icheckbox_minimal-red',
+      radioClass: 'iradio_minimal-red'
+    });
+    //Flat red color scheme for iCheck
+    $('input[type="checkbox"].flat-red, input[type="radio"].flat-red').iCheck({
+      checkboxClass: 'icheckbox_flat-green',
+      radioClass: 'iradio_flat-green'
+    });
 
-        var config = {
-            type: 'line',
-            data: {
-                labels: [<?php foreach($stamp as $value){
-                  $value = date("g:i A","$value");
-       echo "\"$value\",";
-      }
-      ?>],
-                
-                datasets: [{
-                    label: "Download in Mbps",
-                    borderColor: "rgba(210, 214, 222, 1)",
-                    backgroundColor: "rgba(210, 214, 222, 1)",
-                    pointBorderColor: "rgba(255, 255, 255, .0)",
-                    pointBackgroundColor: "rgba(255, 255, 255, .0)",
-                    pointBorderWidth: 0,
-                    pointHoverRadius: 0,
-                    pointRadius: 0,
-                    data: [<?php foreach($down as $value){
-                      $value = $value/1000000;
-       echo "$value,";
-      }
-      ?>],
-                }, {
-                    label: "Upload in Mbps",
-                    borderColor: "rgba(60,141,188,0.8)",
-                    backgroundColor: "rgba(60,141,188,0.9)",
-                    pointBorderColor: "rgba(60,141,188,.0)",
-                    pointBackgroundColor: "rgba(60,141,188,.0)",
-                    pointBorderWidth: 0,
-                    pointHoverRadius: 0,
-                    pointRadius: 0,
-                    data: [<?php foreach($up as $value){
-                      $value = $value/1000000;
-       echo "$value,";
-      }
-      ?>],
-                }]
-            },
-            options: {
-                responsive: true,
-                tooltips: {
-                    mode: 'label',
-                    callbacks: {
-                        // beforeTitle: function() {
-                        //     return '...beforeTitle';
-                        // },
-                        // afterTitle: function() {
-                        //     return '...afterTitle';
-                        // },
-                        // beforeBody: function() {
-                        //     return '...beforeBody';
-                        // },
-                        // afterBody: function() {
-                        //     return '...afterBody';
-                        // },
-                        // beforeFooter: function() {
-                        //     return '...beforeFooter';
-                        // },
-                        // footer: function() {
-                        //     return 'Footer';
-                        // },
-                        // afterFooter: function() {
-                        //     return '...afterFooter';
-                        // },
-                    }
-                },
-                hover: {
-                    mode: 'label'
-                },
-                scales: {
-                    xAxes: [{
-                        display: true,
-                        scaleLabel: {
-                            show: true,
-                            labelString: "Time of Day",
-                            fontSize: 20,
-                        },
-                        gridLines: {
-                            display: false,
-                        },
-                        ticks: {
-                          fontSize: 16,
-                        }
-                        
-                    }],
-                    yAxes: [{
-                        display: true,
-                        scaleLabel: {
-                            show: true,
-                            labelString: "Megabits per Second",
-                            fontSize: 20,
-                        },
-                        gridLines: {
-                            display: false,
-                        },
-                        ticks: {
-                          fontSize: 20,
-                        }
-                        
-                    }]
-                }
-            }
-        };
-       
-        window.onload = function() {
-            var ctx = document.getElementById("canvas").getContext("2d");
-            window.myLine = new Chart(ctx, config);
-            
-        };
-     
-        
-    </script>
+    //Colorpicker
+    $(".my-colorpicker1").colorpicker();
+    //color picker with addon
+    $(".my-colorpicker2").colorpicker();
 
+    //Timepicker
+    $(".timepicker").timepicker({
+      showInputs: false
+    });
+  });
+</script>
 </body>
 </html>

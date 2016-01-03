@@ -22,7 +22,7 @@ echo'
             <li><a href="emailcustomer.php">Change Email</a></li>
             <li><a href="phonecustomer.php">Change Phone Number</a></li>
             <li><a href="changecusser.php">Change Service Plan</a></li>
-          </ul>
+          </ul></li>
             <li><a href="viewcustomer.php">View Customer\'s</a></li>
             <li><a href="mapcus.php">Map Customer\'s</a></li>
             <li><a href="setbill.php">Set Billing Info</a></li>
@@ -42,6 +42,11 @@ echo'
         <li class="treeview">
           <a href="#"><i class="fa fa-server"></i> <span>Device Management</span> <i class="fa fa-angle-left pull-right"></i></a>
           <ul class="treeview-menu">
+          <li class="treeview">
+          <a href="#"><i class="fa fa-fire"></i> <span>Firewall Management</span> <i class="fa fa-angle-left pull-right"></i></a>
+          <ul class="treeview-menu">
+            <li><a href="setupacl.php">Set up ACL Firewall</a></li>
+          </ul></li>
             <li><a href="createdevice.php">Add a Device to Inventory</a></li>
             <li><a href="ipview.php">View Static IP Assignments </a></li>
             <li><a href="adddhcp.php">Add a DHCP Server</a></li>
@@ -58,7 +63,7 @@ echo'
             <li><a href="viewcontact.php">View Contacts</a></li>
             <li><a href="createcontactnote.php">Create a Note about a Contact</a></li>
             <li><a href="viewcontactnotes.php">View Contact\'s Notes</a></li>
-          </ul>
+          </ul></li>
             <li><a href="createsite.php">Create a Site</a></li>
             <li><a href="mapsites.php">Map Sites</a></li>
             <li><a href="drawcova.php">Draw Coverage</a></li>

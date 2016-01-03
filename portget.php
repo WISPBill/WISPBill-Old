@@ -32,7 +32,7 @@ $mysqlil = new mysqli("$ipl", "$usernamel", "$passwordl", "$dbl");
 					 }
 					 if ($result3 = $mysqli->query("SELECT * FROM `device_ports` WHERE `use` = 'ap' and `devices_iddevices` = '$did'")) {
 				/* fetch associative array */
-                 echo'<option value="" selected disabled>Please Select an IP and Port</option>';
+                 echo'<option value="" selected disabled>Please Select a Port</option>';
 				 while ($row3 = $result3->fetch_assoc()) {
 					 $name = $row3["name"];
                      $pid = $row3["port id"];

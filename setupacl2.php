@@ -24,8 +24,6 @@ $mysqli = new mysqli("$ip", "$username", "$password", "$db");
 $mysqlil = new mysqli("$ipl", "$usernamel", "$passwordl", "$dbl");
 // start of post
 $name = $_POST["name"];
-$pool = $_POST["pool"];
-$dns = $_POST["dns"];
 $site = $_POST["site"];
 $port = $_POST["port"];
 // end of post
@@ -34,27 +32,17 @@ $port = $_POST["port"];
  if (empty($name)){
     // If input feild is empty it goes back to the fourm and informs the user
     $_SESSION['exitcodev2'] = 'name';
-    header('Location: adddhcp.php');
-    exit;
-} elseif(empty($pool)){
-    // If input feild is empty it goes back to the fourm and informs the user
-    $_SESSION['exitcodev2'] = 'pool';
-     header('Location: adddhcp.php');
-    exit;
-}elseif(empty($dns)){
-    // If input feild is empty it goes back to the fourm and informs the user
-    $_SESSION['exitcodev2'] = 'dns';
-     header('Location: adddhcp.php');
+    header('Location: setupacl.php');
     exit;
 }elseif(empty($site)){
     // If input feild is empty it goes back to the fourm and informs the user
     $_SESSION['exitcodev2'] = 'site';
-     header('Location: adddhcp.php');
+     header('Location: setupacl.php');
     exit;
 }elseif(empty($port)){
     // If input feild is empty it goes back to the fourm and informs the user
     $_SESSION['exitcodev2'] = 'port';
-     header('Location: adddhcp.php');
+     header('Location: setupacl.php');
     exit;
 }else{
     //resets the code
@@ -63,8 +51,6 @@ $port = $_POST["port"];
 
 
 $name = $mysqli->real_escape_string($name);
-$pool = $mysqli->real_escape_string($pool);
-$dns = $mysqli->real_escape_string($dns);
 $site = $mysqli->real_escape_string($site);
 $portid = $mysqli->real_escape_string($port);
 
@@ -95,43 +81,60 @@ if ($resultl = $mysqlil->query("SELECT * FROM `ipv4_addresses` WHERE `port_id` =
 					 $routerip= $rowl["ipv4_address"];
 					 }
                      }
-if ($resultl = $mysqlil->query("SELECT * FROM `ipv4_addresses` WHERE `port_id` = '$portid'")) {
+if ($resultl = $mysqlil->query("SELECT * FROM `ports` WHERE `port_id` = '$portid'")) {
 				/* fetch associative array */
 				 while ($rowl = $resultl->fetch_assoc()) {
-					 $defaultrouter= $rowl["ipv4_address"];
-                     $ipv4network = $rowl["ipv4_network_id"];
-                 }
-                 }
-if ($resultl = $mysqlil->query("SELECT * FROM `ipv4_networks` WHERE `ipv4_network_id` = '$ipv4network'")) {
-				/* fetch associative array */
-				 while ($rowl = $resultl->fetch_assoc()) {
-					 $subnet= $rowl["ipv4_network"];
+					 $portdesc= $rowl["ifDescr"];
 					 }
+                     
+                     $ifvirtual = strpos($portdesc, '.');
+                     
+                     if($ifvirtual == FALSE){
+                      $portname = $portdesc;
+                     }else{
+                      $ifvirtual = $ifvirtual + 1;
+                      $vif = substr("$portdesc","$ifvirtual");
+                      $vlength = strlen($vif);
+                      $vlength = $vlength + 1;
+                      $lenght = strlen($portdesc);
+                      $lenght = $lenght - $vlength;
+                      $eth = substr("$portdesc","0","$lenght");
+                      $portname = "$eth vif $vif";
                      }
-$long = ip2long($defaultrouter);
-$start = $long +1;
-$start =long2ip($start);
-$end = $long + $pool;
-$end = long2ip($end);
+} else {
+     echo'Something went wrong with the database please contact your webmaster';
+        exit;
+}
 
 $ssh = new Net_SSH2("$routerip");
 if (!$ssh->login("$rname", "$rpass")) {
     exit('Login Failed');
 }
 
+$desc = "ACL Ruleset SET by WISPBill";
+$rejectrule = "2";
 $ssh->exec("/opt/vyatta/sbin/vyatta-cfg-cmd-wrapper begin\n
-/opt/vyatta/sbin/vyatta-cfg-cmd-wrapper set service dhcp-server shared-network-name $name authoritative disable\n
-/opt/vyatta/sbin/vyatta-cfg-cmd-wrapper set service dhcp-server shared-network-name $name subnet $subnet default-router $defaultrouter\n
-/opt/vyatta/sbin/vyatta-cfg-cmd-wrapper set service dhcp-server shared-network-name $name subnet $subnet dns-server $dns\n
-/opt/vyatta/sbin/vyatta-cfg-cmd-wrapper set service dhcp-server shared-network-name $name subnet $subnet lease 86400\n
-/opt/vyatta/sbin/vyatta-cfg-cmd-wrapper set service dhcp-server shared-network-name $name subnet $subnet start $start stop $end\n
+/opt/vyatta/sbin/vyatta-cfg-cmd-wrapper set firewall name $name default-action reject\n
+/opt/vyatta/sbin/vyatta-cfg-cmd-wrapper set firewall name $name description '$desc'\n
+/opt/vyatta/sbin/vyatta-cfg-cmd-wrapper set firewall name $name rule 1 action accept\n
+/opt/vyatta/sbin/vyatta-cfg-cmd-wrapper set firewall name $name rule 1 description 'Allow Existing'\n
+/opt/vyatta/sbin/vyatta-cfg-cmd-wrapper set firewall name $name rule 1 log disable\n
+/opt/vyatta/sbin/vyatta-cfg-cmd-wrapper set firewall name $name rule 1 protocol all\n
+/opt/vyatta/sbin/vyatta-cfg-cmd-wrapper set firewall name $name rule 1 state established enable\n
+/opt/vyatta/sbin/vyatta-cfg-cmd-wrapper set firewall name $name rule 1 state invalid disable\n
+/opt/vyatta/sbin/vyatta-cfg-cmd-wrapper set firewall name $name rule 1 state new disable\n
+/opt/vyatta/sbin/vyatta-cfg-cmd-wrapper set firewall name $name rule 1 state related enable\n
+/opt/vyatta/sbin/vyatta-cfg-cmd-wrapper set firewall name $name rule $rejectrule action reject\n
+/opt/vyatta/sbin/vyatta-cfg-cmd-wrapper set firewall name $name rule $rejectrule description 'Non Approved Macs'\n
+/opt/vyatta/sbin/vyatta-cfg-cmd-wrapper set firewall name $name rule $rejectrule log disable\n
+/opt/vyatta/sbin/vyatta-cfg-cmd-wrapper set firewall name $name rule $rejectrule protocol all\n
+/opt/vyatta/sbin/vyatta-cfg-cmd-wrapper set interfaces ethernet $portname firewall in name $name\n
 /opt/vyatta/sbin/vyatta-cfg-cmd-wrapper commit\n
 /opt/vyatta/sbin/vyatta-cfg-cmd-wrapper save\n");
 
-if ($mysqli->query("INSERT INTO `$db`.`dhcp_servers` (`idDHCP_Servers`,
-                   `DNS`, `Range_Start`, `Range_Stop`, `subnet`, `name`,
-                   `device_ports_iddevice_ports`) VALUES
-                   (NULL, '$dns', '$start', '$end', '$subnet', '$name', '$portdid');") === TRUE) {
+if ($mysqli->query("INSERT INTO `$db`.`firewall` (`idfirewall`, `name`,
+`default_action`, `description`, `reject_rule`,`device_ports_iddevice_ports`) VALUES
+(NULL, '$name', 'reject', '$desc', '$rejectrule', '$portdid');") === TRUE) {
 //nothing 
 } else{
     echo'Something went wrong with the database please contact your webmaster';

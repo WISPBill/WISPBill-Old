@@ -17,24 +17,19 @@ set firewall name ACL rule 1 state established enable
 set firewall name ACL rule 1 state invalid disable
 set firewall name ACL rule 1 state new disable
 set firewall name ACL rule 1 state related enable
+
 set firewall name ACL rule 2 action accept
 set firewall name ACL rule 2 description 'Approved Mac'
 set firewall name ACL rule 2 log disable
 set firewall name ACL rule 2 protocol all
 set firewall name ACL rule 2 source mac-address '00:25:9c:f8:e4:78'
+
 set firewall name ACL rule 4 action reject
 set firewall name ACL rule 4 description 'Non Approved Macs '
 set firewall name ACL rule 4 log disable
 set firewall name ACL rule 4 protocol all
-Set DHCP
-set service dhcp-server shared-network-name Dev1 authoritative disable
-set service dhcp-server shared-network-name Dev1 subnet 192.168.5.0/24 default-router 192.168.2.2
-set service dhcp-server shared-network-name Dev1 subnet 192.168.5.0/24 dns-server 8.8.8.8
-set service dhcp-server shared-network-name Dev1 subnet 192.168.5.0/24 lease 86400
-set service dhcp-server shared-network-name Dev1 subnet 192.168.5.0/24 start 192.168.5.2 stop 192.168.5.100
-Static Mapping
-set service dhcp-server shared-network-name Dev1 subnet 192.168.5.0/24 static-mapping Test ip-address 192.168.5.89
-set service dhcp-server shared-network-name Dev1 subnet 192.168.5.0/24 static-mapping Test mac-address '00:0c:29:9a:70:ca'
+
+Redirct 
 Make Route for no Pay
 set protocols static table 2 route 0.0.0.0/0 next-hop 192.168.4.2
 Make NO RULE SET 

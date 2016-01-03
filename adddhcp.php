@@ -380,7 +380,7 @@ WHERE  `ifconfig` =  'yes'")) {
               <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
   <script type="text/javascript">
   $("#first-choice").change(function() {
-  $("#second-choice").load("https://192.168.1.189/adddhcpget.php?choice=" + $("#first-choice").val());});
+  $("#second-choice").load("https://192.168.1.189/portget.php?choice=" + $("#first-choice").val());});
   </script>
     </section>
     <!-- /.content -->

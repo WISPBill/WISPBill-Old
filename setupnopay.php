@@ -266,11 +266,11 @@ desired effect
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Set up ACL Firewall  
+        Set up No Pay Firewall  
       </h1>
       <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Level</a></li>
-        <li class="active">ACL Firewall</li>
+        <li class="active">No Pay Firewall</li>
       </ol>
     </section>
 <?php
@@ -289,18 +289,9 @@ $errorlabel ='<label class="control-label" for="inputError" style="color: red;">
             </div>
             <!-- /.box-header -->
             <div class="box-body">
-              <form role="form" action="setupacl2.php"method="post">
+              <form role="form" action="setupnopay2.php"method="post">
                 <!-- text input -->
-                <div class="form-group">
-					<?php
-					if($error == 'name'){
-						echo "$errorlabel";
-					}else{
-						echo '<label>Enter Firewall Name</label>';
-					}
-					?>
-                  <input type="text" class="form-control" name="name" placeholder="Enter Firewall Name without any Whitespace" required>
-                </div>
+                
                 
 				 <div class="form-group">
                   
@@ -334,6 +325,17 @@ WHERE  `ifconfig` =  'yes'")) {
                 <select class="form-control" name="port" id="second-choice" required>
 				  <option value="" selected disabled>Please Select Site First</option>
                 </select>
+                </div>';
+              if($error == 'backport'){
+						echo "$errorlabel";
+					}else{
+						echo '<label>Select Backhaul Port</label>';
+					}
+                    echo '
+                    <div class="form-group">
+                <select class="form-control" name="backport" id="third-choice" required>
+				  <option value="" selected disabled>Please Select Site First</option>
+                </select>
                 </div>
                 
 				<div class="box-footer">
@@ -352,6 +354,10 @@ WHERE  `ifconfig` =  'yes'")) {
   <script type="text/javascript">
   $("#first-choice").change(function() {
   $("#second-choice").load("<?php echo"$url"; ?>/portget.php?choice=" + $("#first-choice").val());});
+  </script>
+  <script type="text/javascript">
+  $("#first-choice").change(function() {
+  $("#third-choice").load("<?php echo"$url"; ?>/portgetall.php?choice=" + $("#first-choice").val());});
   </script>
     </section>
     <!-- /.content -->

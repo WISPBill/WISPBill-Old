@@ -46,6 +46,7 @@ echo'
           <a href="#"><i class="fa fa-fire"></i> <span>Firewall Management</span> <i class="fa fa-angle-left pull-right"></i></a>
           <ul class="treeview-menu">
             <li><a href="setupacl.php">Set up ACL Firewall</a></li>
+            <li><a href="setupnopay.php">Set up No Pay Firewall</a></li>
           </ul></li>
             <li><a href="createdevice.php">Add a Device to Inventory</a></li>
             <li><a href="ipview.php">View Static IP Assignments </a></li>

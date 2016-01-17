@@ -20,9 +20,14 @@
  */
 require_once('./session.php');
 require_once('./fileloader.php');
-$mysqli = new mysqli("$ip", "$username", "$password", "$db");
 
-$adminid = $_SESSION['adminid'];
+if (isset($_GET["id"])){
+    $id = $_GET["id"];
+    header("Location: readnoti.php?id=$id");
+    exit;
+}else {
+    // Nothing 
+}
 
 if ($result = $mysqli->query("SELECT * FROM `admin_users` WHERE `idadmin` = $adminid")) {
     /* fetch associative array */
@@ -35,6 +40,20 @@ if ($result = $mysqli->query("SELECT * FROM `admin_users` WHERE `idadmin` = $adm
     $result->close();
 }// end if
 
+if ($result = $mysqli->query("SELECT * FROM `customer_info` WHERE
+                             `idcustomer_users` is not NULL
+                             and `idcustomer_plans` is not NULL")) {
+      /* fetch associative array */
+      $custotal = $result->num_rows;
+}
+if ($result = $mysqli->query("SELECT * FROM `customer_info` WHERE `idcustomer_users` is NULL")) {
+      /* fetch associative array */
+      $leadtotal = $result->num_rows;
+}
+$calevents = '1';
+$mailevents = '1';
+$calltotal = '7';
+$devicedown = '1';
 ?>
 <!DOCTYPE html>
 <html>
@@ -56,13 +75,16 @@ if ($result = $mysqli->query("SELECT * FROM `admin_users` WHERE `idadmin` = $adm
         page. However, you can choose any other skin. Make sure you
         apply the skin class to the body tag so the changes take effect.
   -->
+  
   <link rel="stylesheet" href="AdminLTE2/dist/css/skins/skin-blue.min.css">
+  <link rel="stylesheet" href="AdminLTE2/plugins/iCheck/flat/blue.css">
 
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
   <!--[if lt IE 9]>
   <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
   <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+
   <![endif]-->
 </head>
 <!--
@@ -206,160 +228,132 @@ desired effect
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
-    <section class="content-header">
+     <section class="content-header">
       <h1>
-       Add a Lead
+        Unread Notifications
+        <small><?php echo "$notitotal";?> Unread Notifications</small>
       </h1>
       <ol class="breadcrumb">
         <li><a href="dashbored.php"><i class="fa fa-dashboard"></i> Dashbored</a></li>
-        <li class="active">Add a Lead</li>
+        <li class="active">Here</li>
       </ol>
     </section>
-<?php
-// get error 
-$error = $_SESSION['exitcodev2'];
-$_SESSION['exitcodev2'] ='';
-$errorlabel ='<label class="control-label" for="inputError" style="color: red;"><i class="fa fa-times-circle-o"></i> Input with
-    error</label>';
-?>
+
+
     <!-- Main content -->
     <section class="content">
+  <div class="row">
+        <div class="col-md-3" style="clear: both; float: left;">
+          <a href="notiuser.php" class="btn btn-primary btn-block margin-bottom">Send Message to User</a>
 
-       <!-- general form elements disabled -->
-          <div class="box box-warning">
+          <!-- /.box -->
+        </div>
+        <!-- /.col -->
+        <div class="col-md-9" style="clear: both; float: left; width: 100%;">
+          <div class="box box-primary">
             <div class="box-header with-border">
+              <h3 class="box-title">Inbox</h3>
+
+           
+              <!-- /.box-tools -->
             </div>
             <!-- /.box-header -->
-            <div class="box-body">
-              <form role="form" action="createlead2.php"method="post">
-                <!-- text input -->
-                <div class="form-group">
-					<?php
-					if($error == 'fname'){
-						echo "$errorlabel";
-					}else{
-						echo '<label>First Name</label>';
-					}
-					?>
-                  <input type="text" class="form-control" name="fname" placeholder="Enter First Name" required>
-                </div>
-               
-			   <div class="form-group">
-                  
-                     <?php
-					if($error == 'lname'){
-						echo "$errorlabel";
-					}else{
-						echo '<label>Last Name</label>';
-					}
-					?>
-                  <input type="text" class="form-control" name="lname" placeholder="Enter Last Name" required>
-                </div>
-               
-               <div class="form-group">
-                <?php
-					if($error == 'email'){
-						echo "$errorlabel";
-					}else{
-						echo '<label>Email</label>';
-					}
-					?>
-                  
-                  <input type="text" class="form-control" name="email" placeholder="Enter Email" required>
-                </div>
-               <div class="form-group">
-                <?php
-					if($error == 'email'){
-						echo "$errorlabel";
-					}else{
-						echo '<label>Confirm Email</label>';
-					}
-					?>
-                  
-                  <input type="text" class="form-control" name="email2" placeholder="Confirm Email" required>
-                </div>
-               <div class="form-group">
-                <?php
-					if($error == 'tel'){
-						echo "$errorlabel";
-					}else{
-						echo '<label>Telephone Number</label>';
-					}
-					?>
-                   
-                  <input type="text" class="form-control" name="tel" placeholder="Enter Telephone Number" required>
-                   
-                   </div>
-               <div class="form-group">
-                <?php
-					if($error == 'add'){
-						echo "$errorlabel";
-					}else{
-						echo '<label>Street Address</label>';
-					}
-					?>
-                  
-                  <input type="text" class="form-control" name="add" placeholder="Enter Street Address" required>
-                </div>
-               <div class="form-group">
-                <?php
-					if($error == 'city'){
-						echo "$errorlabel";
-					}else{
-						echo '<label>City</label>';
-					}
-					?>
-                  
-                  <input type="text" class="form-control" name="city" placeholder="Enter City" required>
-                </div>
-               <div class="form-group">
-                <?php
-					if($error == 'zip'){
-						echo "$errorlabel";
-					}else{
-						echo '<label>Zip Code</label>';
-					}
-					?>
-                  
-                  <input type="text" class="form-control" name="zip" placeholder="Enter Street Address" required>
-                </div>
-               <div class="form-group">
-                <?php
-					if($error == 'state'){
-						echo "$errorlabel";
-					}else{
-						echo '<label>State</label>';
-					}
-					?>
-                  
-                  <input type="text" class="form-control" name="state" <?php echo "value='$state'";?> required>
-                </div>
-			                 
-                  <div class="form-group">
-                  <?php
-					if($error == 'source'){
-						echo "$errorlabel";
-					}else{
-						echo '<label>Lead Source</label>';
-					}
-					?>
-                  <select class="form-control"  name='source' required>
-					<option value='' selected disabled>Please Select an Option</option>
-                <option value='tel'>Phone Call</option>
-                <option value='friend'>Referred by a Friend</option>
-                <option value='d2d'>Door to Door</option>
-                <option value='email'>Email</option>
-                <option value='booth'>Show Booth</option>
-                <option value='other'>Other</option>
-                  </select>
-                </div>
-
-				<div class="box-footer">
-                <button type="submit" class="btn btn-primary">Submit</button>
+            <div class="box-body no-padding">
+              <div class="mailbox-controls">
+                <!-- Check all button -->
+                <button type="button" class="btn btn-default btn-sm checkbox-toggle"><i class="fa fa-square-o"></i>
+                </button>
+              
+                <!-- /.btn-group -->
+                <a href="viewnotifications.php">
+                <button type="button" class="btn btn-default btn-sm"><i class="fa fa-refresh"></i></button>
+                </a>
+                <!-- /.pull-right -->
               </div>
-     
-              </form>
+              <form role="form" action="markread.php"method="post">
+              <div class="table-responsive mailbox-messages">
+                <table class="table table-hover table-striped">
+                  <tbody>
+                    <?php
+                    if ($result = $mysqli->query("SELECT * FROM `notifications` WHERE `readyn`
+= '0' and `towho` = 'all' or `readyn`= '0' and `towho` = '$adminid' ORDER BY `notifications`.`idnotifications` DESC")) {
+    foreach($result as $row){
+        
+                    
+    $source= $row["fromwho"];
+     $notiid= $row["idnotifications"];
+     $notimesg= $row["content"];
+     $notitimestamp = $row["date"];
+      
+      $notimesg = substr ("$notimesg", 0,64)."...";
+      $unixTimestamp = strtotime("$notitimestamp");
+      $currenttime = time();
+      
+      $stime = $currenttime - $unixTimestamp;
+      
+      $notitime = $stime/60;
+      $notitime = round($notitime);
 
+      if($source == 'system'){
+        $notisource = 'System Automatic Alert';
+      }elseif(is_numeric($source)){
+        if ($result3 = $mysqli->query("SELECT * FROM `admin_users` WHERE `idadmin` = $source")) {
+				/* fetch associative array */
+				 while ($row3 = $result3->fetch_assoc()) {
+					 $fname = $row3["fname"];
+                     $lname = $row3["lname"];
+                     $notisource = "$fname $lname";
+					 }
+  
+					$result3->close();
+						}
+      }else {
+        $notisource = $source;
+      }
+             echo "<tr>
+                    <td><input type='checkbox' name='id[]' value=$notiid></td>
+                    <td class='mailbox-name'><a href='readnoti.php?id=$notiid'>$notisource</a></td>
+                    <td class='mailbox-subject'><b>$notimesg</b>
+                    </td>
+                    <td class='mailbox-date'>$notitime mins ago</td>
+                  </tr>";
+    }// End loop 
+     
+    /* free result set */
+    $result->close();
+                    } // end if 
+                    ?>
+
+                  </tbody>
+                </table>
+                <!-- /.table -->
+              </div>
+              <!-- /.mail-box-messages -->
+            </div>
+            <!-- /.box-body -->
+            <div class="box-footer no-padding">
+              <div class="mailbox-controls">
+                <!-- Check all button -->
+                <button type="button" class="btn btn-default btn-sm checkbox-toggle"><i class="fa fa-square-o"></i>
+                </button>
+                
+                <!-- /.btn-group -->
+                <a href="viewnotifications.php">
+                <button type="button" class="btn btn-default btn-sm"><i class="fa fa-refresh"></i></button>
+                </a>
+             
+                <!-- /.pull-right -->
+              </div>
+            </div>
+            <div class="box-footer">
+                <button type="submit" class="btn btn-primary">Mark Selected as Read</button>
+              </div>          
+          </div>
+          <!-- /. box -->
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
     </section>
     <!-- /.content -->
   </div>
@@ -385,73 +379,52 @@ $errorlabel ='<label class="control-label" for="inputError" style="color: red;">
 <script src="AdminLTE2/bootstrap/js/bootstrap.min.js"></script>
 <!-- AdminLTE App -->
 <script src="AdminLTE2/dist/js/app.min.js"></script>
-<script src="AdminLTE2/plugins/input-mask/jquery.inputmask.js"></script>
-<script src="AdminLTE2/plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
-<script src="AdminLTE2/plugins/input-mask/jquery.inputmask.extensions.js"></script>
-
-<!-- Optionally, you can add Slimscroll and FastClick plugins.
-     Both of these plugins are recommended to enhance the
-     user experience. Slimscroll is required when using the
-     fixed layout. -->
+ <script src="AdminLTE2/plugins/chartjs/beta2.js"></script>
+<!-- iCheck -->
+<script src="AdminLTE2/plugins/iCheck/icheck.min.js"></script>
+<!-- Page Script -->
 <script>
   $(function () {
-    //Initialize Select2 Elements
-    $(".select2").select2();
-
-    //Datemask dd/mm/yyyy
-    $("#datemask").inputmask("dd/mm/yyyy", {"placeholder": "dd/mm/yyyy"});
-    //Datemask2 mm/dd/yyyy
-    $("#datemask2").inputmask("mm/dd/yyyy", {"placeholder": "mm/dd/yyyy"});
-    //Money Euro
-    $("[data-mask]").inputmask();
-
-    //Date range picker
-    $('#reservation').daterangepicker();
-    //Date range picker with time picker
-    $('#reservationtime').daterangepicker({timePicker: true, timePickerIncrement: 30, format: 'MM/DD/YYYY h:mm A'});
-    //Date range as a button
-    $('#daterange-btn').daterangepicker(
-        {
-          ranges: {
-            'Today': [moment(), moment()],
-            'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-            'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-            'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-            'This Month': [moment().startOf('month'), moment().endOf('month')],
-            'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-          },
-          startDate: moment().subtract(29, 'days'),
-          endDate: moment()
-        },
-        function (start, end) {
-          $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
-        }
-    );
-
+    //Enable iCheck plugin for checkboxes
     //iCheck for checkbox and radio inputs
-    $('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
-      checkboxClass: 'icheckbox_minimal-blue',
-      radioClass: 'iradio_minimal-blue'
-    });
-    //Red color scheme for iCheck
-    $('input[type="checkbox"].minimal-red, input[type="radio"].minimal-red').iCheck({
-      checkboxClass: 'icheckbox_minimal-red',
-      radioClass: 'iradio_minimal-red'
-    });
-    //Flat red color scheme for iCheck
-    $('input[type="checkbox"].flat-red, input[type="radio"].flat-red').iCheck({
-      checkboxClass: 'icheckbox_flat-green',
-      radioClass: 'iradio_flat-green'
+    $('.mailbox-messages input[type="checkbox"]').iCheck({
+      checkboxClass: 'icheckbox_flat-blue',
+      radioClass: 'iradio_flat-blue'
     });
 
-    //Colorpicker
-    $(".my-colorpicker1").colorpicker();
-    //color picker with addon
-    $(".my-colorpicker2").colorpicker();
+    //Enable check and uncheck all functionality
+    $(".checkbox-toggle").click(function () {
+      var clicks = $(this).data('clicks');
+      if (clicks) {
+        //Uncheck all checkboxes
+        $(".mailbox-messages input[type='checkbox']").iCheck("uncheck");
+        $(".fa", this).removeClass("fa-check-square-o").addClass('fa-square-o');
+      } else {
+        //Check all checkboxes
+        $(".mailbox-messages input[type='checkbox']").iCheck("check");
+        $(".fa", this).removeClass("fa-square-o").addClass('fa-check-square-o');
+      }
+      $(this).data("clicks", !clicks);
+    });
 
-    //Timepicker
-    $(".timepicker").timepicker({
-      showInputs: false
+    //Handle starring for glyphicon and font awesome
+    $(".mailbox-star").click(function (e) {
+      e.preventDefault();
+      //detect type
+      var $this = $(this).find("a > i");
+      var glyph = $this.hasClass("glyphicon");
+      var fa = $this.hasClass("fa");
+
+      //Switch states
+      if (glyph) {
+        $this.toggleClass("glyphicon-star");
+        $this.toggleClass("glyphicon-star-empty");
+      }
+
+      if (fa) {
+        $this.toggleClass("fa-star");
+        $this.toggleClass("fa-star-o");
+      }
     });
   });
 </script>

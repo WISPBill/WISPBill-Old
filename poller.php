@@ -101,8 +101,14 @@ LIMIT 0 , 25")) {
 										
 								   if($rxbytes < $orxbytes){
 										$orxbytes = '0';
-								   } elseif($txbytes < $otxbytes){
+								   } else{
+										//Nothing
+								   }
+								   
+								   if($txbytes < $otxbytes){
 										$otxbytes = '0';
+								   }else{
+										//nothing
 								   }
 								   //Time diffrence
 								       $etime = $time - $otime;

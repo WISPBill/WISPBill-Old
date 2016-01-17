@@ -20,6 +20,14 @@
  */
 require_once('./session.php');
 require_once('./fileloader.php');
+
+if (isset($_GET["id"])){
+    $id = $_GET["id"];
+    header("Location: readnoti.php?id=$id");
+    exit;
+}else {
+    // Nothing 
+}
 $mysqli = new mysqli("$ip", "$username", "$password", "$db");
 
 $adminid = $_SESSION['adminid'];
@@ -56,13 +64,17 @@ if ($result = $mysqli->query("SELECT * FROM `admin_users` WHERE `idadmin` = $adm
         page. However, you can choose any other skin. Make sure you
         apply the skin class to the body tag so the changes take effect.
   -->
+  
   <link rel="stylesheet" href="AdminLTE2/dist/css/skins/skin-blue.min.css">
+  <link rel="stylesheet" href="AdminLTE2/plugins/iCheck/flat/blue.css">
 
+  <link rel="stylesheet" href="AdminLTE2/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
   <!--[if lt IE 9]>
   <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
   <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+
   <![endif]-->
 </head>
 <!--
@@ -206,161 +218,103 @@ desired effect
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
-    <section class="content-header">
+     <section class="content-header">
       <h1>
-       Add a Lead
+        Send Message to User
       </h1>
       <ol class="breadcrumb">
         <li><a href="dashbored.php"><i class="fa fa-dashboard"></i> Dashbored</a></li>
-        <li class="active">Add a Lead</li>
+        <li class="active">Here</li>
       </ol>
     </section>
+
 <?php
 // get error 
 $error = $_SESSION['exitcodev2'];
 $_SESSION['exitcodev2'] ='';
 $errorlabel ='<label class="control-label" for="inputError" style="color: red;"><i class="fa fa-times-circle-o"></i> Input with
-    error</label>';
+    error</label>';   
 ?>
     <!-- Main content -->
     <section class="content">
+         <form role="form" action="notiuser2.php"method="post">
+  <div class="row">
+        <div class="col-md-3" style="clear: both; float: left;">
+          <a href="viewnotifications.php" class="btn btn-primary btn-block margin-bottom">Back to Inbox</a>
 
-       <!-- general form elements disabled -->
-          <div class="box box-warning">
+          <!-- /.box -->
+        </div>
+        <!-- /.col -->
+        <div class="col-md-9" style="clear: both; float: left; width: 100%;">
+          <div class="box box-primary">
             <div class="box-header with-border">
+                <?php
+                if($error == 'msg'){
+						echo "$errorlabel";
+					}else{
+						echo ' <h3 class="box-title">Compose New Message</h3>';
+					}
+             
+              ?>
             </div>
             <!-- /.box-header -->
             <div class="box-body">
-              <form role="form" action="createlead2.php"method="post">
-                <!-- text input -->
-                <div class="form-group">
-					<?php
-					if($error == 'fname'){
-						echo "$errorlabel";
-					}else{
-						echo '<label>First Name</label>';
-					}
-					?>
-                  <input type="text" class="form-control" name="fname" placeholder="Enter First Name" required>
-                </div>
-               
-			   <div class="form-group">
-                  
-                     <?php
-					if($error == 'lname'){
-						echo "$errorlabel";
-					}else{
-						echo '<label>Last Name</label>';
-					}
-					?>
-                  <input type="text" class="form-control" name="lname" placeholder="Enter Last Name" required>
-                </div>
-               
-               <div class="form-group">
+              <div class="form-group">
+                
                 <?php
-					if($error == 'email'){
+				 if ($result = $mysqli->query("SELECT * FROM `admin_users` ")) {
+    /* fetch associative array */
+	
+                if($error == 'name'){
 						echo "$errorlabel";
 					}else{
-						echo '<label>Email</label>';
+						echo '<label>To:</label>';
 					}
-					?>
-                  
-                  <input type="text" class="form-control" name="email" placeholder="Enter Email" required>
+                echo '<select class="form-control" name="name" required>
+				  <option value="" selected disabled>Send the Message to </option>
+                   <option value="all">All Users</option>';
+    while ($row = $result->fetch_assoc()) {
+        $id = $row["idadmin"];
+        $fname = $row["fname"];
+        $lname = $row["lname"];
+        echo"<option value=$id>$fname $lname</option>";
+        }
+ echo ' </select>
                 </div>
-               <div class="form-group">
-                <?php
-					if($error == 'email'){
-						echo "$errorlabel";
-					}else{
-						echo '<label>Confirm Email</label>';
-					}
-					?>
-                  
-                  <input type="text" class="form-control" name="email2" placeholder="Confirm Email" required>
-                </div>
-               <div class="form-group">
-                <?php
-					if($error == 'tel'){
-						echo "$errorlabel";
-					}else{
-						echo '<label>Telephone Number</label>';
-					}
-					?>
-                   
-                  <input type="text" class="form-control" name="tel" placeholder="Enter Telephone Number" required>
-                   
-                   </div>
-               <div class="form-group">
-                <?php
-					if($error == 'add'){
-						echo "$errorlabel";
-					}else{
-						echo '<label>Street Address</label>';
-					}
-					?>
-                  
-                  <input type="text" class="form-control" name="add" placeholder="Enter Street Address" required>
-                </div>
-               <div class="form-group">
-                <?php
-					if($error == 'city'){
-						echo "$errorlabel";
-					}else{
-						echo '<label>City</label>';
-					}
-					?>
-                  
-                  <input type="text" class="form-control" name="city" placeholder="Enter City" required>
-                </div>
-               <div class="form-group">
-                <?php
-					if($error == 'zip'){
-						echo "$errorlabel";
-					}else{
-						echo '<label>Zip Code</label>';
-					}
-					?>
-                  
-                  <input type="text" class="form-control" name="zip" placeholder="Enter Street Address" required>
-                </div>
-               <div class="form-group">
-                <?php
-					if($error == 'state'){
-						echo "$errorlabel";
-					}else{
-						echo '<label>State</label>';
-					}
-					?>
-                  
-                  <input type="text" class="form-control" name="state" <?php echo "value='$state'";?> required>
-                </div>
-			                 
-                  <div class="form-group">
-                  <?php
-					if($error == 'source'){
-						echo "$errorlabel";
-					}else{
-						echo '<label>Lead Source</label>';
-					}
-					?>
-                  <select class="form-control"  name='source' required>
-					<option value='' selected disabled>Please Select an Option</option>
-                <option value='tel'>Phone Call</option>
-                <option value='friend'>Referred by a Friend</option>
-                <option value='d2d'>Door to Door</option>
-                <option value='email'>Email</option>
-                <option value='booth'>Show Booth</option>
-                <option value='other'>Other</option>
-                  </select>
-                </div>
-
-				<div class="box-footer">
-                <button type="submit" class="btn btn-primary">Submit</button>
+				';
+    /* free result set */
+    $result->close();
+	}else{
+        echo'  <label class="control-label" for="inputError">Datebase
+                    error contact your webmaster</label>';
+    }
+				?>
+         
+              <div class="form-group">
+                    <textarea  class="form-control" style="height: 300px" name="msg">
+                      
+                    </textarea>
               </div>
-     
-              </form>
-
+              
+            </div>
+            <!-- /.box-body -->
+            <div class="box-footer">
+              <div class="pull-right">
+                
+                <button type="submit" class="btn btn-primary"><i class="fa fa-envelope-o"></i> Send</button>
+              </div>
+              <button type="reset" class="btn btn-default"><i class="fa fa-times"></i> Discard</button>
+            </div>
+            <!-- /.box-footer -->
+          </div>
+          <!-- /. box -->
+        </div>
+         
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
     </section>
+ 
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
@@ -385,74 +339,17 @@ $errorlabel ='<label class="control-label" for="inputError" style="color: red;">
 <script src="AdminLTE2/bootstrap/js/bootstrap.min.js"></script>
 <!-- AdminLTE App -->
 <script src="AdminLTE2/dist/js/app.min.js"></script>
-<script src="AdminLTE2/plugins/input-mask/jquery.inputmask.js"></script>
-<script src="AdminLTE2/plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
-<script src="AdminLTE2/plugins/input-mask/jquery.inputmask.extensions.js"></script>
-
-<!-- Optionally, you can add Slimscroll and FastClick plugins.
-     Both of these plugins are recommended to enhance the
-     user experience. Slimscroll is required when using the
-     fixed layout. -->
+ <script src="AdminLTE2/plugins/chartjs/beta2.js"></script>
+<!-- iCheck -->
+<script src="AdminLTE2/plugins/iCheck/icheck.min.js"></script>
+<!-- Page Script -->
+<!-- Bootstrap WYSIHTML5 -->
+<script src="AdminLTE2/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
+<!-- Page Script -->
 <script>
   $(function () {
-    //Initialize Select2 Elements
-    $(".select2").select2();
-
-    //Datemask dd/mm/yyyy
-    $("#datemask").inputmask("dd/mm/yyyy", {"placeholder": "dd/mm/yyyy"});
-    //Datemask2 mm/dd/yyyy
-    $("#datemask2").inputmask("mm/dd/yyyy", {"placeholder": "mm/dd/yyyy"});
-    //Money Euro
-    $("[data-mask]").inputmask();
-
-    //Date range picker
-    $('#reservation').daterangepicker();
-    //Date range picker with time picker
-    $('#reservationtime').daterangepicker({timePicker: true, timePickerIncrement: 30, format: 'MM/DD/YYYY h:mm A'});
-    //Date range as a button
-    $('#daterange-btn').daterangepicker(
-        {
-          ranges: {
-            'Today': [moment(), moment()],
-            'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-            'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-            'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-            'This Month': [moment().startOf('month'), moment().endOf('month')],
-            'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-          },
-          startDate: moment().subtract(29, 'days'),
-          endDate: moment()
-        },
-        function (start, end) {
-          $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
-        }
-    );
-
-    //iCheck for checkbox and radio inputs
-    $('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
-      checkboxClass: 'icheckbox_minimal-blue',
-      radioClass: 'iradio_minimal-blue'
-    });
-    //Red color scheme for iCheck
-    $('input[type="checkbox"].minimal-red, input[type="radio"].minimal-red').iCheck({
-      checkboxClass: 'icheckbox_minimal-red',
-      radioClass: 'iradio_minimal-red'
-    });
-    //Flat red color scheme for iCheck
-    $('input[type="checkbox"].flat-red, input[type="radio"].flat-red').iCheck({
-      checkboxClass: 'icheckbox_flat-green',
-      radioClass: 'iradio_flat-green'
-    });
-
-    //Colorpicker
-    $(".my-colorpicker1").colorpicker();
-    //color picker with addon
-    $(".my-colorpicker2").colorpicker();
-
-    //Timepicker
-    $(".timepicker").timepicker({
-      showInputs: false
-    });
+    //Add text editor
+    $("#compose-textarea").wysihtml5();
   });
 </script>
 </body>

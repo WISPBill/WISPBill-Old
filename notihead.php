@@ -1,6 +1,7 @@
 <?php
 $mysqli = new mysqli("$ip", "$username", "$password", "$db");
 
+if(isset($_SESSION['adminid'])){
 $adminid = $_SESSION['adminid'];
 if ($result = $mysqli->query("SELECT * FROM `notifications` WHERE `readyn`
 = '0' and `towho` = 'all' or `readyn`= '0' and `towho` = '$adminid' ORDER BY `notifications`.`idnotifications` DESC")) {
@@ -55,5 +56,8 @@ if ($result = $mysqli->query("SELECT * FROM `notifications` WHERE `readyn`
       /* free result set */
     $result->close();
       }
+}
+}else{
+	//nothing
 }
 ?>

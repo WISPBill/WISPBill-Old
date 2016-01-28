@@ -58,7 +58,7 @@ if (isset($_SESSION['exitcode'])){
 } else {
 	
 }
-    
+ $_SESSION['exitcode'] = '';   
 // End of PHP
 //Start of HTML
 ?>
@@ -109,6 +109,10 @@ if (isset($_SESSION['exitcode'])){
       </div>
       <div class="form-group has-feedback">
         <input type="password" class="form-control" placeholder="Password" name="pass">
+        <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+      </div>
+	  <div class="form-group has-feedback">
+        <input type="password" class="form-control" placeholder="Email Password" name="epass">
         <span class="glyphicon glyphicon-lock form-control-feedback"></span>
       </div>
       <div class="row">

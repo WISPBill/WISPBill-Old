@@ -40,20 +40,6 @@ if ($result = $mysqli->query("SELECT * FROM `admin_users` WHERE `idadmin` = $adm
     $result->close();
 }// end if
 
-if ($result = $mysqli->query("SELECT * FROM `customer_info` WHERE
-                             `idcustomer_users` is not NULL
-                             and `idcustomer_plans` is not NULL")) {
-      /* fetch associative array */
-      $custotal = $result->num_rows;
-}
-if ($result = $mysqli->query("SELECT * FROM `customer_info` WHERE `idcustomer_users` is NULL")) {
-      /* fetch associative array */
-      $leadtotal = $result->num_rows;
-}
-$calevents = '1';
-$mailevents = '1';
-$calltotal = '7';
-$devicedown = '1';
 ?>
 <!DOCTYPE html>
 <html>

@@ -31,6 +31,7 @@ if($_SERVER["HTTPS"] != "on")
 //start of post
 $user = $_POST["user"];
 $pass = $_POST["pass"];
+$epass = $_POST["epass"];
 // end of post
 // start of data sanitize and existence check
  if (empty($user)) {
@@ -45,12 +46,19 @@ $pass = $_POST["pass"];
     $_SESSION['exitcode'] = 'password empty';
     header('Location: index.php');
     exit;
-} else{
+} elseif(empty($epass)){
+    // If password is empty it goes back to the fourm and informs the user
+    session_start(); 
+    $_SESSION['exitcode'] = 'password empty';
+    header('Location: index.php');
+    exit;
+}else{
     // do nothing 
 } // end if
 
 $user = $mysqli->real_escape_string($user);
 $pass = $mysqli->real_escape_string($pass);
+$epass = $mysqli->real_escape_string($epass);
 // end of data sanitize and existence check
 // start of cheack for exsting username and or email 
 
@@ -101,6 +109,22 @@ if ($result = $mysqli->query("SELECT * FROM `admin_users` WHERE `username` = '$u
     /* free result set */
     $result->close();
 }
+// Email Stuff
+$bytes = openssl_random_pseudo_bytes(32, $cstrong);
+        if($cstrong == TRUE){
+          $size = mcrypt_get_iv_size(MCRYPT_BLOWFISH, 'ofb');
+          $iv = mcrypt_create_iv($size, MCRYPT_DEV_URANDOM);
+      $epassword = mcrypt_encrypt (MCRYPT_BLOWFISH,"$bytes", "$epass","ofb","$iv");
+	  session_start();
+    session_regenerate_id();
+	  $_SESSION['iv'] = "$iv";
+	  $_SESSION['key'] = "$bytes";
+	  $_SESSION['emailpass'] = "$epassword";
+        }else{
+          echo "Openssl wont work on this server";
+          exit;
+        }
+//End of Email Stuff
 if (password_verify($pass, $hash)) {
     // Password is valid
     session_start();

@@ -63,28 +63,26 @@ AND  `location_idlocation` =  '$site'")) {
 					 $did= $row2["iddevices"];
 					 }
                      }
-if ($result3 = $mysqli->query("SELECT * FROM `device_ports` WHERE `use` = 'mgmt' and `devices_iddevices` = '$did'")) {
+					 if ($result3 = $mysqli->query("SELECT * FROM `device_ports` WHERE `use` = 'mgmt' and `devices_iddevices` = '$did'")) {
 				/* fetch associative array */
 				 while ($row3 = $result3->fetch_assoc()) {
-					 $portidm= $row3["port id"];
+					 $routerip= $row3["ip_address"];
 					 }
-                     }
-if ($result4 = $mysqli->query("SELECT * FROM  `device_ports` WHERE  `port id` =  '$portid'")) {
-/* fetch associative array */
-while ($row4 = $result4->fetch_assoc()) {
-$portdid= $row4["iddevice_ports"];
-					 }
-                     }
-if ($resultl = $mysqlil->query("SELECT * FROM `ipv4_addresses` WHERE `port_id` = '$portidm'")) {
+						 if ($result4 = $mysqli->query("SELECT * FROM `device_credentials` WHERE `devices_iddevices` = '$did'")) {
+						 /* fetch associative array */
+						 while ($row4 = $result4->fetch_assoc()) {
+						 $eusername= $row4["username"];
+						 $epassword= $row4["password"];
+						 $iv= $row4["IV"];
+						 }
+						 
+						 $rpass= mcrypt_decrypt (MCRYPT_BLOWFISH,"$masterkey", "$epassword","ofb","$iv");
+						 $rname = mcrypt_decrypt (MCRYPT_BLOWFISH,"$masterkey", "$eusername","ofb","$iv");
+
+if ($resultl = $mysqli->query("SELECT * FROM `device_ports` WHERE `iddevice_ports` = '$portid'")) {
 				/* fetch associative array */
 				 while ($rowl = $resultl->fetch_assoc()) {
-					 $routerip= $rowl["ipv4_address"];
-					 }
-                     }
-if ($resultl = $mysqlil->query("SELECT * FROM `ports` WHERE `port_id` = '$portid'")) {
-				/* fetch associative array */
-				 while ($rowl = $resultl->fetch_assoc()) {
-					 $portdesc= $rowl["ifDescr"];
+					 $portdesc= $rowl["name"];
 					 }
                      
                      $ifvirtual = strpos($portdesc, '.');
@@ -134,7 +132,7 @@ $ssh->exec("/opt/vyatta/sbin/vyatta-cfg-cmd-wrapper begin\n
 
 if ($mysqli->query("INSERT INTO `$db`.`firewall` (`idfirewall`, `name`,
 `default_action`, `description`, `reject_rule`,`device_ports_iddevice_ports`) VALUES
-(NULL, '$name', 'reject', '$desc', '$rejectrule', '$portdid');") === TRUE) {
+(NULL, '$name', 'reject', '$desc', '$rejectrule', '$portid');") === TRUE) {
 //nothing 
 } else{
     echo'Something went wrong with the database please contact your webmaster';

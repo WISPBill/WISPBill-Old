@@ -138,7 +138,7 @@ function getAirOSstat($radioIP, $username, $password) {
 }
 
 function getdhcpip($routerip, $username, $password,$mac) {
-
+$radioip = array();
 $ssh = new Net_SSH2("$routerip");
 if (!$ssh->login("$username", "$password")) {
     return $radioip["error"] ='router error';

@@ -40,7 +40,10 @@ echo'
           </ul>
         </li>
         <li class="treeview">
-          <a href="#"><i class="fa fa-server"></i> <span>Device Management</span> <i class="fa fa-angle-left pull-right"></i></a>
+          <a href="#"><i class="fa fa-plug"></i> <span>Device Management</span> <i class="fa fa-angle-left pull-right"></i></a>
+          <ul class="treeview-menu">
+          <li class="treeview">
+          <a href="#"><i class="fa fa-server"></i> <span>Router Management</span> <i class="fa fa-angle-left pull-right"></i></a>
           <ul class="treeview-menu">
           <li class="treeview">
           <a href="#"><i class="fa fa-fire"></i> <span>Firewall Management</span> <i class="fa fa-angle-left pull-right"></i></a>
@@ -48,6 +51,8 @@ echo'
             <li><a href="setupacl.php">Set up ACL Firewall</a></li>
             <li><a href="setupnopay.php">Set up No Pay Firewall</a></li>
           </ul></li>
+          <li><a href="configrouter.php">Configure Monitoring</a></li>
+          </ul>
             <li><a href="createdevice.php">Add a Device to Inventory</a></li>
             <li><a href="ipview.php">View Static IP Assignments </a></li>
             <li><a href="adddhcp.php">Add a DHCP Server</a></li>
@@ -90,7 +95,7 @@ echo'
           </a>
         </li>
         <li>
-          <a href=''>
+          <a href='mailbox.php'>
             <i class='fa fa-envelope'></i> <span>Mailbox</span>
             <small class='label pull-right bg-blue'>$mailevents</small>
           </a>";

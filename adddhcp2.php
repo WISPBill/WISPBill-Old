@@ -77,37 +77,35 @@ AND  `location_idlocation` =  '$site'")) {
 					 $did= $row2["iddevices"];
 					 }
                      }
-if ($result3 = $mysqli->query("SELECT * FROM `device_ports` WHERE `use` = 'mgmt' and `devices_iddevices` = '$did'")) {
+					 if ($result3 = $mysqli->query("SELECT * FROM `device_ports` WHERE `use` = 'mgmt' and `devices_iddevices` = '$did'")) {
 				/* fetch associative array */
 				 while ($row3 = $result3->fetch_assoc()) {
-					 $portidm= $row3["port id"];
-					 }
-                     }
-if ($result4 = $mysqli->query("SELECT * FROM  `device_ports` WHERE  `port id` =  '$portid'")) {
-/* fetch associative array */
-while ($row4 = $result4->fetch_assoc()) {
-$portdid= $row4["iddevice_ports"];
-					 }
-                     }
-if ($resultl = $mysqlil->query("SELECT * FROM `ipv4_addresses` WHERE `port_id` = '$portidm'")) {
+					 $routerip= $row3["ip_address"];
+					 }}
+						 if ($result4 = $mysqli->query("SELECT * FROM `device_credentials` WHERE `devices_iddevices` = '$did'")) {
+						 /* fetch associative array */
+						 while ($row4 = $result4->fetch_assoc()) {
+						 $eusername= $row4["username"];
+						 $epassword= $row4["password"];
+						 $iv= $row4["IV"];
+						 }}
+						 
+						 $rpass= mcrypt_decrypt (MCRYPT_BLOWFISH,"$masterkey", "$epassword","ofb","$iv");
+						 $rname = mcrypt_decrypt (MCRYPT_BLOWFISH,"$masterkey", "$eusername","ofb","$iv");
+						 
+	if ($result4 = $mysqli->query("SELECT * FROM `device_ports` WHERE `iddevice_ports` = '$portid'")) {
 				/* fetch associative array */
-				 while ($rowl = $resultl->fetch_assoc()) {
-					 $routerip= $rowl["ipv4_address"];
-					 }
-                     }
-if ($resultl = $mysqlil->query("SELECT * FROM `ipv4_addresses` WHERE `port_id` = '$portid'")) {
-				/* fetch associative array */
-				 while ($rowl = $resultl->fetch_assoc()) {
-					 $defaultrouter= $rowl["ipv4_address"];
-                     $ipv4network = $rowl["ipv4_network_id"];
-                 }
-                 }
-if ($resultl = $mysqlil->query("SELECT * FROM `ipv4_networks` WHERE `ipv4_network_id` = '$ipv4network'")) {
-				/* fetch associative array */
-				 while ($rowl = $resultl->fetch_assoc()) {
-					 $subnet= $rowl["ipv4_network"];
-					 }
-                     }
+				 while ($row4 = $result4->fetch_assoc()) {
+					 $defaultrouter = $row4["ip_address"];
+					 $mask = $row4["network"];
+					 }}
+					 
+					 $cidr = substr($mask,1);
+
+$network = long2ip((ip2long($ip)) & ((-1 << (32 - (int)$cidr))));
+
+$subnet = $network.$mask;
+
 $long = ip2long($defaultrouter);
 $start = $long +1;
 $start =long2ip($start);
@@ -131,7 +129,7 @@ $ssh->exec("/opt/vyatta/sbin/vyatta-cfg-cmd-wrapper begin\n
 if ($mysqli->query("INSERT INTO `$db`.`dhcp_servers` (`idDHCP_Servers`,
                    `DNS`, `Range_Start`, `Range_Stop`, `subnet`, `name`,
                    `device_ports_iddevice_ports`) VALUES
-                   (NULL, '$dns', '$start', '$end', '$subnet', '$name', '$portdid');") === TRUE) {
+                   (NULL, '$dns', '$start', '$end', '$subnet', '$name', '$portid');") === TRUE) {
 //nothing 
 } else{
     echo'Something went wrong with the database please contact your webmaster';

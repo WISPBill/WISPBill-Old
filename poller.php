@@ -23,7 +23,6 @@
  
 require_once('./fileloader.php');
 	 $mysqli = new mysqli("$ip", "$username", "$password", "$db");
-	 $mysqlil = new mysqli("$ipl", "$usernamel", "$passwordl", "$dbl");
  if ($result = $mysqli->query("SELECT * FROM  `devices` WHERE  `type` =  'cpe'
 AND  `field_status` =  'customer' AND  `manufacturer` =  'Ubiquiti Networks'
 LIMIT 0 , 25")) {
@@ -35,22 +34,27 @@ LIMIT 0 , 25")) {
          if ($result2 = $mysqli->query("SELECT * FROM `devices` WHERE `location_idlocation` = '$site'and `type` = 'router'")) {
 				/* fetch associative array */
 				 while ($row2 = $result2->fetch_assoc()) {
-					 $lid= $row2["librenms_id"];
 					 $did= $row2["iddevices"];
 					 }
 					 if ($result3 = $mysqli->query("SELECT * FROM `device_ports` WHERE `use` = 'mgmt' and `devices_iddevices` = '$did'")) {
 				/* fetch associative array */
 				 while ($row3 = $result3->fetch_assoc()) {
-					 $portid= $row3["port id"];
+					 $routerip= $row3["ip_address"];
 					 }
-						 if ($resultl = $mysqlil->query("SELECT * FROM `ipv4_addresses` WHERE `port_id` = '$portid'")) {
-				/* fetch associative array */
-				 while ($rowl = $resultl->fetch_assoc()) {
-					 $routerip= $rowl["ipv4_address"];
-					 }
+						 if ($result4 = $mysqli->query("SELECT * FROM `device_credentials` WHERE `devices_iddevices` = '$did'")) {
+						 /* fetch associative array */
+						 while ($row4 = $result4->fetch_assoc()) {
+						 $eusername= $row4["username"];
+						 $epassword= $row4["password"];
+						 $iv= $row4["IV"];
+						 }
+						 
+						 $rpass= mcrypt_decrypt (MCRYPT_BLOWFISH,"$masterkey", "$epassword","ofb","$iv");
+						 $rname = mcrypt_decrypt (MCRYPT_BLOWFISH,"$masterkey", "$eusername","ofb","$iv");
+						 
 						 $mac = strtolower($mac);
 						 $radioip = getdhcpip($routerip,$rname,$rpass,$mac);
-						 
+
 						 if ($radioip["error"] =='router error'){
 							  // Could not SSH into router
 								  

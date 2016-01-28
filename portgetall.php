@@ -35,22 +35,15 @@ $mysqlil = new mysqli("$ipl", "$usernamel", "$passwordl", "$dbl");
                  echo'<option value="" selected disabled>Please Select a Port</option>';
 				 while ($row3 = $result3->fetch_assoc()) {
 					 $name = $row3["name"];
-                     $pid = $row3["port id"];
-                     if ($result2 = $mysqlil->query("SELECT * FROM `ports` WHERE `port_id` = '$pid'")) {
-				/* fetch associative array */
-				 while ($row2 = $result2->fetch_assoc()) {
-					 $name= $row2["ifDescr"];
-					 }
-                     if ($resultl = $mysqlil->query("SELECT * FROM `ipv4_addresses` WHERE `port_id` = '$pid'")) {
-				/* fetch associative array */
-				 while ($rowl = $resultl->fetch_assoc()) {
-					 $routerip= $rowl["ipv4_address"];
-					 }
-                    echo"<option value=$pid>$routerip on port $name</option>";
+                     $pid = $row3["iddevice_ports"];
+                     $routerip = $row3["ip_address"];
+                     $mask = $row3["network"];
+					 
+                    echo"<option value=$pid>$routerip$mask on port $name</option>";
                     $routerip = '';
-					 }
-                 }}
+					 
+                 }
+				 }
                      }
-    }
 
 ?>

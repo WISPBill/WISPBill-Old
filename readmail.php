@@ -61,7 +61,17 @@ if ($result = $mysqli->query("SELECT * FROM `admin_users` WHERE `idadmin` = $adm
   
   <link rel="stylesheet" href="AdminLTE2/dist/css/skins/skin-blue.min.css">
   <link rel="stylesheet" href="AdminLTE2/plugins/iCheck/flat/blue.css">
-
+<script>
+        function CallPrint(strid) {
+            var prtContent = document.getElementById(strid);
+            var WinPrint = window.open('', '', 'letf=0,top=0,width=400,height=400,toolbar=0,scrollbars=0,status=0');
+            WinPrint.document.write(prtContent.innerHTML);
+            WinPrint.document.close();
+            WinPrint.focus();
+            WinPrint.print();
+            WinPrint.close();
+        }
+     </script>
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
   <!--[if lt IE 9]>
@@ -212,12 +222,13 @@ desired effect
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
      <section class="content-header">
+        
    <h1>
     Mailbox
    </h1>
       <ol class="breadcrumb">
         <li><a href="dashbored.php"><i class="fa fa-dashboard"></i> Dashbored</a></li>
-        <li class="active">Here</li>
+        <li class="active">Mail</li>
       </ol>
     </section>
 
@@ -258,34 +269,17 @@ desired effect
         <div class="col-md-9">
           <div class="box box-primary">
             <div class="box-header with-border">
-              <h3 class="box-title">Inbox</h3>
+              <h3 class="box-title">Read Mail</h3>
 
-            
-              <!-- /.box-tools -->
             </div>
-            <!-- /.box-header -->
-            <div class="box-body no-padding">
-              <div class="mailbox-controls">
-                <!-- Check all button -->
-                <button type="button" class="btn btn-default btn-sm checkbox-toggle"><i class="fa fa-square-o"></i>
-                </button>
-                <div class="btn-group">
-                    
-                  <button type="submit" class="btn btn-default btn-sm"><i class="fa fa-trash-o"></i></button>
-                    
-                </div>
-                <!-- /.btn-group -->
-                <a href="">
-                <button type="button" class="btn btn-default btn-sm"><i class="fa fa-refresh"></i></button>
-               </a>
-                
-                <!-- /.pull-right -->
-              </div>
-              <div class="table-responsive mailbox-messages">
-                <table class="table table-hover table-striped">
-                  <tbody>
-               
-  <?php
+            <?php
+             if(isset($_GET["id"])){
+            $mailid = $_GET["id"];
+            $folder = $_GET["folder"];
+        } else{
+            //no folder we want to view
+          header('Location: mailbox.php');
+        }
    include_once __DIR__.'/webmail/libraries/afterlogic/api.php';
 
     if (class_exists('CApi') && CApi::IsValid())
@@ -308,18 +302,7 @@ desired effect
             $epassword = $_SESSION['emailpass'];
             $sPassword = mcrypt_decrypt (MCRYPT_BLOWFISH,"$bytes", "$epassword","ofb","$iv");
         }
-        if(isset($_GET["mailfolder"])){
-            $sFolder = $_GET["mailfolder"];
-        } else{
-            //no folder we want to view
-          $sFolder = 'INBOX';
-        }
         
-        $iOffset = 0;
-        $iLimit = 25;
-
-        $oCollection = null;
-
         try
         {
             $oApiIntegratorManager = CApi::Manager('integrator');
@@ -327,19 +310,14 @@ desired effect
             $oAccount = $oApiIntegratorManager->LoginToAccount($semail, $sPassword);
             if ($oAccount)
             {
-                $oApiMailManager = CApi::Manager('mail');
-               $oCollection =  $oApiMailManager->getMessageList($oAccount, $sFolder, $iOffset, $iLimit);
+                 $oApiMailManager = CApi::Manager('mail');
+                $mesg = $oApiMailManager->getMessage($oAccount,$folder,$mailid,'',false,false,0);
 				/* @var $oCollection CApiMailMessageCollection */
-				if ($oCollection)
-				{
-					
-					$oCollection->ForeachList(function (/* @var $oMessage CApiMailMessage */ $oMessage) {
-						$oFrom = /* @var $oFrom \MailSo\Mime\EmailCollection */ $oMessage->getFrom();
-						$mailid = $oMessage->getUid();
-                        $subject = $oMessage->getSubject();
-                        $folder= $oMessage->getFolder();
-                        $from = $oFrom->ToString();
-                        $emaildatetime = $oMessage->getReceivedOrDateTimeStamp();
+				$subject = $mesg->getSubject();
+                $from = $mesg->getFrom();
+                $from = $from->ToString();
+                $mesghtml = $mesg->getHtml();
+                        $emaildatetime = $mesg->getReceivedOrDateTimeStamp();
                         $timeaday = time() - 86400;
                         if($emaildatetime > $timeaday){
                             // Message was sent to day get time
@@ -348,20 +326,6 @@ desired effect
                             // Message was sent more than 24 hours ago get date
                             $emaildatetime = date("n/j/y","$emaildatetime");
                         }
-                        echo "<tr>
-                    <td><input type='checkbox' name='id[]' value=$mailid></td>
-                    <td class='mailbox-name'><a href='readmail.php?id=$mailid&folder=$folder'>$from</a></td>
-                    <td class='mailbox-subject'><b>$subject</b>
-                    </td>
-                    <td class='mailbox-date'>$emaildatetime</td>
-                  </tr>";
-					});
-					
-				}
-				else
-				{
-					echo $oApiMailManager->GetLastErrorMessage();
-				}
 			}
 			else
 			{
@@ -380,35 +344,47 @@ desired effect
 		echo 'AfterLogic API isn\'t available';
 	}
   ?>
-  </tbody>
-                </table>
-                <!-- /.table -->
-                <input type="hidden" name="folder" value="<?php echo "$sFolder";?>">
+            <!-- /.box-header -->
+            <div class="box-body no-padding" id="email">
+             <input type="hidden" name="folder" value="<?php echo "$folder";?>">
+             <input type="hidden" name="id[]" value="<?php echo "$mailid";?>">
+              <div class="mailbox-read-info">
+                <h3><?php echo"$subject";?></h3>
+                <h5><?php echo"From: $from";?>
+                  <span class="mailbox-read-time pull-right"><?php echo"$emaildatetime";?></span></h5>
               </div>
-              <!-- /.mail-box-messages -->
-            </div>
-            <!-- /.box-body -->
-            <div class="box-footer no-padding">
-              <div class="mailbox-controls">
-                <!-- Check all button -->
-                <button type="button" class="btn btn-default btn-sm checkbox-toggle"><i class="fa fa-square-o"></i>
-                </button>
+              <!-- /.mailbox-read-info -->
+              <div class="mailbox-controls with-border text-center">
                 <div class="btn-group">
-                  <button type="submit" class="btn btn-default btn-sm"><i class="fa fa-trash-o"></i></button>
+                  <button type="submit" class="btn btn-default btn-sm" data-toggle="tooltip" data-container="body" title="Delete">
+                    <i class="fa fa-trash-o"></i></button>
                 </div>
                 <!-- /.btn-group -->
-                <a href="">
-                <button type="button" class="btn btn-default btn-sm"><i class="fa fa-refresh"></i></button>
-               </a>
-                <!-- /.pull-right -->
+                <button type="button" class="btn btn-default btn-sm" data-toggle="tooltip" title="Print" onClick="javascript:CallPrint('email')">
+                  <i class="fa fa-print"></i></button>
               </div>
+              <!-- /.mailbox-controls -->
+              <div class="mailbox-read-message">
+                <?php echo"$mesghtml";?>
+              </div>
+              <!-- /.mailbox-read-message -->
             </div>
+            <!-- /.box-body -->
+           
+            <!-- /.box-footer -->
+            <div class="box-footer">
+
+              <button type="submit" class="btn btn-default"><i class="fa fa-trash-o"></i> Delete</button>
+              <a href="#" onClick="javascript:CallPrint('email')">
+              <button type="button" class="btn btn-default" ><i class="fa fa-print"></i> Print</button>
+              </a>
+            </div>
+            <!-- /.box-footer -->
           </div>
           <!-- /. box -->
         </div>
         <!-- /.col -->
       </div>
-    
       <!-- /.row -->
         </form>
     </section>

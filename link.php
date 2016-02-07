@@ -87,6 +87,14 @@ echo'
             <li><a href="deleteplan.php">Delete a Service Plan</a></li> 
           </ul>
         </li>
+        <li class="treeview">
+          <a href="#"><i class="fa fa-database"></i> <span>Data Views</span> <i class="fa fa-angle-left pull-right"></i></a>
+          <ul class="treeview-menu">
+            <li><a href="">1</a></li>
+            <li><a href="">2</a></li>
+           
+          </ul>
+        </li>
         <li>
           <a href="">
             <i class="fa fa-calendar"></i> <span>Calendar</span>
@@ -94,11 +102,17 @@ echo'
             echo "$calevents</small>
           </a>
         </li>
-        <li>
-          <a href='mailbox.php'>
+       
+          ";
+            if($emailreader == true){
+                echo" <li>
+                <a href='mailbox.php'>
             <i class='fa fa-envelope'></i> <span>Mailbox</span>
             <small class='label pull-right bg-blue'>$mailevents</small>
           </a>";
+            }else{
+            //Email it not on
+          }
           echo '
         </li>
       </ul>

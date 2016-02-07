@@ -26,7 +26,11 @@ require_once('./airosstatpoller.php');
 // Noti Header Data grab
 require_once('./notihead.php');
 // Email Count
+if($emailreader == true){
 require_once('./unreademail.php');
+}else{
+    //Mail is not on
+}
 set_include_path(get_include_path() . PATH_SEPARATOR . 'ssh');
 include('Net/SSH2.php');
 

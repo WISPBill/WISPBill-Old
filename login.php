@@ -48,17 +48,25 @@ $epass = $_POST["epass"];
     exit;
 } elseif(empty($epass)){
     // If password is empty it goes back to the fourm and informs the user
+	if($emailreader == true){
     session_start(); 
     $_SESSION['exitcode'] = 'password empty';
     header('Location: index.php');
     exit;
+	}else{
+		//email is not on
+	}
 }else{
     // do nothing 
 } // end if
 
 $user = $mysqli->real_escape_string($user);
 $pass = $mysqli->real_escape_string($pass);
+if($emailreader == true){
 $epass = $mysqli->real_escape_string($epass);
+}else{
+	//email is not on
+}
 // end of data sanitize and existence check
 // start of cheack for exsting username and or email 
 
@@ -110,6 +118,7 @@ if ($result = $mysqli->query("SELECT * FROM `admin_users` WHERE `username` = '$u
     $result->close();
 }
 // Email Stuff
+if($emailreader == true){
 $bytes = openssl_random_pseudo_bytes(32, $cstrong);
         if($cstrong == TRUE){
           $size = mcrypt_get_iv_size(MCRYPT_BLOWFISH, 'ofb');
@@ -124,6 +133,9 @@ $bytes = openssl_random_pseudo_bytes(32, $cstrong);
           echo "Openssl wont work on this server";
           exit;
         }
+}else{
+	//Email is not on
+}
 //End of Email Stuff
 if (password_verify($pass, $hash)) {
     // Password is valid

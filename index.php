@@ -19,6 +19,7 @@
 	@turtles2 on ubiquiti community, DSLReports and Netonix 
  */
 // See if loged in
+require_once('./fileloader.php');
 session_start();
 if (isset($_SESSION['logged'])){
 	$ses = $_SESSION['logged'];
@@ -111,10 +112,17 @@ if (isset($_SESSION['exitcode'])){
         <input type="password" class="form-control" placeholder="Password" name="pass">
         <span class="glyphicon glyphicon-lock form-control-feedback"></span>
       </div>
+	  <?php
+	  if($emailreader == true){
+	  echo'
 	  <div class="form-group has-feedback">
         <input type="password" class="form-control" placeholder="Email Password" name="epass">
         <span class="glyphicon glyphicon-lock form-control-feedback"></span>
-      </div>
+      </div>';
+	  }else{
+		//email is not on
+	  }
+	  ?>
       <div class="row">
         <!-- /.col -->
         <div class="col-xs-4" style="float: right;";>

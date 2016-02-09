@@ -1,19 +1,31 @@
-To Install WISPBill do the following: 
-Have a Web Server with the PHP extensions mcrypt and SSH2 
-The Web Server must support and have SSL enabled 
-Must have MYSQL Database use the schema file to set up 
+To Install WISPBill do the following:
+
+Have a Web Server with the PHP extensions mcrypt and SSH2
+
+The Web Server must support and have SSL enabled
+
+Must have MYSQL Database use the schema file to set up
+
 Copy samplebillconfig.php and name it billconfig.php
-Adjust billconfig.php to match your needs 
+
+Adjust billconfig.php to match your needs
+
 Comment out require_once('./session.php'); in createadminuser.php and createadminuser2.php
+
 Go to www.example.com/createadminuser.php and fill it the from
+
 Un Comment out require_once('./session.php'); in createadminuser.php and createadminuser2.php
+
 WISPBill Should be good to go
 
 
 If  you find bugs report them if you add a feature or fix a bug make a pull request
 
-I Few known limitations 
-Geocoder is based off of US Census Data therefore it will only geocode US address 
+
+I Few known limitations
+
+Geocoder is based off of US Census Data therefore it will only geocode US address
+
 QOS and Subscription Management is not done 
 
 WISPBill a PHP based ISP billing platform

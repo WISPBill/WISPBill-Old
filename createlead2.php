@@ -183,8 +183,6 @@ if ($mysqli->query("INSERT INTO `$db`.`customer_info`
 }
 
 // end of data entry
-header('Location: index.php');
- exit;
 }else{
 $lat = $_POST["lat"];
 $lon = $_POST["lon"];
@@ -201,15 +199,34 @@ $lon = $_POST["lon"];
 }else{
     //Do nothing
 }
-$email = $_SESSION['email'];
+$email1 = $_SESSION['email'];
 if ($mysqli->query("UPDATE `$db`.`customer_info`
                    SET `lat` = '$lat', `lon` = '$lon' WHERE
-                   `customer_info`.`email` = '$email';") === TRUE) {
+                   `customer_info`.`email` = '$email1';") === TRUE) {
+//nothing 
+} else{
+    echo'Something went wrong with the database please contact your webmaster';
+        exit;
+}
+
+}
+
+if ($result = $mysqli->query("SELECT * FROM `customer_info` WHERE `email` = '$email1'")) {
+    /* fetch associative array */
+     while ($row = $result->fetch_assoc()) {
+     $iid= $row["idcustomer_info"];
+}
+       /* free result set */
+    $result->close();
+}// end if
+
+if ($mysqli->query("INSERT INTO `$db`.`customer_external`
+                   (`customer_info_idcustomer_info`, `billing`, `communication_preferences`, `radius`)
+                   VALUES ('$iid', NULL, NULL, NULL);") === TRUE) {
 //nothing 
 } else{
     echo'Something went wrong with the database please contact your webmaster';
         exit;
 }
 header('Location: index.php');
-}
 ?>

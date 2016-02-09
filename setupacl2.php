@@ -78,7 +78,8 @@ AND  `location_idlocation` =  '$site'")) {
 						 
 						 $rpass= mcrypt_decrypt (MCRYPT_BLOWFISH,"$masterkey", "$epassword","ofb","$iv");
 						 $rname = mcrypt_decrypt (MCRYPT_BLOWFISH,"$masterkey", "$eusername","ofb","$iv");
-
+						 }
+					 }
 if ($resultl = $mysqli->query("SELECT * FROM `device_ports` WHERE `iddevice_ports` = '$portid'")) {
 				/* fetch associative array */
 				 while ($rowl = $resultl->fetch_assoc()) {

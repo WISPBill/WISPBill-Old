@@ -1,4 +1,6 @@
 
+THIS DOC is for DEV only it will be removed
+
 set firewall name ACL rule 2 action accept
 set firewall name ACL rule 2 description 'Approved Mac'
 set firewall name ACL rule 2 log disable

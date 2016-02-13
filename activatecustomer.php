@@ -209,16 +209,16 @@ desired effect
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-      Covert Lead to An Account
+      Select a Device to Link it to an Account
       </h1>
       <ol class="breadcrumb">
         <li><a href="dashbored.php"><i class="fa fa-dashboard"></i> Dashbored</a></li>
-        <li class="active">Convert Lead</li>
+        <li class="active">Link Device</li>
       </ol>
     </section>
 
     <!-- Main content -->
-	 <form role="form" action="convertlead2.php"method="post">
+	 <form role="form" action="activatecustomer2.php"method="post">
 	<div class="row">
         <div class="col-xs-12">
     <section class="content">
@@ -227,102 +227,90 @@ desired effect
 			 <?php
 // get error 
 $error = $_SESSION['exitcodev2'];
-                if($error =='lead'){
-				 echo '<h3 class="box-title" style="color: red;">You need to Select a Lead</h3>';
-				}else{
-				 echo '<h3 class="box-title">Select a Lead</h3>';
-				}
-							$errorlabel ='<label class="control-label" for="inputError" style="color: red;"><i class="fa fa-times-circle-o"></i> Input with
-    error</label>'; 
-							$_SESSION['exitcodev2'] = '';
+$_SESSION['exitcodev2'] ='';
+$errorlabel ='<label class="control-label" for="inputError" style="color: red;"><i class="fa fa-times-circle-o"></i> Input with
+    error</label>';             
 ?> 
             </div>
             <!-- /.box-header -->
             <div class="box-body">
-              <table id="example1" class="table table-bordered table-striped">
-                <thead>
-                <tr>
-                  <th>Select</th>
-				  <th>Name</th> 
-				   <th>Phone</th>
-				  <th>Email</th>
-				 <th>Address</th>
-				  <th>City</th>
-                </tr>
-                </thead>
-                <tbody>
-				 <?php
-                if ($result = $mysqli->query("SELECT * FROM `customer_info` WHERE `idcustomer_users` is NULL")) {
-      /* fetch associative array */
-         
-    while ($row = $result->fetch_assoc()) {
-     $id= $row["idcustomer_info"];
-     $fname= $row["fname"];
-     $lname= $row["lname"];
-     $tel= $row["phone"];
-     $email= $row["email"];
-     $add= $row["address"];
-     $city= $row["city"];
-     echo" <tr>
-    <td><input type='radio' name='id' value=$id unchecked></td>
-    <td>$fname $lname</td> 
-    <td>$tel</td>
-    <td>$email</td>
-    <td>$add</td> 
-    <td>$city</td>
-  </tr>";
-    }
-}
-
-?>
-                </tbody>
-                <tfoot>
-                <tr>
-                  <th>Select</th>
-				  <th>Name</th> 
-				   <th>Phone</th>
-				  <th>Email</th>
-				 <th>Address</th>
-				  <th>City</th>
-                </tr>
-                </tfoot>
-              </table>
-			  <div class="form-group">
+            
+			  
+			   <div class="form-group">
 					<?php
-					if($error == 'name'){
+					if($error == 'email' or $error == 'emailphone'){
 						echo "$errorlabel";
 					}else{
-						echo '<label>Username</label>';
+						echo '<label>Email</label>';
 					}
 					?>
-                  <input type="text" class="form-control"  name="username" placeholder="Enter Username" required>
+                  <input type="text" class="form-control" name="email" placeholder="Enter Email" required>
                 </div>
                
 			   <div class="form-group">
                   
                      <?php
-					if($error == 'pass'){
+					if($error == 'tel' or $error == 'emailphone'){
 						echo "$errorlabel";
 					}else{
-						echo '<label>Password</label>';
+						echo '<label>Telephone</label>';
 					}
 					?>
-                  <input class="form-control" type="password" 
-  	            name="password"  placeholder="Enter Password" required>
+
+                  <input type="tel" class="form-control"  name="tel" placeholder="Enter Telephone" required>
                 </div>
-               
-               <div class="form-group">
+			   
+			   <div class="form-group">
                 <?php
-					if($error == 'pass'){
+					if($error == '4'){
 						echo "$errorlabel";
 					}else{
-						echo '<label>Confirm Password</label>';
+						echo '<label>Last 4 Digits of Credit Card</label>';
 					}
 					?>
                   
-                  <input class="form-control" type="password" 
-  	            name="password2" placeholder="Confirm Password" required>
+                  <input type="number" min="0" max="9999" class="form-control" name="4" placeholder="Enter Last 4" required>
                 </div>
+<div class="form-group">
+                  <?php
+					if($error == 'mode'){
+						echo "$errorlabel";
+					}else{
+						echo '<label>Billing Mode</label>';
+					}
+					?>
+                  <select class="form-control" name="mode" required>
+					<option value='' selected disabled>Please Select Billing Mode</option>
+                    <option value="radius">Radius</option>
+                  </select>
+                </div>
+              <div class="form-group">
+			  <?php
+				 if ($result = $mysqli->query("SELECT * FROM `customer_plans` ")) {
+    /* fetch associative array */
+	
+                if($error == 'plan'){
+						echo "$errorlabel";
+					}else{
+						echo '<label>Service Plan</label>';
+					}
+                echo '<select class="form-control" name="plan" required>
+				  <option value="" selected disabled>Please Select Plan</option>';
+    while ($row = $result->fetch_assoc()) {
+        $id = $row["idcustomer_plans"];
+        $name = $row["name"];
+        $up = $row["max_bandwith_up_kilo"];
+        $down = $row["max_bandwith_down_kilo"]; 
+        echo"<option value=$id>$name Upload $up Kbps Download $down Kbps</option>";
+        }
+ echo ' </select>
+                </div>';
+				$result->close();
+	}else{
+        echo'  <label class="control-label" for="inputError">Datebase
+                    error contact your webmaster</label>';
+    }?>
+               
 			  <div class="box-footer">
                 <button type="submit" class="btn btn-primary">Submit</button>
               </div>
@@ -334,9 +322,12 @@ $error = $_SESSION['exitcodev2'];
         <!-- /.col -->
       </div>
       <!-- /.row -->
+		</div>
+	 </form>
+  
     </section>
     <!-- /.content -->
-  </div>
+  
   <!-- /.content-wrapper -->
 
   <!-- Main Footer -->
@@ -369,13 +360,12 @@ $error = $_SESSION['exitcodev2'];
      fixed layout. -->
 <script>
   $(function () {
-    $("#example1").DataTable();
-    $('#example2').DataTable({
-      "paging": true,
+    $('#example1').DataTable({
+      "paging": false,
       "lengthChange": false,
       "searching": false,
       "ordering": true,
-      "info": true,
+      "info": false,
       "autoWidth": false
     });
   });

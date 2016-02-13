@@ -32,6 +32,11 @@ $usernamel='';
 $passwordl='';
 $ipl='';
 $dbl='';
+//Freeradius
+$usernamer='';
+$passwordr='';
+$ipr='';
+$dbr='';
 // End of SQL config
 // Start of Billing Config
 // These features are being worked on
@@ -72,4 +77,8 @@ $notimesg = '';
 $calevents = '1';
 // This is the key for Device credential encryption
 $masterkey = 'makeitgood';
+//Sendgrid Config
+$sendgrid = new SendGrid('YOUR_SENDGRID_APIKEY');
+$sendgridon = true; 
+$fromemail = '';
 ?>

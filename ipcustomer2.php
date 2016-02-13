@@ -95,7 +95,22 @@ if ($result2 = $mysqli->query("SELECT * FROM `customer_users` WHERE `idcustomer_
  $last4 = $cus->sources->data[0]->last4;
 
  if($last4 == $l4c){
-    // if last 4 match update DB and Stripe 
+    // if last 4 match update DB and Stripe
+    if ($result3 = $mysqli->query("SELECT * FROM  `customer_external` 
+WHERE  `customer_info_idcustomer_info` =  '$infoid'")) {
+    /* fetch associative array */
+     while ($row = $result3->fetch_assoc()) {
+     $mode= $row["billing_mode"];
+}
+       /* free result set */
+    $result3->close();
+}// end if
+    if($mode == 'radius'){
+     //Radius
+     echo "Static IP not supported in Radius Mode";
+     exit;
+    }elseif($mode == 'wispbill'){
+    
      if ($result14 = $mysqli->query("SELECT * FROM `devices` WHERE `iddevices` = '$cdid'")) {
      /* fetch associative array */
           while ($row14 = $result14->fetch_assoc()) {
@@ -247,7 +262,7 @@ if ($result = $mysqli->query("UPDATE `$db`.`customer_info` SET
 		$result5->close();
 		}
 	}
-
+    }// End of mode wispbill mode
 }else{
      $_SESSION['exitcodev2']  = '4';
     header('Location: ipcustomer.php');

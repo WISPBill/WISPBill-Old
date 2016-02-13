@@ -141,6 +141,7 @@ if ($mysqli->query("UPDATE `$db`.`customer_info`
     echo'Something went wrong with the database please contact your webmaster';
         exit;
 }
+
 // end of data entry
 header('Location: index.php');
 ?>

@@ -92,6 +92,21 @@ if ($result2 = $mysqli->query("SELECT * FROM `customer_users` WHERE `idcustomer_
  $last4 = $cus->sources->data[0]->last4;
 
  if($last4 == $l4c){
+         if ($result3 = $mysqli->query("SELECT * FROM  `customer_external` 
+     WHERE  `customer_info_idcustomer_info` =  '$infoid'")) {
+    /* fetch associative array */
+     while ($row = $result3->fetch_assoc()) {
+     $mode= $row["billing_mode"];
+     }
+       /* free result set */
+    $result3->close();
+     }// end if
+    if($mode == 'radius'){
+     //Radius
+     echo "Static IP not supported in Radius Mode";
+     exit;
+    }elseif($mode == 'wispbill'){
+     
      if ($result = $mysqli->query("SELECT * FROM `static_leases` WHERE `idstatic_leases` = '$lid'")) {
             while ($row = $result->fetch_assoc()) {
     $mac = $row["mac"];
@@ -145,6 +160,7 @@ $ssh->exec("/opt/vyatta/sbin/vyatta-cfg-cmd-wrapper begin\n
      echo"DB";
      exit;
  }
+    }// end of wispbill mode
  }else{
      $_SESSION['exitcodev2']  = '4';
     header('Location: ipcustomer.php');

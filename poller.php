@@ -80,6 +80,27 @@ LIMIT 0 , 25")) {
 								   }
 						 }elseif($radioip["mac"] == "$mac"){
 							  // Found IP
+							  if ($result5 = $mysqli->query("SELECT * FROM `notifications`
+								   WHERE `readyn` = '0' and `content` = 'The Router at $routerip did not have IP lease data for a radio ID of CPE AFFECTED = $cpeid'")) {
+										if ($result5->num_rows == 1){
+										// Error is open we need to close  
+											while ($row5 = $result5->fetch_assoc()) {
+										$notiid= $row5["idnotifications"];
+											}
+											
+										if ($mysqli->query("UPDATE `$db`.`notifications`
+											 SET `readyn` = '1' WHERE `notifications`.`idnotifications` = '$notiid';")
+								   === TRUE) {
+								   // Nothing
+								   }
+										} elseif ($result5->num_rows == 0){
+										// No open error have to make one
+											 
+										}
+										/* free result set */
+										$result5->close();
+								   }
+							 
 							  $radiosship = $radioip["ip"];
 							  $stat = getAirOSstat("$radiosship", "$radiouname", "$radiopass");
 							  if ($stat["error"] == 'none'){
@@ -141,13 +162,13 @@ LIMIT 0 , 25")) {
 										if ($result5->num_rows == 1){
 										// Error is open should be closed
 										while ($row5 = $result5->fetch_assoc()) {
-										$notiid= $row5["idnotifications"];
+										$notiid= $row5["idnotifications"];}
 											 if ($mysqli->query("UPDATE `$db`.`notifications`
 											 SET `readyn` = '1' WHERE `notifications`.`idnotifications` = '$notiid';")
 								   === TRUE) {
 								   // Nothing
 								   }
-										}
+										
 										} elseif ($result->num_rows == 0){
 										// No open error nothing to do
 										}
@@ -240,7 +261,7 @@ LIMIT 0 , 25")) {
 										/* free result set */
 										$result5->close();
 								   }
-						 }
+					}
 						 }// end if
 					 } // End of If	 
          } // End of If

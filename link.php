@@ -26,6 +26,7 @@ echo'
             <li><a href="viewcustomer.php">View Customer\'s</a></li>
             <li><a href="mapcus.php">Map Customer\'s</a></li>
             <li><a href="setbill.php">Set Billing Info</a></li>
+            <li><a href="activatecustomer.php">Activate A Customer</a></li>
             <li><a href="linkcusdevice.php">Link Device to Customer</a></li>
             <li><a href="ipcustomer.php">Assign Static IP Address</a></li>
             <li><a href="ipdelete.php">Delete Static IP Assignments </a></li>

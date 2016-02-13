@@ -51,8 +51,26 @@ if($event_json["type"] == 'charge.failed' ){
             /* fetch associative array */
             while ($row = $result->fetch_assoc()) {
             $user= $row["username"];
+							$userid $row["idcustomer_users"];
               }
+				}
+					if ($result = $mysqli->query("SELECT * FROM `customer_info` WHERE `idcustomer_users` = '$userid'")) {
+            /* fetch associative array */
+            while ($row = $result->fetch_assoc()) {
+            $infoid= $row["idcustomer_info"];
+              }
+					}
+					
+					if ($result = $mysqli->query("SELECT * FROM `customer_external` WHERE `customer_info_idcustomer_info` = '$infoid'")) {
+            /* fetch associative array */
+            while ($row = $result->fetch_assoc()) {
+            $mode = $row["billing_mode"];
+						$status = $row["billing"];
+              }
+					}
+					if($mode == 'radius'){
             // Start of Suspend
+						if($status = '1'){
             $mysqlir = new mysqli("$ipr", "$usernamer", "$passwordr", "$dbr");
             if ($mysqlir->query("INSERT INTO `$dbr`.`radreply` (`id`, `username`, `attribute`, `op`, `value`)
                                 VALUES (NULL, '$user', 'WISPr-Redirection-URL', ':=', '$nopayurl');") === TRUE) {
@@ -60,14 +78,13 @@ if($event_json["type"] == 'charge.failed' ){
              echo'Something went wrong with the database please contact your webmaster';
                  exit;
                 }
-         /* free result set */
-         $result->close();
-        } else {
-          // There is an error with SQL or Inputs 
-         http_response_code(300);
-        exit;
-        } //end if
-
+						}else{
+							// Cus is alread
+						}
+        }elseif($mode == 'wispbill'){
+						// WISPBIll
+					}
+				}
         
         http_response_code(200); 
     }else{

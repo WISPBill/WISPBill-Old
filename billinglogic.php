@@ -139,4 +139,9 @@ if ($result = $mysqli->query("INSERT INTO `$db`.`Firewall_Rules` (`idACL`, `rule
     return $success;
 } // end of ACLWhitelist
 
+function mailuser($email,$event,$sendgridapi,$fromemail) {
+//SendGrid API Loader
+require './sendgrid-php/vendor/autoload.php';
+
+}// End of Mail User
 ?>

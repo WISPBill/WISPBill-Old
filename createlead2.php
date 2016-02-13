@@ -221,12 +221,13 @@ if ($result = $mysqli->query("SELECT * FROM `customer_info` WHERE `email` = '$em
 }// end if
 
 if ($mysqli->query("INSERT INTO `$db`.`customer_external`
-                   (`customer_info_idcustomer_info`, `billing`, `communication_preferences`, `radius`)
+                   (`customer_info_idcustomer_info`, `billing`, `communication_preferences`, `billing_mode`)
                    VALUES ('$iid', NULL, NULL, NULL);") === TRUE) {
 //nothing 
 } else{
     echo'Something went wrong with the database please contact your webmaster';
         exit;
 }
+
 header('Location: index.php');
 ?>

@@ -25,141 +25,191 @@ require_once('./billingcon.php');
 $input = @file_get_contents("php://input");
 $event_json = json_decode($input, true);
 
-// Looking for failed charge
+// Asks stripe for data to ensure that charge has failed and it is not a false messeage
 
-if($event_json["type"] == 'charge.failed' ){
-    // stuff happens here if charge failed
-    
-    // Asks stripe for data to ensure that charge has failed and it is not a false messeage
-    $id = $event_json["id"];
-    $event= Stripe_Event::retrieve("$id");
-    
-    //making sure id is a fail charge 
-    if($event["type"] == 'charge.failed' ){
-        // Get cus id 
-        
-        $data= $event["data"];
-        $data2= $data["object"];
-        $cusid= $data2["customer"];
-        
-        // Get cus email
-        
-        $cus= Stripe_Customer::retrieve("$cusid");
-        $email = $cus["email"];
-        $mysqli = new mysqli("$ip", "$username", "$password", "$db");
-        if ($result = $mysqli->query("SELECT * FROM `customer_users` WHERE `email` = '$email'")) {
-            /* fetch associative array */
-            while ($row = $result->fetch_assoc()) {
-            $user= $row["username"];
-							$userid $row["idcustomer_users"];
-              }
-				}
-					if ($result = $mysqli->query("SELECT * FROM `customer_info` WHERE `idcustomer_users` = '$userid'")) {
-            /* fetch associative array */
-            while ($row = $result->fetch_assoc()) {
-            $infoid= $row["idcustomer_info"];
-              }
-					}
-					
-					if ($result = $mysqli->query("SELECT * FROM `customer_external` WHERE `customer_info_idcustomer_info` = '$infoid'")) {
-            /* fetch associative array */
-            while ($row = $result->fetch_assoc()) {
-            $mode = $row["billing_mode"];
-						$status = $row["billing"];
-              }
-					}
-					if($mode == 'radius'){
-            // Start of Suspend
-						if($status = '1'){
-            $mysqlir = new mysqli("$ipr", "$usernamer", "$passwordr", "$dbr");
-            if ($mysqlir->query("INSERT INTO `$dbr`.`radreply` (`id`, `username`, `attribute`, `op`, `value`)
+$id = $event_json["id"];
+$event= Stripe_Event::retrieve("$id");
+
+    //making sure id is a fail charge
+      $data= $event["data"];
+      $data2= $data["object"];
+      $cusid= $data2["customer"];
+      
+if($event["type"] == 'charge.failed' ){
+ 
+      if ($result2 = $mysqli->query("SELECT * FROM `customer_users` WHERE `stripeid` = '$cusid'")) {
+    /* fetch associative array */
+     while ($row = $result2->fetch_assoc()) {
+     $cid= $row["idcustomer_users"];
+	 $user= $row["username"];
+ }
+       /* free result set */
+    $result2->close();
+ }// end if
+ 
+      if ($result = $mysqli->query("SELECT * FROM `customer_info` WHERE `idcustomer_users` = '$cid'")) {
+    /* fetch associative array */
+     while ($row = $result->fetch_assoc()) {
+     $did= $row["devices_iddevices"];
+     $iid= $row["idcustomer_info"];
+ }
+       /* free result set */
+    $result->close();
+ }// end if
+ 
+  if ($result = $mysqli->query("SELECT * FROM  `customer_external` 
+WHERE  `customer_info_idcustomer_info` =  '$iid'")) {
+    /* fetch associative array */
+     while ($row = $result->fetch_assoc()) {
+     $mode= $row["billing_mode"];
+     $status= $row["billing"];
+ }
+       /* free result set */
+    $result->close();
+ }// end if
+ 
+ if($status == '1'){
+  // Customer has had falied charge for first time
+  if($mode == 'radius'){
+   //Radius Billing User
+   $mysqlir = new mysqli("$ipr", "$usernamer", "$passwordr", "$dbr");
+   
+   if ($mysqlir->query("INSERT INTO `$dbr`.`radreply` (`id`, `username`, `attribute`, `op`, `value`)
                                 VALUES (NULL, '$user', 'WISPr-Redirection-URL', ':=', '$nopayurl');") === TRUE) {
             } else{
-             echo'Something went wrong with the database please contact your webmaster';
+            http_response_code(500);
                  exit;
-                }
-						}else{
-							// Cus is alread
-						}
-        }elseif($mode == 'wispbill'){
-						// WISPBIll
-					}
-				}
-        
-        http_response_code(200); 
-    }else{
-    // nothing happens if it is not a failed charge event
-    http_response_code(200); 
-    } // end  nested if 
+            }
+    if ($mysqli->query("UPDATE  `$db`.`customer_external` SET  `billing` =  '0' WHERE
+   `customer_external`.`customer_info_idcustomer_info` =$iid;") === TRUE) {
 
-} elseif($event_json["type"] == 'charge.succeeded' ){
-    // stuff happens here if charge 
-    
-    // Asks stripe for data to ensure that charge is not a false messeage
-    $id = $event_json["id"];
-    $event= Stripe_Event::retrieve("$id");
-    
+   }else{
+   http_response_code(500);
+   exit;
+   }
+  }elseif($mode == 'wispbill'){
+   //SSH billing user
+   
+  }
+ }elseif($status == '0'){
+  // Customer is already behind we don't need to do anything
+  
+ }else{
+  http_response_code(500); 
+ }
+        
     //making sure id is a charge 
-    if($event["type"] == 'charge.succeeded' ){
+}elseif($event["type"] == 'charge.succeeded' ){
         // Get cus id 
-        
-        $data= $event["data"];
-        $data2= $data["object"];
-        $cusid= $data2["customer"];
-        
-        // Get cus email
-        
-        $cus= Stripe_Customer::retrieve("$cusid");
-        $email = $cus["email"];
-        $mysqli = new mysqli("$ip", "$username", "$password", "$db");
-        if ($result = $mysqli->query("SELECT * FROM `customer_users` WHERE `email` = '$email'")) {
-            /* fetch associative array */
-            while ($row = $result->fetch_assoc()) {
-            $user= $row["username"];
-              }
-            // Start of Unsuspend
-            $mysqlir = new mysqli("$ipr", "$usernamer", "$passwordr", "$dbr");
-            
-            if ($result2 = $mysqlir->query("SELECT * FROM `radreply` WHERE `username` = '$user'")) {
-            if ($result2->num_rows >= 1){
-            // Delete it 
-             if ($mysqlir->query("DELETE FROM `radreply` WHERE `username`='$user' and `attribute` = 'WISPr-Redirection-URL'") === TRUE) {
-            } else{
-             echo'Something went wrong with the database please contact your webmaster';
-                 exit;
-                }
-             exit;
-            } elseif ($result2->num_rows == 0){
-            // do nothing 
-          } else{
-        echo'Something went wrong with the database please contact your webmaster';
-        exit;
-         }
-    
-    /* free result set */
+ if ($result2 = $mysqli->query("SELECT * FROM `customer_users` WHERE `stripeid` = '$cusid'")) {
+    /* fetch associative array */
+     while ($row = $result2->fetch_assoc()) {
+     $cid= $row["idcustomer_users"];
+	 $user= $row["username"];
+ }
+       /* free result set */
     $result2->close();
-    }// end of  Unsuspend
-            
-         /* free result set */
-         $result->close();
-         
-        } else {
-          // There is an error with SQL or Inputs 
-         http_response_code(300);
-        exit;
-        } //end if
+ }// end if
+ 
+      if ($result = $mysqli->query("SELECT * FROM `customer_info` WHERE `idcustomer_users` = '$cid'")) {
+    /* fetch associative array */
+     while ($row = $result->fetch_assoc()) {
+     $did= $row["devices_iddevices"];
+     $iid= $row["idcustomer_info"];
+ }
+       /* free result set */
+    $result->close();
+ }// end if
+ 
+  if ($result = $mysqli->query("SELECT * FROM  `customer_external` 
+WHERE  `customer_info_idcustomer_info` =  '$iid'")) {
+    /* fetch associative array */
+     while ($row = $result->fetch_assoc()) {
+     $mode= $row["billing_mode"];
+     $status= $row["billing"];
+ }
+       /* free result set */
+    $result->close();
+ }// end if
+ 
+ if($status == '1'){
+  // Customer has been paying there bill there is nothing to do
+  
+ }elseif($status == '0'){
+  // Customer has payed is bill we need undo
+  if($mode == 'radius'){
+   //Radius Billing User
+   $mysqlir = new mysqli("$ipr", "$usernamer", "$passwordr", "$dbr");
+   
+   
+   $mysqlir = new mysqli("$ipr", "$usernamer", "$passwordr", "$dbr");
+   
+   if ($mysqlir->query("DELETE FROM `radreply` WHERE `username`='$user' and `attribute` = 'WISPr-Redirection-URL'") === TRUE) {
+            } else{
+            http_response_code(500);
+                 exit;
+            }
+    if ($mysqli->query("UPDATE  `$db`.`customer_external` SET  `billing` =  '1' WHERE
+   `customer_external`.`customer_info_idcustomer_info` =$iid;") === TRUE) {
 
-        http_response_code(200); 
-    }else{
-    // nothing happens if it is not a  charge event
-    http_response_code(200); 
-    } // end  nested if 
-
-}
-
-else{
+   }else{
+   http_response_code(500);
+   exit;
+   }
+   
+  }elseif($mode == 'wispbill'){
+   //SSH billing user
+   
+  }
+ }else{
+  http_response_code(500); 
+ }
+ 
+ }elseif($event["type"] == 'invoice.payment_succeeded'){
+  // Send Email
+  
+   if ($result2 = $mysqli->query("SELECT * FROM `customer_users` WHERE `stripeid` = '$cusid'")) {
+    /* fetch associative array */
+     while ($row = $result2->fetch_assoc()) {
+     $cid= $row["idcustomer_users"];
+ }
+       /* free result set */
+    $result2->close();
+ }// end if
+ 
+    if ($result = $mysqli->query("SELECT * FROM `customer_info` WHERE `idcustomer_users` = '$cid'")) {
+    /* fetch associative array */
+     while ($row = $result->fetch_assoc()) {
+     $email= $row["email"];
+ }
+       /* free result set */
+    $result->close();
+ }// end if
+ mailuser($email,'receipt',$sendgridapi,$fromemail);
+elseif($event["type"] == 'invoice.payment_failed'){
+  // Send Email
+  
+   if ($result2 = $mysqli->query("SELECT * FROM `customer_users` WHERE `stripeid` = '$cusid'")) {
+    /* fetch associative array */
+     while ($row = $result2->fetch_assoc()) {
+     $cid= $row["idcustomer_users"];
+ }
+       /* free result set */
+    $result2->close();
+ }// end if
+ 
+    if ($result = $mysqli->query("SELECT * FROM `customer_info` WHERE `idcustomer_users` = '$cid'")) {
+    /* fetch associative array */
+     while ($row = $result->fetch_assoc()) {
+     $email= $row["email"];
+ }
+       /* free result set */
+    $result->close();
+ }// end if
+ mailuser($email,'fail',$sendgridapi,$fromemail);
+}else{
     // nothing happens if it is not a charge event
-    http_response_code(200); 
+    
 } // end if
-
+http_response_code(200); 
 ?>

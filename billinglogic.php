@@ -142,6 +142,30 @@ if ($result = $mysqli->query("INSERT INTO `$db`.`Firewall_Rules` (`idACL`, `rule
 function mailuser($email,$event,$sendgridapi,$fromemail) {
 //SendGrid API Loader
 require './sendgrid-php/vendor/autoload.php';
+require './emailtemplates.php';
 
+if($event == 'receipt'){
+	// Send Receipt
+	$sendgrid = new SendGrid("$sendgridapi");
+	$semail = new SendGrid\Email();
+	$semail
+    ->addTo("$email")
+    ->setFrom("$fromemail")
+    ->setSubject("$receiptsubject")
+    ->setHtml("$receipthtml");
+
+	$sendgrid->send($semail);
+	
+}elseif($event == 'fail'){
+	$sendgrid = new SendGrid("$sendgridapi");
+	$semail = new SendGrid\Email();
+	$semail
+    ->addTo("$email")
+    ->setFrom("$fromemail")
+    ->setSubject("$failsubject")
+    ->setHtml("$failhtml");
+
+	$sendgrid->send($semail);
+}
 }// End of Mail User
 ?>

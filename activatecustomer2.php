@@ -172,5 +172,5 @@ if ($result3 = $mysqli->query("SELECT * FROM `customer_plans` WHERE `idcustomer_
     header('Location: activatecustomer.php');
     exit;
  }
-//header('Location: index.php');
+header('Location: index.php');
 ?>

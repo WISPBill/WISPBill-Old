@@ -50,10 +50,7 @@ LIMIT 0 , 25")) {
 						  $time = time();
 	$ssh = new Net_SSH2("$routerip");
 	if (!$ssh->login("$rname", "$rpass")) {
-        if ($result5 = $mysqli->query("SELECT * FROM `notifications`
-		WHERE `readyn` = '0' and `content` = 'The Router at $routerip did not allow SSH on
-		Management VLAN IP. Reason Unknown. Some Stats were
-		not collected. ID of Port AFFECTED = $portid'")) {
+        if ($result5 = $mysqli->query("SELECT * FROM `notifications` WHERE `readyn` = '0' and `content` = 'The Router at $routerip did not allow SSH on Management VLAN IP. Reason Unknown. Some Stats were not collected. ID of Port AFFECTED = $portid'")) {
 			if ($result5->num_rows == 1){
 			// Error is open no need to make again
 										
@@ -70,8 +67,27 @@ LIMIT 0 , 25")) {
 				/* free result set */
 		$result5->close();
 		}
+	}else{
+	 if ($result5 = $mysqli->query("SELECT * FROM `notifications`
+		WHERE `readyn` = '0' and `content` = 'The Router at $routerip did not allow SSH on Management VLAN IP. Reason Unknown. Some Stats were not collected. ID of Port AFFECTED = $portid'")) {
+			if ($result5->num_rows == 1){
+			// Error is open we need to close
+			   while ($row = $result5->fetch_assoc()) {
+			   $notiid= $row["idnotifications"];
+			   }
+			   if ($mysqli->query("UPDATE `$db`.`notifications`
+											 SET `readyn` = '1' WHERE `notifications`.`idnotifications` = '$notiid';")
+								   === TRUE) {
+								   // Nothing
+								   }
+			} elseif ($result5->num_rows == 0){
+			// No open error do nothing
+				
+			}
+				/* free result set */
+		$result5->close();
+		}
 	}
-
 	$data = $ssh->exec("/opt/vyatta/bin/vyatta-op-cmd-wrapper show interfaces ethernet $name");
 			
 	$string = 'RX:  bytes    packets     errors    dropped    overrun      mcast';  

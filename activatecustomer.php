@@ -209,11 +209,11 @@ desired effect
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-      Select a Device to Link it to an Account
+      Activate Customer and Select Billing Mode
       </h1>
       <ol class="breadcrumb">
         <li><a href="dashbored.php"><i class="fa fa-dashboard"></i> Dashbored</a></li>
-        <li class="active">Link Device</li>
+        <li class="active">Activate Customer</li>
       </ol>
     </section>
 
@@ -282,6 +282,7 @@ $errorlabel ='<label class="control-label" for="inputError" style="color: red;">
                   <select class="form-control" name="mode" required>
 					<option value='' selected disabled>Please Select Billing Mode</option>
                     <option value="radius">Radius</option>
+                    <option value="wispbill">Wispbill (No Actions Taken but DB)</option>
                   </select>
                 </div>
               <div class="form-group">

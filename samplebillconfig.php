@@ -37,6 +37,7 @@ $usernamer='';
 $passwordr='';
 $ipr='';
 $dbr='';
+$nopayurl=''; // For WISPr-Redirection-URL
 // End of SQL config
 // Start of Billing Config
 // These features are being worked on

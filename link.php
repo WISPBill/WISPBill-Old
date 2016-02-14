@@ -6,7 +6,8 @@ echo'
         <li class="treeview">
           <a href="#"><i class="fa fa-compass"></i> <span>Lead Management</span> <i class="fa fa-angle-left pull-right"></i></a>
           <ul class="treeview-menu">
-            <li><a href="mapleads.php">Map Leads</a></li>
+            <li><a href="mapleads.php">Map Lead\'s</a></li>
+            <li><a href="viewlead.php">View Lead\'s</a></li>
             <li><a href="createlead.php">Create a Lead</a></li>
             <li><a href="convertleadin.php">Convert Lead to An Install</a></li>
             <li><a href="convertlead.php">Convert Lead to An Account</a></li>
@@ -91,8 +92,8 @@ echo'
         <li class="treeview">
           <a href="#"><i class="fa fa-database"></i> <span>Data Views</span> <i class="fa fa-angle-left pull-right"></i></a>
           <ul class="treeview-menu">
-            <li><a href="">1</a></li>
-            <li><a href="">2</a></li>
+            <li><a href="viewportdata.php">View Router Port Data</a></li>
+            <li><a href="viewavgcpedata.php">View Average CPE Preformance</a></li>
            
           </ul>
         </li>

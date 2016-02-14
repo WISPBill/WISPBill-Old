@@ -25,11 +25,13 @@ If  you find bugs report them if you add a feature or fix a bug make a pull requ
 You Can now use Freeradius Mode (Assign Static IP not Supported but QOS and Auth are Supported)
 
 
+You can now use WISPBill SSH based Subscription Management QOS not Supported (I Don't know the best way to do it if you have a way that can be done by SSH let me know)
+
 I Few known limitations
 
 Geocoder is based off of US Census Data therefore it will only geocode US address
 
-WISPBill SSH based QOS and Subscription Management is not done 
+WISPBill SSH based QOS is not done 
 
 WISPBill a PHP based ISP billing platform
     Copyright (C) 2015  Turtles2

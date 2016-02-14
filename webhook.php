@@ -89,7 +89,24 @@ WHERE  `customer_info_idcustomer_info` =  '$iid'")) {
    }
   }elseif($mode == 'wispbill'){
    //SSH billing user
-   
+   $works = nopayset($iid,$mysqli,$masterkey,$db);
+   if($works == false){
+    $works = nopayset($iid,$mysqli,$masterkey,$db);
+       if($works == false){
+       http_response_code(500);
+       }elseif($works == true){
+       //Nothing
+       }else{
+       http_response_code(500);
+       exit;
+       }
+
+   }elseif($works == true){
+    //Nothing
+   }else{
+    http_response_code(500);
+    exit;
+   }
   }
  }elseif($status == '0'){
   // Customer is already behind we don't need to do anything
@@ -159,7 +176,36 @@ WHERE  `customer_info_idcustomer_info` =  '$iid'")) {
    
   }elseif($mode == 'wispbill'){
    //SSH billing user
-   
+   $works = nopayunset($iid,$mysqli,$masterkey,$db);
+   if($works == false){
+    $works = nopayunset($iid,$mysqli,$masterkey,$db);
+       if($works == false){
+       http_response_code(500);
+       }elseif($works == true){
+       if ($mysqli->query("UPDATE  `$db`.`customer_external` SET  `billing` =  '1' WHERE
+   `customer_external`.`customer_info_idcustomer_info` =$iid;") === TRUE) {
+
+   }else{
+   http_response_code(500);
+   exit;
+   }
+       }else{
+       http_response_code(500);
+       exit;
+       }
+
+   }elseif($works == true){
+    if ($mysqli->query("UPDATE  `$db`.`customer_external` SET  `billing` =  '1' WHERE
+   `customer_external`.`customer_info_idcustomer_info` =$iid;") === TRUE) {
+
+   }else{
+   http_response_code(500);
+   exit;
+   }
+   }else{
+    http_response_code(500);
+    exit;
+   }
   }
  }else{
   http_response_code(500); 
@@ -186,7 +232,7 @@ WHERE  `customer_info_idcustomer_info` =  '$iid'")) {
     $result->close();
  }// end if
  mailuser($email,'receipt',$sendgridapi,$fromemail);
-elseif($event["type"] == 'invoice.payment_failed'){
+ }elseif($event["type"] == 'invoice.payment_failed'){
   // Send Email
   
    if ($result2 = $mysqli->query("SELECT * FROM `customer_users` WHERE `stripeid` = '$cusid'")) {

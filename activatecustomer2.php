@@ -151,7 +151,17 @@ if ($result3 = $mysqli->query("SELECT * FROM `customer_plans` WHERE `idcustomer_
                 }
    }elseif($mode == "wispbill"){
      // Do WISPBill SSH Billing
-          
+       $works = ACLWhitelist($iid,$mysqli,$masterkey,$db);
+	   if($works == false){
+		  echo "SSH Error AClWhitelist";
+		  exit;
+	   }elseif($works == true){
+		  //nothing
+	   }else{
+		  //acl did not run
+		  echo "ACLWhitelist did not work";
+		  exit;
+	   }
    }else{
      echo "Error";
      exit;

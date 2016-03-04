@@ -40,7 +40,7 @@ $dbr='';
 $nopayurl=''; // For WISPr-Redirection-URL
 // End of SQL config
 // Start of Billing Config
-// These features are being worked on
+// These features are not needed unless you want to risk stuff 
 $nopayportalip='192.168.4.2'; // IP in tunnel for captive portal should be lowest in subnet max tunnesl 200
 $nopaytunip='192.168.1.3'; // IP for tunnel endpoint
 // Timezone
@@ -75,7 +75,7 @@ $emailreader = false;// False if you don't want email clent
 $notitimestamp=  time();
 $source = '';
 $notimesg = '';
-$calevents = '1';
+
 // This is the key for Device credential encryption
 $masterkey = 'makeitgood';
 //Sendgrid Config

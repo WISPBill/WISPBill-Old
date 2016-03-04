@@ -16,7 +16,8 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-	@turtles2 on ubiquiti community, DSLReports and Netonix 
+	@turtles2 on ubiquiti community, DSLReports and Netonix
+		This script is depreciated as far as the software gose I do not recommend using it for WISPBill
  */
 require_once('./session.php');
 require_once('./fileloader.php');
@@ -234,7 +235,7 @@ $errorlabel ='<label class="control-label" for="inputError" style="color: red;">
             <div class="box-body">
               <form role="form" action="setupnopay2.php"method="post">
                 <!-- text input -->
-                
+                <h1>This script is depreciated as far as the software gose I do not recommend using it for WISPBill</h1>
                 
 				 <div class="form-group">
                   

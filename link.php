@@ -37,7 +37,12 @@ echo'
          <li class="treeview">
           <a href="#"><i class="fa fa-life-ring"></i> <span>Customer Support</span> <i class="fa fa-angle-left pull-right"></i></a>
           <ul class="treeview-menu">
-            <li><a href="#">Link in level 2</a></li>
+            <li class="treeview">
+          <a href="#"><i class="fa fa-ticket"></i> <span>Ticket Management</span> <i class="fa fa-angle-left pull-right"></i></a>
+          <ul class="treeview-menu">
+            <li><a href="assignticket.php">Assign Tickets</a></li>
+            <li><a href="viewyourticket.php">View Your Tickets</a></li>
+          </ul></li>
             <li><a href="#">Link in level 2</a></li>
           </ul>
         </li>
@@ -51,7 +56,7 @@ echo'
           <a href="#"><i class="fa fa-fire"></i> <span>Firewall Management</span> <i class="fa fa-angle-left pull-right"></i></a>
           <ul class="treeview-menu">
             <li><a href="setupacl.php">Set up ACL Firewall</a></li>
-            <li><a href="setupnopay.php">Set up No Pay Firewall</a></li>
+            
           </ul></li>
           <li><a href="configrouter.php">Configure Monitoring</a></li>
           </ul>
@@ -90,15 +95,15 @@ echo'
           </ul>
         </li>
         <li class="treeview">
-          <a href="#"><i class="fa fa-database"></i> <span>Data Views</span> <i class="fa fa-angle-left pull-right"></i></a>
+          <a href="#"><i class="fa fa-calendar-plus-o"></i> <span>Schedule Management</span> <i class="fa fa-angle-left pull-right"></i></a>
           <ul class="treeview-menu">
-            <li><a href="viewportdata.php">View Router Port Data</a></li>
-            <li><a href="viewavgcpedata.php">View Average CPE Preformance</a></li>
-           
+            <li><a href="scheduletask.php">Schedule an Existing Task</a></li>
+            <li><a href="starttask.php">Start A Task</a></li>
+           <li><a href="endtask.php">End A Task</a></li>
           </ul>
         </li>
         <li>
-          <a href="">
+          <a href="calendar.php">
             <i class="fa fa-calendar"></i> <span>Calendar</span>
             <small class="label pull-right bg-green">';
             echo "$calevents</small>
@@ -116,6 +121,14 @@ echo'
             //Email it not on
           }
           echo '
+        </li>
+          <li class="treeview">
+          <a href="#"><i class="fa fa-database"></i> <span>Data Views</span> <i class="fa fa-angle-left pull-right"></i></a>
+          <ul class="treeview-menu">
+            <li><a href="viewportdata.php">View Router Port Data</a></li>
+            <li><a href="viewavgcpedata.php">View Average CPE Preformance</a></li>
+           
+          </ul>
         </li>
       </ul>
       <!-- /.sidebar-menu -->

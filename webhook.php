@@ -20,7 +20,8 @@
  */
 require_once('./fileloader.php');
 require_once('./billingcon.php');
-
+// Workaround for email sender 
+$emailfilldata = '';
 // Retrieve the request's body and parse it as JSON
 $input = @file_get_contents("php://input");
 $event_json = json_decode($input, true);
@@ -231,7 +232,7 @@ WHERE  `customer_info_idcustomer_info` =  '$iid'")) {
        /* free result set */
     $result->close();
  }// end if
- mailuser($email,'receipt',$sendgridapi,$fromemail);
+ mailuser($email,'receipt',$sendgridapi,$fromemail,$emailfilldata);
  }elseif($event["type"] == 'invoice.payment_failed'){
   // Send Email
   
@@ -252,7 +253,7 @@ WHERE  `customer_info_idcustomer_info` =  '$iid'")) {
        /* free result set */
     $result->close();
  }// end if
- mailuser($email,'fail',$sendgridapi,$fromemail);
+ mailuser($email,'fail',$sendgridapi,$fromemail,$emailfilldata);
 }else{
     // nothing happens if it is not a charge event
     

@@ -209,64 +209,80 @@ desired effect
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-      View Customer's
+      Assign Ticket
       </h1>
       <ol class="breadcrumb">
         <li><a href="dashbored.php"><i class="fa fa-dashboard"></i> Dashbored</a></li>
-        <li class="active">Customers</li>
+        <li class="active">Assign Ticket</li>
       </ol>
     </section>
 
     <!-- Main content -->
- 
+	 <form role="form" action="assignticket2.php"method="post">
 	<div class="row">
         <div class="col-xs-12">
     <section class="content">
 	<div class="box">
             <div class="box-header">
-<?php
-	         $mysqli = new mysqli("$ip", "$username", "$password", "$db");
-if ($result = $mysqli->query("SELECT * FROM `customer_info` WHERE
-                             `idcustomer_users` is not NULL
-                             and `idcustomer_plans` is not NULL")) {
-      /* fetch associative array */
-      $numrow = $result->num_rows;
-     echo "<h3 class=\"box-title\">We have $numrow Customers</h3>";			
- ?>
+			 <?php
+// get error 
+$error = $_SESSION['exitcodev2'];
+                if($error =='id'){
+				 echo '<h3 class="box-title" style="color: red;">You need to Select a Ticket</h3>';
+				}else{
+				 echo '<h3 class="box-title">Select a Ticket to Assign</h3>';
+				}
+                
+$_SESSION['exitcodev2'] ='';
+$errorlabel ='<label class="control-label" for="inputError" style="color: red;"><i class="fa fa-times-circle-o"></i> Input with
+    error</label>';
+?>
+
             </div>
             <!-- /.box-header -->
             <div class="box-body">
               <table id="example1" class="table table-bordered table-striped">
                 <thead>
                 <tr>
-				  <th>Name</th> 
-				  <th>Phone</th>
-                  <th>Email</th>
-				  <th>Address</th> 
-				 <th>City</th>
-                 <th>Zip</th>
+                  <th>Select</th>
+				  <th>Issue</th> 
+				  <th>Customer</th>
+                  <th>Created By</th> 
                 </tr>
                 </thead>
                 <tbody>
 				 <?php
-
-    
+                  /*0 unassigned
+  *1 assigned but not solved
+  *2 assigned and solved
+  *3 assigned and escalation needed
+  *4 solved with escalation 
+  */
+                if ($result = $mysqli->query("SELECT * FROM  `ticket` WHERE  `status` =  '0'")) {
+      /* fetch associative array */
+         
     while ($row = $result->fetch_assoc()) {
-     $fname= $row["fname"];
-     $lname= $row["lname"];
-     $phone= $row["phone"];
-     $add= $row["address"];
-     $city= $row["city"];
-     $zip= $row["zip_code"];
-     $email= $row["email"];
-     $phone = "(".substr($phone,0,3).") ".substr($phone,3,3)."-".substr($phone,6);
+      $id= $row["idticket"];
+      $issue= $row["issue"];
+     $cusinfoid= $row["customer_info_idcustomer_info"];
+     $adminid= $row["admin_users_idadmin"];
+     if ($result2 = $mysqli->query("SELECT * FROM `customer_info` WHERE `idcustomer_info` = '$cusinfoid'")) {
+     while ($row2 = $result2->fetch_assoc()) {
+     $fname= $row2["fname"];
+     $lname= $row2["lname"];
+     }
+     }
+     if ($result3 = $mysqli->query("SELECT * FROM `admin_users` WHERE `idadmin` = '$adminid'")) {
+     while ($row3 = $result3->fetch_assoc()) {
+     $afname= $row3["fname"];
+     $alname= $row3["lname"];
+     }
+     }
      echo" <tr>
-    <td>$fname $lname</td> 
-    <td>$phone</td>
-    <td>$email</td>
-    <td>$add</td> 
-    <td>$city</td>
-    <td>$zip</td>
+    <td><input type='checkbox' name='id[]' value=$id unchecked></td>
+    <td>$issue</td> 
+    <td>$fname $lname</td>
+    <td>$afname $alname</td>
   </tr>";
     }
 }
@@ -275,19 +291,47 @@ if ($result = $mysqli->query("SELECT * FROM `customer_info` WHERE
                 </tbody>
                 <tfoot>
                 <tr>
-                  <th>Name</th> 
-				  <th>Phone</th>
-                  <th>Email</th>
-				  <th>Address</th> 
-				 <th>City</th>
-                 <th>Zip</th>
+                   <th>Select</th>
+				  <th>Issue</th> 
+				  <th>Customer</th>
+                  <th>Created By</th> 
                 </tr>
                 </tfoot>
               </table>
-			
+			   <div class="form-group">
+                  
+				<?php
+				 if ($result2 = $mysqli->query("SELECT * FROM `admin_users`")) {
+    /* fetch associative array */
+	
+                if($error == 'admin'){
+						echo "$errorlabel";
+					}else{
+						echo '<label>Assign Tickets To</label>';
+					}
+                echo '<select class="form-control" name="adminid" required>
+				  <option value="" selected disabled>Please Select a User</option>';
+    while ($row2 = $result2->fetch_assoc()) {
+        $id2 = $row2["idadmin"];
+        $fname= $row2["fname"];
+        $lname= $row2["lname"];
+        echo"<option value=$id2>$fname $lname</option>";
+        }
+ echo ' </select>
+                </div>
+				<div class="box-footer">
+                <button type="submit" class="btn btn-primary">Submit</button>
+              </div>';
+    /* free result set */
+    $result->close();
+	}else{
+        echo'  <label class="control-label" for="inputError">Datebase
+                    error contact your webmaster</label>';
+    }
+				?>
+            </div>
             <!-- /.box-body -->
           </div>
-               </div>
           <!-- /.box -->
         </div>
         <!-- /.col -->
@@ -328,13 +372,12 @@ if ($result = $mysqli->query("SELECT * FROM `customer_info` WHERE
      fixed layout. -->
 <script>
   $(function () {
-    $("#example1").DataTable();
-    $('#example2').DataTable({
+    $('#example1').DataTable({
       "paging": true,
-      "lengthChange": false,
-      "searching": false,
+      "lengthChange": true,
+      "searching": true,
       "ordering": true,
-      "info": true,
+      "info": false,
       "autoWidth": false
     });
   });

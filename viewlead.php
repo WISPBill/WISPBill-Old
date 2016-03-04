@@ -257,6 +257,7 @@ if ($result = $mysqli->query("SELECT * FROM `customer_info` WHERE `idcustomer_us
      $city= $row["city"];
      $zip= $row["zip_code"];
      $email= $row["email"];
+     $phone = "(".substr($phone,0,3).") ".substr($phone,3,3)."-".substr($phone,6);
      echo" <tr>
     <td>$fname $lname</td> 
     <td>$phone</td>

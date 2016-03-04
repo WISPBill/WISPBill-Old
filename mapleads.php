@@ -254,6 +254,7 @@ if ($result = $mysqli->query("SELECT * FROM `customer_info` WHERE `idcustomer_us
      $phone = $row["phone"];
      $fname = $row["fname"];
      $lname = $row["lname"];
+     $phone = "(".substr($phone,0,3).") ".substr($phone,3,3)."-".substr($phone,6);
      echo" 
        var marker = L.marker([$lat, $lon])
         .addTo(map)

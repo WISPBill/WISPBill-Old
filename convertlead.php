@@ -263,6 +263,7 @@ $error = $_SESSION['exitcodev2'];
      $email= $row["email"];
      $add= $row["address"];
      $city= $row["city"];
+	 $tel = "(".substr($tel,0,3).") ".substr($tel,3,3)."-".substr($tel,6);
      echo" <tr>
     <td><input type='radio' name='id' value=$id unchecked></td>
     <td>$fname $lname</td> 

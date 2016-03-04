@@ -427,7 +427,7 @@ if ($result = $mysqli->query("select avg($intdata) as data from `cpe_data` WHERE
         x: {
             type: 'timeseries',
             tick: {
-                format: '%I:%M %p %e/%m/%y'
+                format: '%I:%M %p %m/%e/%y'
             }
         }
     }

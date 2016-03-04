@@ -57,6 +57,13 @@ if ($result = $mysqli->query("SELECT * FROM `notifications` WHERE `readyn`
     $result->close();
       }
 }
+	// Start of Calaender even getter 
+	if ($result = $mysqli->query("SELECT * FROM `tasks` WHERE `admin_users_idadmin` = '$adminid' and `start_date_time` >  '$currenttime'")) {
+		$curtime = time();
+    $calevents = mysqli_num_rows($result);
+	}
+	
+	
 }else{
 	//nothing
 }

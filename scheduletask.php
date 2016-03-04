@@ -51,6 +51,13 @@ if ($result = $mysqli->query("SELECT * FROM `admin_users` WHERE `idadmin` = $adm
   <!-- Ionicons -->
   <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
   <link rel="stylesheet" href="AdminLTE2/plugins/datatables/dataTables.bootstrap.css">
+  <link rel="stylesheet" href="AdminLTE2/plugins/daterangepicker/daterangepicker-bs3.css">
+  <!-- iCheck for checkboxes and radio inputs -->
+  <link rel="stylesheet" href="AdminLTE2/plugins/iCheck/all.css">
+  <!-- Bootstrap Color Picker -->
+
+  <!-- Bootstrap time Picker -->
+  <link rel="stylesheet" href="AdminLTE2/plugins/timepicker/bootstrap-timepicker.min.css">
   <!-- Theme style -->
   <link rel="stylesheet" href="AdminLTE2/dist/css/AdminLTE.min.css">
   <!-- AdminLTE Skins. We have chosen the skin-blue for this starter
@@ -59,6 +66,8 @@ if ($result = $mysqli->query("SELECT * FROM `admin_users` WHERE `idadmin` = $adm
   -->
   <link rel="stylesheet" href="AdminLTE2/dist/css/skins/skin-blue.min.css">
 
+	
+	
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
   <!--[if lt IE 9]>
@@ -87,6 +96,23 @@ desired effect
 |---------------------------------------------------------|
 -->
 <body class="hold-transition skin-blue sidebar-mini">
+									<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Ticket Data View</h4>
+      </div>
+      <div class="modal-body" id="modal-body">
+      
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="wrapper">
 
   <!-- Main Header -->
@@ -209,16 +235,16 @@ desired effect
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-      Convert Lead to Install
+      Schedule an Existing Task
       </h1>
       <ol class="breadcrumb">
         <li><a href="dashbored.php"><i class="fa fa-dashboard"></i> Dashbored</a></li>
-        <li class="active">Convert Lead</li>
+        <li class="active">Schedule Task</li>
       </ol>
     </section>
 
     <!-- Main content -->
-	 <form role="form" action="convertleadin2.php"method="post">
+	 <form role="form" action="scheduletask2.php"method="post">
 	<div class="row">
         <div class="col-xs-12">
     <section class="content">
@@ -228,12 +254,16 @@ desired effect
 // get error 
 $error = $_SESSION['exitcodev2'];
                 if($error =='id'){
-				 echo '<h3 class="box-title" style="color: red;">You need to Select a Lead</h3>';
+				 echo '<h3 class="box-title" style="color: red;">You need to Select a Task</h3>';
 				}else{
-				 echo '<h3 class="box-title">Select a Lead</h3>';
+				 echo '<h3 class="box-title">Select Task to Schedule</h3>';
 				}
-				$_SESSION['exitcodev2'] = '';
-?> 
+                
+$_SESSION['exitcodev2'] ='';
+$errorlabel ='<label class="control-label" for="inputError" style="color: red;"><i class="fa fa-times-circle-o"></i> Input with
+    error</label>';
+?>
+
             </div>
             <!-- /.box-header -->
             <div class="box-body">
@@ -241,58 +271,95 @@ $error = $_SESSION['exitcodev2'];
                 <thead>
                 <tr>
                   <th>Select</th>
-				  <th>Name</th> 
-				   <th>Phone</th>
-				  <th>Email</th>
-				 <th>Address</th>
-				  <th>City</th>
+									<th>Show Full Info</th>
+				  <th>Issue</th> 
+                  <th>Customer</th>
+                  <th>Phone</th>
                 </tr>
                 </thead>
                 <tbody>
 				 <?php
-                if ($result = $mysqli->query("SELECT * FROM  `customer_info` 
-WHERE  `idcustomer_info` NOT IN (
-SELECT  `customer_info_idcustomer_info` 
-FROM  `ticket` WHERE  `issue` =  'Install'
-) AND  `idcustomer_users` IS NULL ")) {
+                  /*0 unassigned
+  *1 assigned but not solved
+  *2 assigned and solved
+  *3 assigned and escalation needed
+  *4 solved with escalation 
+  */
+                if ($result = $mysqli->query("SELECT * FROM  `tasks` WHERE  `start_date_time` IS NULL 
+AND  `real_start_date_time` IS NULL 
+AND  `admin_users_idadmin` =  '$adminid'")) {
       /* fetch associative array */
          
     while ($row = $result->fetch_assoc()) {
-     $id= $row["idcustomer_info"];
-     $fname= $row["fname"];
-     $lname= $row["lname"];
-     $tel= $row["phone"];
-     $email= $row["email"];
-     $add= $row["address"];
-     $city= $row["city"];
-	 $tel = "(".substr($tel,0,3).") ".substr($tel,3,3)."-".substr($tel,6);
+      $id= $row["idtasks"];
+      $task= $row["task"];
+      $ticketid= $row["ticket_idticket"];
+      
+      if ($result2 = $mysqli->query("SELECT * FROM `ticket` WHERE `idticket` = '$ticketid'")) {
+     while ($row2 = $result2->fetch_assoc()) {
+     $cusinfoid= $row2["customer_info_idcustomer_info"];
+     }
+     }
+     if ($result2 = $mysqli->query("SELECT * FROM `customer_info` WHERE `idcustomer_info` = '$cusinfoid'")) {
+     while ($row2 = $result2->fetch_assoc()) {
+     $fname= $row2["fname"];
+     $lname= $row2["lname"];
+     $phone= $row2["phone"];
+     $phone = "(".substr($phone,0,3).") ".substr($phone,3,3)."-".substr($phone,6);
+     }
+     }
+     
      echo" <tr>
-    <td><input type='radio' name='id' value=$id unchecked></td>
-    <td>$fname $lname</td> 
-    <td>$tel</td>
-    <td>$email</td>
-    <td>$add</td> 
-    <td>$city</td>
+    <td><input type='radio' name='id' value='$ticketid' unchecked></td>
+		<td>
+		   <button type='button' class='btn btn-block btn-success btn-sm' data-toggle='modal' data-target='#myModal' id='$ticketid' onClick='getdatainfo(this.id)'>Show Ticket Data</button>
+		</td>
+    <td>$task</td> 
+<td>$fname $lname</td>
+<td>$phone</td>
   </tr>";
-    }
+    $ticketid= ''; }
 }
 
 ?>
+	
                 </tbody>
                 <tfoot>
                 <tr>
-                  <th>Select</th>
-				  <th>Name</th> 
-				   <th>Phone</th>
-				  <th>Email</th>
-				 <th>Address</th>
-				  <th>City</th>
+                   <th>Select</th>
+									<th>Show Full Info</td>
+				  <th>Issue</th> 
+			<th>Customer</th>
+            <th>Phone</th>
                 </tr>
                 </tfoot>
               </table>
-			  <div class="box-footer">
+              
+              <div class="form-group">
+                <?php
+					if($error == 'time'){
+						echo "$errorlabel";
+					}else{
+						echo ' <label>Date and time range:</label>';
+					}
+					?>
+               
+                <div class="input-group">
+                  <div class="input-group-addon">
+                    <i class="fa fa-clock-o"></i>
+                  </div>
+                  <input type="text" class="form-control pull-right" name="time" id="reservationtime" readonly="readonly">
+                 
+                </div>
+                <!-- /.input group -->
+              </div>
+              <!-- /.form group -->
+              
+			   
+				<div class="box-footer">
                 <button type="submit" class="btn btn-primary">Submit</button>
               </div>
+              
             </div>
             <!-- /.box-body -->
           </div>
@@ -324,26 +391,133 @@ FROM  `ticket` WHERE  `issue` =  'Install'
 <script src="AdminLTE2/plugins/jQuery/jQuery-2.1.4.min.js"></script>
 <!-- Bootstrap 3.3.5 -->
 <script src="AdminLTE2/bootstrap/js/bootstrap.min.js"></script>
+<script src="AdminLTE2/plugins/select2/select2.full.min.js"></script>
+<script src="AdminLTE2/plugins/input-mask/jquery.inputmask.js"></script>
+<script src="AdminLTE2/plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
+<script src="AdminLTE2/plugins/input-mask/jquery.inputmask.extensions.js"></script>
 <!-- AdminLTE App -->
 <script src="AdminLTE2/dist/js/app.min.js"></script>
 <!-- DataTables -->
 <script src="AdminLTE2/plugins/datatables/jquery.dataTables.min.js"></script>
 <script src="AdminLTE2/plugins/datatables/dataTables.bootstrap.min.js"></script>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.2/moment.min.js"></script>
+<script src="AdminLTE2/plugins/daterangepicker/daterangepicker.js"></script>
+<!-- bootstrap color picker -->
+<script src="AdminLTE2/plugins/colorpicker/bootstrap-colorpicker.min.js"></script>
+<!-- bootstrap time picker -->
+<script src="AdminLTE2/plugins/timepicker/bootstrap-timepicker.min.js"></script>
 <!-- Optionally, you can add Slimscroll and FastClick plugins.
      Both of these plugins are recommended to enhance the
      user experience. Slimscroll is required when using the
      fixed layout. -->
+		<script type="text/javascript">
+ function getdatainfo(clicked_id)
+			{
+  $("#modal-body").load("<?php echo"$url"; ?>/ticketdataget.php?choice=" + clicked_id);
+ }
+  </script>
 <script>
   $(function () {
-    $("#example1").DataTable();
-    $('#example2').DataTable({
+    $('#example1').DataTable({
       "paging": true,
+      "lengthChange": true,
+      "searching": true,
+      "ordering": true,
+      "info": false,
+      "autoWidth": false
+    });
+  });
+	  $(function () {
+    $('#example2').DataTable({
+      "paging": false,
       "lengthChange": false,
       "searching": false,
-      "ordering": true,
-      "info": true,
+      "ordering": false,
+      "info": false,
       "autoWidth": false
+    });
+  });
+	 $(function () {
+    $('#example3').DataTable({
+      "paging": true,
+      "lengthChange": true,
+      "searching": true,
+      "ordering": true,
+      "info": false,
+      "autoWidth": false
+    });
+  });
+	 $(function () {
+    $('#example4').DataTable({
+      "paging": true,
+      "lengthChange": true,
+      "searching": true,
+      "ordering": true,
+      "info": false,
+      "autoWidth": false
+    });
+  });
+</script>
+<script>
+  $(function () {
+    //Initialize Select2 Elements
+    $(".select2").select2();
+
+    //Datemask dd/mm/yyyy
+    $("#datemask").inputmask("dd/mm/yyyy", {"placeholder": "dd/mm/yyyy"});
+    //Datemask2 mm/dd/yyyy
+    $("#datemask2").inputmask("mm/dd/yyyy", {"placeholder": "mm/dd/yyyy"});
+    //Money Euro
+    $("[data-mask]").inputmask();
+
+    //Date range picker
+    $('#reservation').daterangepicker();
+    //Date range picker with time picker
+    $('#reservationtime').daterangepicker({timePicker: true, timePickerIncrement: 5, format: 'MM/DD/YYYY h:mm A'});
+    //Date range as a button
+    $('#daterange-btn').daterangepicker(
+        {
+          ranges: {
+            'Today': [moment(), moment()],
+            'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+            'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+            'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+            'This Month': [moment().startOf('month'), moment().endOf('month')],
+            'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+          },
+          startDate: moment().subtract(29, 'days'),
+          endDate: moment()
+        },
+        function (start, end) {
+          $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+        }
+    );
+
+    //iCheck for checkbox and radio inputs
+    $('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
+      checkboxClass: 'icheckbox_minimal-blue',
+      radioClass: 'iradio_minimal-blue'
+    });
+    //Red color scheme for iCheck
+    $('input[type="checkbox"].minimal-red, input[type="radio"].minimal-red').iCheck({
+      checkboxClass: 'icheckbox_minimal-red',
+      radioClass: 'iradio_minimal-red'
+    });
+    //Flat red color scheme for iCheck
+    $('input[type="checkbox"].flat-red, input[type="radio"].flat-red').iCheck({
+      checkboxClass: 'icheckbox_flat-green',
+      radioClass: 'iradio_flat-green'
+    });
+
+    //Colorpicker
+    $(".my-colorpicker1").colorpicker();
+    //color picker with addon
+    $(".my-colorpicker2").colorpicker();
+
+    //Timepicker
+    $(".timepicker").timepicker({
+      showInputs: false
     });
   });
 </script>

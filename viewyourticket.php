@@ -209,70 +209,75 @@ desired effect
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-      Convert Lead to Install
+      View Your Open tickets
       </h1>
       <ol class="breadcrumb">
         <li><a href="dashbored.php"><i class="fa fa-dashboard"></i> Dashbored</a></li>
-        <li class="active">Convert Lead</li>
+        <li class="active">View Tickets</li>
       </ol>
     </section>
 
     <!-- Main content -->
-	 <form role="form" action="convertleadin2.php"method="post">
+
 	<div class="row">
         <div class="col-xs-12">
     <section class="content">
 	<div class="box">
-            <div class="box-header">
-			 <?php
-// get error 
-$error = $_SESSION['exitcodev2'];
-                if($error =='id'){
-				 echo '<h3 class="box-title" style="color: red;">You need to Select a Lead</h3>';
-				}else{
-				 echo '<h3 class="box-title">Select a Lead</h3>';
-				}
-				$_SESSION['exitcodev2'] = '';
-?> 
+        <div class="box-header">
+
+     <h3 class="box-title">View Your Open tickets</h3>
+ 
             </div>
             <!-- /.box-header -->
             <div class="box-body">
               <table id="example1" class="table table-bordered table-striped">
                 <thead>
                 <tr>
-                  <th>Select</th>
-				  <th>Name</th> 
-				   <th>Phone</th>
-				  <th>Email</th>
-				 <th>Address</th>
-				  <th>City</th>
+				  <th>Issue</th> 
+				  <th>Customer</th>
+                  <th>Created By</th> 
+                  <th>View Ticket</th>
                 </tr>
                 </thead>
                 <tbody>
 				 <?php
-                if ($result = $mysqli->query("SELECT * FROM  `customer_info` 
-WHERE  `idcustomer_info` NOT IN (
-SELECT  `customer_info_idcustomer_info` 
-FROM  `ticket` WHERE  `issue` =  'Install'
-) AND  `idcustomer_users` IS NULL ")) {
+                  /*0 unassigned
+  *1 assigned but not solved
+  *2 assigned and solved
+  *3 assigned and escalation needed
+  *4 solved with escalation 
+  Odd is unsloved and even is solved
+  */
+                if ($result = $mysqli->query("SELECT * FROM  `ticket` 
+WHERE  `idticket` IN (
+SELECT  `ticket_idticket` 
+FROM  `tasks` 
+WHERE  `admin_users_idadmin` =  '$adminid'
+) AND  MOD(  `status` , 2 ) =1 ")) {
       /* fetch associative array */
          
     while ($row = $result->fetch_assoc()) {
-     $id= $row["idcustomer_info"];
-     $fname= $row["fname"];
-     $lname= $row["lname"];
-     $tel= $row["phone"];
-     $email= $row["email"];
-     $add= $row["address"];
-     $city= $row["city"];
-	 $tel = "(".substr($tel,0,3).") ".substr($tel,3,3)."-".substr($tel,6);
+      $id= $row["idticket"];
+      $issue= $row["issue"];
+     $cusinfoid= $row["customer_info_idcustomer_info"];
+     $adminid= $row["admin_users_idadmin"];
+     if ($result2 = $mysqli->query("SELECT * FROM `customer_info` WHERE `idcustomer_info` = '$cusinfoid'")) {
+     while ($row2 = $result2->fetch_assoc()) {
+     $fname= $row2["fname"];
+     $lname= $row2["lname"];
+     }
+     }
+     if ($result3 = $mysqli->query("SELECT * FROM `admin_users` WHERE `idadmin` = '$adminid'")) {
+     while ($row3 = $result3->fetch_assoc()) {
+     $afname= $row3["fname"];
+     $alname= $row3["lname"];
+     }
+     }
      echo" <tr>
-    <td><input type='radio' name='id' value=$id unchecked></td>
-    <td>$fname $lname</td> 
-    <td>$tel</td>
-    <td>$email</td>
-    <td>$add</td> 
-    <td>$city</td>
+    <td>$issue</td> 
+    <td>$fname $lname</td>
+    <td>$afname $alname</td>
+    <td><a href='viewticket.php?id=$id'>View Ticket</a></td>
   </tr>";
     }
 }
@@ -281,18 +286,14 @@ FROM  `ticket` WHERE  `issue` =  'Install'
                 </tbody>
                 <tfoot>
                 <tr>
-                  <th>Select</th>
-				  <th>Name</th> 
-				   <th>Phone</th>
-				  <th>Email</th>
-				 <th>Address</th>
-				  <th>City</th>
+                   
+				  <th>Issue</th> 
+				  <th>Customer</th>
+                  <th>Created By</th> 
+                   <th>View Ticket</th>
                 </tr>
                 </tfoot>
               </table>
-			  <div class="box-footer">
-                <button type="submit" class="btn btn-primary">Submit</button>
-              </div>
             </div>
             <!-- /.box-body -->
           </div>
@@ -336,13 +337,12 @@ FROM  `ticket` WHERE  `issue` =  'Install'
      fixed layout. -->
 <script>
   $(function () {
-    $("#example1").DataTable();
-    $('#example2').DataTable({
+    $('#example1').DataTable({
       "paging": true,
-      "lengthChange": false,
-      "searching": false,
+      "lengthChange": true,
+      "searching": true,
       "ordering": true,
-      "info": true,
+      "info": false,
       "autoWidth": false
     });
   });

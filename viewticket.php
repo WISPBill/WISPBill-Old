@@ -22,6 +22,12 @@ require_once('./session.php');
 require_once('./fileloader.php');
 $mysqli = new mysqli("$ip", "$username", "$password", "$db");
 
+	if(empty($_GET['id'])){
+			header('Location: index.php');
+		}else{
+			$ticketid = $_GET['id'];
+		}
+
 $adminid = $_SESSION['adminid'];
 
 if ($result = $mysqli->query("SELECT * FROM `admin_users` WHERE `idadmin` = $adminid")) {
@@ -209,94 +215,229 @@ desired effect
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-      Convert Lead to Install
+      View ticket
       </h1>
       <ol class="breadcrumb">
         <li><a href="dashbored.php"><i class="fa fa-dashboard"></i> Dashbored</a></li>
-        <li class="active">Convert Lead</li>
+        <li class="active">View Ticket</li>
       </ol>
     </section>
 
     <!-- Main content -->
-	 <form role="form" action="convertleadin2.php"method="post">
+
+	
+    <section class="content">
 	<div class="row">
         <div class="col-xs-12">
-    <section class="content">
-	<div class="box">
+					<div class="box">
             <div class="box-header">
-			 <?php
-// get error 
-$error = $_SESSION['exitcodev2'];
-                if($error =='id'){
-				 echo '<h3 class="box-title" style="color: red;">You need to Select a Lead</h3>';
-				}else{
-				 echo '<h3 class="box-title">Select a Lead</h3>';
-				}
-				$_SESSION['exitcodev2'] = '';
-?> 
+<h3 class="box-title">General Ticket Data</h3>
+ 
             </div>
             <!-- /.box-header -->
             <div class="box-body">
-              <table id="example1" class="table table-bordered table-striped">
+    <?php
+					    echo '
+   
+    <table id="example1" class="table table-bordered table-striped">
                 <thead>
                 <tr>
-                  <th>Select</th>
-				  <th>Name</th> 
-				   <th>Phone</th>
-				  <th>Email</th>
-				 <th>Address</th>
-				  <th>City</th>
+				  <th>Issue</th> 
+				  <th>Customer</th>
+                  <th>Created By</th> 
+                 <th>Creation Date</td>
                 </tr>
                 </thead>
-                <tbody>
-				 <?php
-                if ($result = $mysqli->query("SELECT * FROM  `customer_info` 
-WHERE  `idcustomer_info` NOT IN (
-SELECT  `customer_info_idcustomer_info` 
-FROM  `ticket` WHERE  `issue` =  'Install'
-) AND  `idcustomer_users` IS NULL ")) {
+                <tbody>';
+                
+                if ($result = $mysqli->query("SELECT * FROM `ticket` WHERE `idticket` = '$ticketid'")) {
       /* fetch associative array */
          
     while ($row = $result->fetch_assoc()) {
-     $id= $row["idcustomer_info"];
-     $fname= $row["fname"];
-     $lname= $row["lname"];
-     $tel= $row["phone"];
-     $email= $row["email"];
-     $add= $row["address"];
-     $city= $row["city"];
-	 $tel = "(".substr($tel,0,3).") ".substr($tel,3,3)."-".substr($tel,6);
+      $id= $row["idticket"];
+      $issue= $row["issue"];
+     $cusinfoid= $row["customer_info_idcustomer_info"];
+     $adminid= $row["admin_users_idadmin"];
+     if ($result2 = $mysqli->query("SELECT * FROM `customer_info` WHERE `idcustomer_info` = '$cusinfoid'")) {
+     while ($row2 = $result2->fetch_assoc()) {
+     $fname= $row2["fname"];
+     $lname= $row2["lname"];
+     }
+     }
+     if ($result3 = $mysqli->query("SELECT * FROM `admin_users` WHERE `idadmin` = '$adminid'")) {
+     while ($row3 = $result3->fetch_assoc()) {
+     $afname= $row3["fname"];
+     $alname= $row3["lname"];
+     }
+     }
+     if ($result3 = $mysqli->query("SELECT * FROM  `history` 
+WHERE  `ticket_idticket` =  '$id' ORDER BY  `history`.`date` ASC 
+LIMIT 0 , 1")) {
+     while ($row3 = $result3->fetch_assoc()) {
+     $cdate= $row3["date"];
+     }
+     }
+
+     $cdate = date('n/j/y  g:i A',"$cdate");
      echo" <tr>
-    <td><input type='radio' name='id' value=$id unchecked></td>
-    <td>$fname $lname</td> 
-    <td>$tel</td>
-    <td>$email</td>
-    <td>$add</td> 
-    <td>$city</td>
+    <td>$issue</td> 
+    <td>$fname $lname</td>
+    <td>$afname $alname</td>
+    <td>$cdate</td>
   </tr>";
     }
 }
-
-?>
-                </tbody>
+echo '</tbody>
                 <tfoot>
                 <tr>
-                  <th>Select</th>
-				  <th>Name</th> 
-				   <th>Phone</th>
-				  <th>Email</th>
-				 <th>Address</th>
-				  <th>City</th>
+                   
+				  <th>Issue</th> 
+				  <th>Customer</th>
+                  <th>Created By</th> 
+                <th>Creation Date</th>
                 </tr>
                 </tfoot>
               </table>
-			  <div class="box-footer">
-                <button type="submit" class="btn btn-primary">Submit</button>
               </div>
+							</div>
+              <br></br>
+							<div class="box">
+            <div class="box-header">
+<h3 class="box-title">Ticket Notes</h3>
+ 
             </div>
-            <!-- /.box-body -->
-          </div>
-          <!-- /.box -->
+            <!-- /.box-header -->
+            <div class="box-body">
+              
+              <table id="example2" class="table table-bordered table-striped">
+                <thead>
+                <tr> 
+				  <th>Note</th>
+				  <th>Date</th> 
+				 <th>By Whom</th>
+                </tr>
+                </thead>
+                <tbody>';
+				
+ if ($result = $mysqli->query("SELECT * FROM `ticket_notes` WHERE `ticket_idticket` = '$id'")) {
+    /* fetch associative array */
+    foreach ($result as $row){
+		 $note = $row["note"];
+        $date = $row["date"];
+		 $taid = $row["admin_users_idadmin"];
+			 $date = date('n/j/y  g:i A',"$date");
+					if ($result3 = $mysqli->query("SELECT * FROM `admin_users` WHERE `idadmin` = $taid")) {
+				/* fetch associative array */
+				 while ($row3 = $result3->fetch_assoc()) {
+				 $afname= $row3["fname"];
+                     $afname= $row3["fname"];
+     $alname= $row3["lname"];
+					
+					 }
+  
+					$result3->close();
+						}else{
+						 echo'Something went wrong with the database please contact your webmaster';
+							exit;
+					}
+		// Echo Data
+		echo "<tr>
+		<td>$note</td>
+		<td>$date</td>
+		<td>$fname $lname</td>
+		</tr>";
+	}
+  
+    $result->close();
+}else{
+       echo'Something went wrong with the database please contact your webmaster';
+       exit;
+    }
+  
+
+echo '
+                </tbody>
+                <tfoot>
+                <tr>
+				  <th>Note</th>
+				  <th>Date</th> 
+				 <th>By Whom</th>
+                </tr>
+                </tfoot>
+              </table>
+                </div>
+							</div>
+              <br></br>
+							<div class="box">
+            <div class="box-header">
+<h3 class="box-title">Ticket History</h3>
+ 
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+                
+              <table id="example3" class="table table-bordered table-striped">
+                <thead>
+                <tr> 
+				  <th>Note</th>
+				  <th>Date</th> 
+				 <th>By Whom</th>
+                </tr>
+                </thead>
+                <tbody>';
+				
+ if ($result = $mysqli->query("SELECT * FROM  `history` WHERE  `ticket_idticket` =  '$id'
+                              ORDER BY  `history`.`date` ASC ")) {
+    /* fetch associative array */
+    foreach ($result as $row){
+		 $note = $row["event"];
+        $date = $row["date"];
+		 $taid = $row["admin_users_idadmin"];
+			 $date = date('n/j/y  g:i A',"$date");
+					if ($result3 = $mysqli->query("SELECT * FROM `admin_users` WHERE `idadmin` = $taid")) {
+				/* fetch associative array */
+				 while ($row3 = $result3->fetch_assoc()) {
+				 $afname= $row3["fname"];
+                    $alname= $row3["lname"];
+					
+					 }
+  
+					$result3->close();
+						}else{
+						 echo'Something went wrong with the database please contact your webmaster';
+							exit;
+					}
+		// Echo Data
+		echo "<tr>
+		<td>$note</td>
+		<td>$date</td>
+		<td>$afname $alname</td>
+		</tr>";
+	}
+  
+    $result->close();
+}else{
+       echo'Something went wrong with the database please contact your webmaster';
+       exit;
+    }
+  
+
+echo '
+                </tbody>
+                <tfoot>
+                <tr>
+				  <th>Note</th>
+				  <th>Date</th> 
+				 <th>By Whom</th>
+                </tr>
+                </tfoot>
+              </table>
+							</div>
+							</div>
+              ';
+					
+					?>
+            
         </div>
         <!-- /.col -->
       </div>
@@ -336,13 +477,32 @@ FROM  `ticket` WHERE  `issue` =  'Install'
      fixed layout. -->
 <script>
   $(function () {
-    $("#example1").DataTable();
-    $('#example2').DataTable({
-      "paging": true,
+    $('#example1').DataTable({
+      "paging": false,
       "lengthChange": false,
       "searching": false,
+      "ordering": false,
+      "info": false,
+      "autoWidth": false
+    });
+  });
+	 $(function () {
+    $('#example2').DataTable({
+      "paging": true,
+      "lengthChange": true,
+      "searching": true,
       "ordering": true,
-      "info": true,
+      "info": false,
+      "autoWidth": false
+    });
+  });
+	 $(function () {
+    $('#example3').DataTable({
+      "paging": true,
+      "lengthChange": true,
+      "searching": true,
+      "ordering": true,
+      "info": false,
       "autoWidth": false
     });
   });

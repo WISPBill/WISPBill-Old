@@ -27,14 +27,14 @@ $id = $_POST["id"];
 
  if (empty($id)) {
     $_SESSION['exitcodev2'] = 'id';
-    header('Location: convertleadin.php');
+    header('Location: starttask.php');
     exit;
  }else {
     // Nothing 
  }
- 
- $leadid = $mysqli->real_escape_string($id);
- 
+
+ $id = $mysqli->real_escape_string($id);
+
  /*0 unassigned
   *1 assigned but not solved
   *2 assigned and solved
@@ -42,29 +42,30 @@ $id = $_POST["id"];
   *4 solved with escalation 
   */
  
- if ($result = $mysqli->query("INSERT INTO `$db`.`ticket` (`idticket`, `issue`,
-`status`, `admin_users_idadmin`, `customer_info_idcustomer_info`) VALUES
-(NULL, 'Install', '0', '$adminid', '$leadid');")) {
+  if ($result2 = $mysqli->query("SELECT * FROM `ticket` WHERE `idticket` = '$id'")) {
+     while ($row2 = $result2->fetch_assoc()) {
+     $cusinfoid= $row2["customer_info_idcustomer_info"];
+     }
+     }
+ 
+     $time = time();
+     
+     if ($result = $mysqli->query("UPDATE  `$db`.`tasks` SET  `real_start_date_time` =  '$time'
+WHERE  `ticket_idticket` = '$id'") === TRUE){
 
 } else {
    echo 'DB ERROR';
   exit;
-}// end if
-
-if ($result3 = $mysqli->query("SELECT * FROM  `ticket` WHERE  `issue` =  'Install'
-AND  `admin_users_idadmin` =  '$adminid' AND  `customer_info_idcustomer_info` =  '$leadid'")) {
-     while ($row3 = $result3->fetch_assoc()) {
-     $ticketid= $row3["idticket"];
-     }
-     }
-$time = time();
+}// end if 
+     
  if ($result = $mysqli->query("INSERT INTO `$db`.`history`
 (`idhistory`, `event`, `date`, `admin_users_idadmin`, `customer_info_idcustomer_info`, `ticket_idticket`)
-VALUES (NULL, 'Install Ticket Created', '$time', '$adminid', '$leadid', '$ticketid');")) {
+VALUES (NULL, 'Task Started', '$time', '$adminid', '$cusinfoid', '$id');") === TRUE){
 
 } else {
    echo 'DB ERROR';
   exit;
 }// end if
+
 header('Location: index.php');
 ?>

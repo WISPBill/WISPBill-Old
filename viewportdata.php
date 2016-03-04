@@ -410,7 +410,7 @@ WHERE  `ifconfig` =  'yes'")) {
         x: {
             type: 'timeseries',
             tick: {
-                format: '%I:%M %p %e/%m/%y'
+                format: '%I:%M %p %m/%e/%y'
             }
         }
     }

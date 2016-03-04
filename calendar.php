@@ -51,6 +51,8 @@ if ($result = $mysqli->query("SELECT * FROM `admin_users` WHERE `idadmin` = $adm
   <!-- Ionicons -->
   <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
   <link rel="stylesheet" href="AdminLTE2/plugins/datatables/dataTables.bootstrap.css">
+    <link rel="stylesheet" href="AdminLTE2/plugins/fullcalendar/fullcalendar.min.css">
+  <link rel="stylesheet" href="AdminLTE2/plugins/fullcalendar/fullcalendar.print.css" media="print">
   <!-- Theme style -->
   <link rel="stylesheet" href="AdminLTE2/dist/css/AdminLTE.min.css">
   <!-- AdminLTE Skins. We have chosen the skin-blue for this starter
@@ -209,94 +211,28 @@ desired effect
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-      Convert Lead to Install
+      Calendar 
       </h1>
       <ol class="breadcrumb">
         <li><a href="dashbored.php"><i class="fa fa-dashboard"></i> Dashbored</a></li>
-        <li class="active">Convert Lead</li>
+        <li class="active">Calendar</li>
       </ol>
     </section>
 
     <!-- Main content -->
-	 <form role="form" action="convertleadin2.php"method="post">
-	<div class="row">
-        <div class="col-xs-12">
+ 
     <section class="content">
-	<div class="box">
-            <div class="box-header">
-			 <?php
-// get error 
-$error = $_SESSION['exitcodev2'];
-                if($error =='id'){
-				 echo '<h3 class="box-title" style="color: red;">You need to Select a Lead</h3>';
-				}else{
-				 echo '<h3 class="box-title">Select a Lead</h3>';
-				}
-				$_SESSION['exitcodev2'] = '';
-?> 
-            </div>
-            <!-- /.box-header -->
-            <div class="box-body">
-              <table id="example1" class="table table-bordered table-striped">
-                <thead>
-                <tr>
-                  <th>Select</th>
-				  <th>Name</th> 
-				   <th>Phone</th>
-				  <th>Email</th>
-				 <th>Address</th>
-				  <th>City</th>
-                </tr>
-                </thead>
-                <tbody>
-				 <?php
-                if ($result = $mysqli->query("SELECT * FROM  `customer_info` 
-WHERE  `idcustomer_info` NOT IN (
-SELECT  `customer_info_idcustomer_info` 
-FROM  `ticket` WHERE  `issue` =  'Install'
-) AND  `idcustomer_users` IS NULL ")) {
-      /* fetch associative array */
-         
-    while ($row = $result->fetch_assoc()) {
-     $id= $row["idcustomer_info"];
-     $fname= $row["fname"];
-     $lname= $row["lname"];
-     $tel= $row["phone"];
-     $email= $row["email"];
-     $add= $row["address"];
-     $city= $row["city"];
-	 $tel = "(".substr($tel,0,3).") ".substr($tel,3,3)."-".substr($tel,6);
-     echo" <tr>
-    <td><input type='radio' name='id' value=$id unchecked></td>
-    <td>$fname $lname</td> 
-    <td>$tel</td>
-    <td>$email</td>
-    <td>$add</td> 
-    <td>$city</td>
-  </tr>";
-    }
-}
-
-?>
-                </tbody>
-                <tfoot>
-                <tr>
-                  <th>Select</th>
-				  <th>Name</th> 
-				   <th>Phone</th>
-				  <th>Email</th>
-				 <th>Address</th>
-				  <th>City</th>
-                </tr>
-                </tfoot>
-              </table>
-			  <div class="box-footer">
-                <button type="submit" class="btn btn-primary">Submit</button>
-              </div>
+<div class="row">
+       
+        <div class="col-md-9" style="min-width: 99%;">
+          <div class="box box-primary">
+            <div class="box-body no-padding">
+              <!-- THE CALENDAR -->
+              <div id="calendar"></div>
             </div>
             <!-- /.box-body -->
           </div>
-          <!-- /.box -->
+          <!-- /. box -->
         </div>
         <!-- /.col -->
       </div>
@@ -324,6 +260,12 @@ FROM  `ticket` WHERE  `issue` =  'Install'
 <script src="AdminLTE2/plugins/jQuery/jQuery-2.1.4.min.js"></script>
 <!-- Bootstrap 3.3.5 -->
 <script src="AdminLTE2/bootstrap/js/bootstrap.min.js"></script>
+<!-- jQuery UI 1.11.4 -->
+<script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+<!-- Slimscroll -->
+<script src="AdminLTE2/plugins/slimScroll/jquery.slimscroll.min.js"></script>
+<!-- FastClick -->
+<script src="AdminLTE2/plugins/fastclick/fastclick.js"></script>
 <!-- AdminLTE App -->
 <script src="AdminLTE2/dist/js/app.min.js"></script>
 <!-- DataTables -->
@@ -334,16 +276,159 @@ FROM  `ticket` WHERE  `issue` =  'Install'
      Both of these plugins are recommended to enhance the
      user experience. Slimscroll is required when using the
      fixed layout. -->
+<!-- fullCalendar 2.2.5 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.2/moment.min.js"></script>
+<script src="AdminLTE2/plugins/fullcalendar/fullcalendar.min.js"></script>
+<!-- Page specific script -->
 <script>
   $(function () {
-    $("#example1").DataTable();
-    $('#example2').DataTable({
-      "paging": true,
-      "lengthChange": false,
-      "searching": false,
-      "ordering": true,
-      "info": true,
-      "autoWidth": false
+
+    /* initialize the external events
+     -----------------------------------------------------------------*/
+    function ini_events(ele) {
+      ele.each(function () {
+
+        // create an Event Object (http://arshaw.com/fullcalendar/docs/event_data/Event_Object/)
+        // it doesn't need to have a start or end
+        var eventObject = {
+          title: $.trim($(this).text()) // use the element's text as the event title
+        };
+
+        // store the Event Object in the DOM element so we can get to it later
+        $(this).data('eventObject', eventObject);
+
+        // make the event draggable using jQuery UI
+        $(this).draggable({
+          zIndex: 1070,
+          revert: true, // will cause the event to go back to its
+          revertDuration: 0  //  original position after the drag
+        });
+
+      });
+    }
+
+    ini_events($('#external-events div.external-event'));
+
+    /* initialize the calendar
+     -----------------------------------------------------------------*/
+    //Date for the calendar events (dummy data)
+    var date = new Date();
+    var d = date.getDate(),
+        m = date.getMonth(),
+        y = date.getFullYear();
+    $('#calendar').fullCalendar({
+      header: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'month,agendaWeek,agendaDay'
+      },
+      buttonText: {
+        today: 'today',
+        month: 'month',
+        week: 'week',
+        day: 'day'
+      },
+      //Random default events
+      events: [
+        			 <?php
+                  /*0 unassigned
+  *1 assigned but not solved
+  *2 assigned and solved
+  *3 assigned and escalation needed
+  *4 solved with escalation 
+  */
+                if ($result = $mysqli->query("SELECT * FROM  `tasks` WHERE  `start_date_time` IS NOT NULL")) {
+      /* fetch associative array */
+         
+    while ($row = $result->fetch_assoc()) {
+      $start= $row["start_date_time"];
+      $task= $row["task"];
+      $end= $row["end_date_time"];
+      $taskadminid= $row["admin_users_idadmin"];
+			
+    $start = $start * 1000;
+    $end = $end * 1000;
+     
+			 if ($result3 = $mysqli->query("SELECT * FROM `admin_users` WHERE `idadmin` = '$taskadminid'")) {
+     while ($row3 = $result3->fetch_assoc()) {
+     $afname= $row3["fname"];
+     $alname= $row3["lname"];
+     }
+     }
+			
+     echo"{
+          title: '$task by $afname $alname',
+          start: new Date($start),
+          end: new Date($end),
+          allDay: false,
+          backgroundColor: '#00a65a', //Success (green)
+          borderColor: '#00a65a', //Success (green)
+        },";
+    }
+}
+
+?>
+    
+      ],
+      editable: false,
+      droppable: false, // this allows things to be dropped onto the calendar !!!
+      drop: function (date, allDay) { // this function is called when something is dropped
+
+        // retrieve the dropped element's stored Event Object
+        var originalEventObject = $(this).data('eventObject');
+
+        // we need to copy it, so that multiple events don't have a reference to the same object
+        var copiedEventObject = $.extend({}, originalEventObject);
+
+        // assign it the date that was reported
+        copiedEventObject.start = date;
+        copiedEventObject.allDay = allDay;
+        copiedEventObject.backgroundColor = $(this).css("background-color");
+        copiedEventObject.borderColor = $(this).css("border-color");
+
+        // render the event on the calendar
+        // the last `true` argument determines if the event "sticks" (http://arshaw.com/fullcalendar/docs/event_rendering/renderEvent/)
+        $('#calendar').fullCalendar('renderEvent', copiedEventObject, true);
+
+        // is the "remove after drop" checkbox checked?
+        if ($('#drop-remove').is(':checked')) {
+          // if so, remove the element from the "Draggable Events" list
+          $(this).remove();
+        }
+
+      }
+    });
+
+    /* ADDING EVENTS */
+    var currColor = "#3c8dbc"; //Red by default
+    //Color chooser button
+    var colorChooser = $("#color-chooser-btn");
+    $("#color-chooser > li > a").click(function (e) {
+      e.preventDefault();
+      //Save color
+      currColor = $(this).css("color");
+      //Add color effect to button
+      $('#add-new-event').css({"background-color": currColor, "border-color": currColor});
+    });
+    $("#add-new-event").click(function (e) {
+      e.preventDefault();
+      //Get value and make sure it is not null
+      var val = $("#new-event").val();
+      if (val.length == 0) {
+        return;
+      }
+
+      //Create events
+      var event = $("<div />");
+      event.css({"background-color": currColor, "border-color": currColor, "color": "#fff"}).addClass("external-event");
+      event.html(val);
+      $('#external-events').prepend(event);
+
+      //Add draggable funtionality
+      ini_events(event);
+
+      //Remove event from text input
+      $("#new-event").val("");
     });
   });
 </script>

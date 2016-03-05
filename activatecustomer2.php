@@ -162,6 +162,8 @@ if ($result3 = $mysqli->query("SELECT * FROM `customer_plans` WHERE `idcustomer_
 		  echo "ACLWhitelist did not work";
 		  exit;
 	   }
+   }elseif($mode == "test"){
+	 // No action taken
    }else{
      echo "Error";
      exit;

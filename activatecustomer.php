@@ -283,6 +283,7 @@ $errorlabel ='<label class="control-label" for="inputError" style="color: red;">
 					<option value='' selected disabled>Please Select Billing Mode</option>
                     <option value="radius">Radius</option>
                     <option value="wispbill">Wispbill (No QOS)</option>
+                    <option value="test">Test Mode (Customer Will Be Charged)</option>
                   </select>
                 </div>
               <div class="form-group">

@@ -104,7 +104,7 @@ echo '</tbody>
                 </thead>
                 <tbody>';
 				
- if ($result = $mysqli->query("SELECT * FROM `ticket_notes` WHERE `ticket_idticket` = '$id'")) {
+ if ($result = $mysqli->query("SELECT * FROM `ticket_note` WHERE `ticket_idticket` = '$id'")) {
     /* fetch associative array */
     foreach ($result as $row){
 		 $note = $row["note"];
@@ -114,7 +114,7 @@ echo '</tbody>
 					if ($result3 = $mysqli->query("SELECT * FROM `admin_users` WHERE `idadmin` = $taid")) {
 				/* fetch associative array */
 				 while ($row3 = $result3->fetch_assoc()) {
-				 $afname= $row3["fname"];
+				
                      $afname= $row3["fname"];
      $alname= $row3["lname"];
 					
@@ -129,7 +129,7 @@ echo '</tbody>
 		echo "<tr>
 		<td>$note</td>
 		<td>$date</td>
-		<td>$fname $lname</td>
+		<td>$afname $alname</td>
 		</tr>";
 	}
   

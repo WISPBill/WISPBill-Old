@@ -42,8 +42,9 @@ echo'
           <ul class="treeview-menu">
             <li><a href="assignticket.php">Assign Tickets</a></li>
             <li><a href="viewyourticket.php">View Your Tickets</a></li>
+            <li><a href="createticketnote.php">Create a Ticket Note</a></li>
           </ul></li>
-            <li><a href="#">Link in level 2</a></li>
+            <li><a href="troubleshooting.php">Troubleshooting</a></li>
           </ul>
         </li>
         <li class="treeview">

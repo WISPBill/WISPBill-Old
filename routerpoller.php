@@ -187,6 +187,11 @@ ORDER BY  `port_data`.`idport_data` DESC LIMIT 0 , 1")) {
 	   echo'DB';
 	      exit;
 	}
+	// Reset data for next port
+	$txbytes = '';
+	$rxbytes = '';
+	$txrate = '';
+	$rxrate = '';
     }
 						 }// end if
 					 } // End of If	 

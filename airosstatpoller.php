@@ -138,6 +138,7 @@ function getAirOSstat($radioIP, $username, $password) {
 }
 
 function getdhcpip($routerip, $username, $password,$mac) {
+	
 $radioip = array();
 $ssh = new Net_SSH2("$routerip");
 if (!$ssh->login("$username", "$password")) {
@@ -165,4 +166,13 @@ $data = $ssh->exec("/opt/vyatta/bin/vyatta-op-cmd-wrapper show dhcp leases");
 }
 		
 } // End of Get DHCP IP
+
+
+function ping($host, $port, $timeout) { 
+  $tB = microtime(true); 
+  $fP = fSockOpen($host, $port, $errno, $errstr, $timeout); 
+  if (!$fP) { return "down"; } 
+  $tA = microtime(true); 
+  return round((($tA - $tB) * 1000), 0); 
+} // End of Ping
 ?>

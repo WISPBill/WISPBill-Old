@@ -373,4 +373,5 @@ if($event == 'receipt'){
 	// Left Blank on purpose
 }
 }// End of Mail User
+
 ?>

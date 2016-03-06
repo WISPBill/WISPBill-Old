@@ -30,6 +30,7 @@ $_SESSION['id2'] = '';
 $_SESSION['id3'] = '';
 $_SESSION['email'] = '';
 $_SESSION['errorcode'] ='';
+$_SESSION['troubleshooting'] ='';
 // End of cleanup
 $adminid = $_SESSION['adminid'];
 
@@ -55,7 +56,15 @@ if ($result = $mysqli->query("SELECT * FROM `customer_info` WHERE `idcustomer_us
       $leadtotal = $result->num_rows;
 }
 
-$calltotal = '7';
+$time= time();
+
+$dayagotime = $time - 86400;
+
+if ($result = $mysqli->query("SELECT * FROM `history` WHERE `event` = 'Customer Contact type call' and `date` > '$dayagotime'")) {
+      /* fetch associative array */
+      $calltotal = $result->num_rows;
+}
+
 $devicedown = '1';
 ?>
 <!DOCTYPE html>
@@ -280,7 +289,7 @@ desired effect
             <div class="inner">
               <h3><?php echo "$calltotal";?></h3>
 
-              <p>Calls Yesterday</p>
+              <p>Calls in the last 24 hours</p>
             </div>
             <div class="icon">
               <i class="ion ion-android-call"></i>

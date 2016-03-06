@@ -25,6 +25,7 @@ $_SESSION['exitcode'] = 'no';
 $_SESSION['iv'] = "no";
 $_SESSION['key'] = "no";
 $_SESSION['emailpass'] = "no";
+$_SESSION['troubleshooting'] ='no';
 session_unset();
 session_destroy();
 header('Location: index.php');

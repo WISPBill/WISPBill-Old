@@ -28,7 +28,15 @@ require_once(dirname(__FILE__) . '/billingcon.php');
 
   $token  = $_POST['stripeToken'];
 $email = $_POST['stripeEmail'];
+$workflow = $_POST["workflow"];
 
+// end of post
+
+if($workflow == 'false'){
+ // DO nothing
+}else{
+ 
+}
 if ($result = $mysqli->query("SELECT * FROM `customer_users` WHERE `email` = '$email'")) {
     if ($result->num_rows == 1){
    //none
@@ -55,6 +63,13 @@ if ($result = $mysqli->query("SELECT * FROM `customer_users` WHERE `email` = '$e
     
 }
 
+if($workflow == 'false'){
 header('Location: index.php');
 exit;
+}elseif($workflow == 'lead1B'){
+ header('Location: linkcusdevice.php?workflow=lead1C');
+
+}else{
+ echo "Workflow Error";
+}
 ?>

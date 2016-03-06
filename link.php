@@ -6,6 +6,11 @@ echo'
         <li class="treeview">
           <a href="#"><i class="fa fa-compass"></i> <span>Lead Management</span> <i class="fa fa-angle-left pull-right"></i></a>
           <ul class="treeview-menu">
+          <li class="treeview">
+          <a href="#"><i class="fa fa-code-fork"></i> <span>Workflows</span> <i class="fa fa-angle-left pull-right"></i></a>
+          <ul class="treeview-menu">
+            <li><a href="convertlead.php?workflow=lead1">Lead to Active Customer</a></li>           
+          </ul></li>
             <li><a href="mapleads.php">Map Lead\'s</a></li>
             <li><a href="viewlead.php">View Lead\'s</a></li>
             <li><a href="createlead.php">Create a Lead</a></li>

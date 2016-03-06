@@ -22,6 +22,41 @@ require_once('./session.php');
 require_once('./fileloader.php');
 $mysqli = new mysqli("$ip", "$username", "$password", "$db");
 
+if(isset($_GET["workflow"])){
+ $workflow = $_GET["workflow"];
+ 
+ if($workflow == 'lead1D'){
+  require_once('./billingcon.php');
+  $isworkflow = true;
+  $workflowcusid = $_SESSION['lead1'];
+  if ($result = $mysqli->query("SELECT * FROM `customer_info` WHERE `idcustomer_info` = '$workflowcusid'")) {
+      /* fetch associative array */
+      
+    while ($row = $result->fetch_assoc()) {
+     $cusemail= $row["email"];
+	 $custel= $row["phone"];
+	 $uid= $row["idcustomer_users"];
+    }
+	if ($result2 = $mysqli->query("SELECT * FROM `customer_users` WHERE `idcustomer_users` = $uid")) {
+    /* fetch associative array */
+     while ($row = $result2->fetch_assoc()) {
+     $cid= $row["stripeid"];
+}
+       /* free result set */
+    $result2->close();
+}// end if
+
+ $cus= Stripe_Customer::retrieve("$cid");
+ $last4 = $cus->sources->data[0]->last4;
+    } //end of mysql if
+  } //  end of lead1b if
+}else{
+  $isworkflow = false;
+  $cusemail= '';
+	 $custel= '';
+	 $last4 ='';
+}
+
 $adminid = $_SESSION['adminid'];
 
 if ($result = $mysqli->query("SELECT * FROM `admin_users` WHERE `idadmin` = $adminid")) {
@@ -244,7 +279,12 @@ $errorlabel ='<label class="control-label" for="inputError" style="color: red;">
 						echo '<label>Email</label>';
 					}
 					?>
-                  <input type="text" class="form-control" name="email" placeholder="Enter Email" required>
+                  <input type="text" class="form-control" name="email" placeholder="Enter Email" <?php if($isworkflow == true){
+				   echo "value='$cusemail'";
+				  }elseif($isworkflow == false){
+				 
+				  }//nothing
+				  ?>required>
                 </div>
                
 			   <div class="form-group">
@@ -257,7 +297,12 @@ $errorlabel ='<label class="control-label" for="inputError" style="color: red;">
 					}
 					?>
 
-                  <input type="tel" class="form-control"  name="tel" placeholder="Enter Telephone" required>
+                  <input type="tel" class="form-control"  name="tel" placeholder="Enter Telephone" <?php if($isworkflow == true){
+				   echo "value='$custel'";
+				  }elseif($isworkflow == false){
+				 
+				  }//nothing
+				  ?>required>
                 </div>
 			   
 			   <div class="form-group">
@@ -269,7 +314,12 @@ $errorlabel ='<label class="control-label" for="inputError" style="color: red;">
 					}
 					?>
                   
-                  <input type="number" min="0" max="9999" class="form-control" name="4" placeholder="Enter Last 4" required>
+                  <input type="number" min="0" max="9999" class="form-control" name="4" placeholder="Enter Last 4" <?php if($isworkflow == true){
+				   echo "value='$last4'";
+				  }elseif($isworkflow == false){
+				 
+				  }//nothing
+				  ?>required>
                 </div>
 <div class="form-group">
                   <?php

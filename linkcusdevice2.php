@@ -29,6 +29,17 @@ $phone = $_POST["tel"];
 $email = $_POST["email"];
 $l4= $_POST["4"];
 $lid= $_POST["site"];
+
+$workflow = $_POST["workflow"];
+
+// end of post
+
+if($workflow == 'false'){
+ // DO nothing
+}else{
+ 
+}
+
 if (empty($id)) {
     // If input feild is empty it goes back to the fourm and informs the user
     $_SESSION['exitcodev2'] = 'dev';
@@ -123,8 +134,16 @@ if ($result2 = $mysqli->query("SELECT * FROM `customer_users` WHERE `idcustomer_
     /* fetch associative array */
     $numsrows = $result14->num_rows;
     if ($numsrows == 0){
-		header('Location: index.php');
-        exit;						
+		if($workflow == 'false'){
+header('Location: index.php');
+exit;
+}elseif($workflow == 'lead1C'){
+ header('Location: activatecustomer.php?workflow=lead1D');
+exit;
+}else{
+ echo "Workflow Error";
+ exit;
+}					
 	 } elseif($numsrows == 1){
 		   while ($row14 = $result14->fetch_assoc()) {
      $mac= $row14["mac"];
@@ -318,7 +337,15 @@ if ($result2 = $mysqli->query("SELECT * FROM `customer_users` WHERE `idcustomer_
     header('linkcusdevice.php');
     exit;
  }
+ 
+if($workflow == 'false'){
 header('Location: index.php');
+exit;
+}elseif($workflow == 'lead1C'){
+ header('Location: activatecustomer.php?workflow=lead1D');
 
+}else{
+ echo "Workflow Error";
+}
 
 ?>

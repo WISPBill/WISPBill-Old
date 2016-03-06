@@ -22,6 +22,24 @@ require_once('./session.php');
 require_once('./fileloader.php');
 $mysqli = new mysqli("$ip", "$username", "$password", "$db");
 
+if(isset($_GET["workflow"])){
+ $workflow = $_GET["workflow"];
+ 
+ if($workflow == 'lead1B'){
+  $isworkflow = true;
+  $workflowcusid = $_SESSION['lead1'];
+  if ($result = $mysqli->query("SELECT * FROM `customer_info` WHERE `idcustomer_info` = '$workflowcusid'")) {
+      /* fetch associative array */
+      
+    while ($row = $result->fetch_assoc()) {
+     $cusemail= $row["email"];
+    }
+    } //end of mysql if
+  } //  end of lead1b if
+}else{
+  $isworkflow = false;
+}
+
 $adminid = $_SESSION['adminid'];
 
 if ($result = $mysqli->query("SELECT * FROM `admin_users` WHERE `idadmin` = $adminid")) {
@@ -234,7 +252,15 @@ desired effect
               require_once('billingcon.php'); ?>
 
 <form action="setbill2.php" method="post">
-    
+     <?php
+				  if($isworkflow == true){
+				   echo "<input type='hidden' name='workflow' value='$workflow'>";
+				  }elseif($isworkflow == false){
+				   echo "<input type='hidden' name='workflow' value='false'>";
+				  }else{
+				   echo "<input type='hidden' name='workflow' value='false'>"; 
+				  }
+				  ?>
   <script src="https://checkout.stripe.com/checkout.js" class="stripe-button"
           data-key="<?php echo $stripe['publishable_key']; ?>"
           data-allow-remember-me="false"
@@ -242,7 +268,16 @@ desired effect
           data-billing-address="true"
           data-label="Setup Billing"
           data-panel-label="Submit Info"
-          data-description="Setup Billing"></script>
+          data-description="Setup Billing"
+    <?php
+    if($isworkflow == false){
+      // DO nothing
+    }elseif($isworkflow == true){
+      echo "data-email='$cusemail'";
+    }
+    ?>
+    >
+  </script>
 </form>
 			
             <!-- /.box-body -->

@@ -22,6 +22,16 @@ require_once('./session.php');
 require_once('./fileloader.php');
 $mysqli = new mysqli("$ip", "$username", "$password", "$db");
 
+if(isset($_GET["workflow"])){
+ $workflow = $_GET["workflow"];
+ 
+ if($workflow == 'lead1'){
+  $isworkflow = true;
+ }
+}else{
+  $isworkflow = false;
+}
+
 $adminid = $_SESSION['adminid'];
 
 if ($result = $mysqli->query("SELECT * FROM `admin_users` WHERE `idadmin` = $adminid")) {
@@ -321,6 +331,16 @@ $error = $_SESSION['exitcodev2'];
 					}
 					?>
                   
+				  <?php
+				  if($isworkflow == true){
+				   echo "<input type='hidden' name='workflow' value='$workflow'>";
+				  }elseif($isworkflow == false){
+				   echo "<input type='hidden' name='workflow' value='false'>";
+				  }else{
+				   echo "<input type='hidden' name='workflow' value='false'>"; 
+				  }
+				  ?>
+				  
                   <input class="form-control" type="password" 
   	            name="password2" placeholder="Confirm Password" required>
                 </div>

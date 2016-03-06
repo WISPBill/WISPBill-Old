@@ -31,6 +31,8 @@ $_SESSION['id3'] = '';
 $_SESSION['email'] = '';
 $_SESSION['errorcode'] ='';
 $_SESSION['troubleshooting'] ='';
+// Workflow CLeanup
+$_SESSION['lead1'] = '';
 // End of cleanup
 $adminid = $_SESSION['adminid'];
 

@@ -27,31 +27,38 @@ $user = $_POST["username"];
 $pass1 = $_POST["password"];
 $pass2 = $_POST["password2"];
 $infoid = $_POST["id"];
+$workflow = $_POST["workflow"];
 
 // end of post
+
+if($workflow == 'false'){
+ $getadd = '';
+}else{
+ $getadd = "?workflow=$workflow";
+}
 
 // start of data sanitize and existence check
  if (empty($user)) {
     // If username is empty it goes back to the fourm and informs the user
      $_SESSION['exitcodev2'] = 'name';
-    header('Location: convertlead.php');
+    header("Location: convertlead.php$getadd");
     exit;
 } elseif(empty($pass1)){
     // If password is empty it goes back to the fourm and informs the user
     $_SESSION['exitcodev2'] = 'pass';
-    header('Location: convertlead.php');
+    header("Location: convertlead.php$getadd");
     exit;
 }
 elseif(empty($pass2)){
     // If password is empty it goes back to the fourm and informs the user
     $_SESSION['exitcodev2'] = 'pass';
-    header('Location: convertlead.php');
+    header("Location: convertlead.php$getadd");
     exit;
 }
 elseif(empty($infoid)){
     // If email is empty it goes back to the fourm and informs the user
    $_SESSION['exitcodev2'] = 'lead';
-    header('Location: convertlead.php');
+    header("Location: convertlead.php$getadd");
     exit;
 }
 else{
@@ -76,7 +83,7 @@ if($pass1 == $pass2){
 } else {
     // If password match fails it goes back to the fourm and informs the user
     $_SESSION['exitcodev2'] = 'pass';
-    header('Location: convertlead.php');
+    header("Location: convertlead.php$getadd");
     exit;
 }
 // end if and password match
@@ -86,7 +93,7 @@ if($pass1 == $pass2){
 if ($result = $mysqli->query("SELECT * FROM `customer_users` WHERE `username` = '$user'")) {
     if ($result->num_rows == 1){
    $_SESSION['exitcodev2'] = 'name';
-    header('Location: convertlead.php');
+    header("Location: convertlead.php$getadd");
     exit;
     } elseif ($result->num_rows == 0){
         // do nothing 
@@ -101,7 +108,7 @@ if ($result = $mysqli->query("SELECT * FROM `customer_users` WHERE `username` = 
 if ($result = $mysqli->query("SELECT * FROM `customer_users` WHERE `email` = '$email'")) {
     if ($result->num_rows == 1){
    $_SESSION['exitcodev2'] = 'name';
-    header('Location: convertlead.php');
+    header("Location: convertlead.php$getadd");
     exit;
     } elseif ($result->num_rows == 0){
         // do nothing 
@@ -143,5 +150,12 @@ if ($mysqli->query("UPDATE `$db`.`customer_info`
 }
 
 // end of data entry
+if($workflow == 'false'){
 header('Location: index.php');
+}elseif($workflow == 'lead1'){
+ header('Location: setbill.php?workflow=lead1B');
+ $_SESSION['lead1'] = "$infoid";
+}else{
+ echo "Workflow Error";
+}
 ?>

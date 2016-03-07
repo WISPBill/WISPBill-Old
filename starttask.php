@@ -64,7 +64,7 @@ if ($result = $mysqli->query("SELECT * FROM `admin_users` WHERE `idadmin` = $adm
         page. However, you can choose any other skin. Make sure you
         apply the skin class to the body tag so the changes take effect.
   -->
-  <link rel="stylesheet" href="AdminLTE2/dist/css/skins/skin-blue.min.css">
+  <link rel="stylesheet" href="AdminLTE2/dist/css/skins/<?php echo"$guiskin";?>.min.css">
 
 	
 	
@@ -95,7 +95,7 @@ desired effect
 |               | sidebar-mini                            |
 |---------------------------------------------------------|
 -->
-<body class="hold-transition skin-blue sidebar-mini">
+<body class="hold-transition <?php echo"$guiskin";?> sidebar-mini">
 									<!-- Modal -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
   <div class="modal-dialog" role="document">

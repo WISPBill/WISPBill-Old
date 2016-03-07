@@ -62,7 +62,7 @@ if ($result = $mysqli->query("SELECT * FROM `admin_users` WHERE `idadmin` = $adm
         apply the skin class to the body tag so the changes take effect.
   -->
   
-  <link rel="stylesheet" href="AdminLTE2/dist/css/skins/skin-blue.min.css">
+  <link rel="stylesheet" href="AdminLTE2/dist/css/skins/<?php echo"$guiskin";?>.min.css">
   <link rel="stylesheet" href="AdminLTE2/plugins/iCheck/flat/blue.css">
 
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -93,7 +93,7 @@ desired effect
 |               | sidebar-mini                            |
 |---------------------------------------------------------|
 -->
-<body class="hold-transition skin-blue sidebar-mini">
+<body class="hold-transition <?php echo"$guiskin";?> sidebar-mini">
 <div class="wrapper">
 
   <!-- Main Header -->

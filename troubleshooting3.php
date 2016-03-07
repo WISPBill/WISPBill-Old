@@ -67,7 +67,7 @@ if ($result = $mysqli->query("SELECT * FROM `admin_users` WHERE `idadmin` = $adm
         apply the skin class to the body tag so the changes take effect.
   -->
   
-  <link rel="stylesheet" href="AdminLTE2/dist/css/skins/skin-blue.min.css">
+  <link rel="stylesheet" href="AdminLTE2/dist/css/skins/<?php echo"$guiskin";?>.min.css">
 
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -101,7 +101,7 @@ desired effect
 |               | sidebar-mini                            |
 |---------------------------------------------------------|
 -->
-<body class="hold-transition skin-blue sidebar-mini">
+<body class="hold-transition <?php echo"$guiskin";?> sidebar-mini">
     						<!-- Modal -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
   <div class="modal-dialog" role="document">

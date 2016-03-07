@@ -86,7 +86,7 @@ desired effect
 |               | sidebar-mini                            |
 |---------------------------------------------------------|
 -->
-<body class="hold-transition skin-blue sidebar-mini">
+<body class="hold-transition <?php echo"$guiskin";?> sidebar-mini">
 <div class="wrapper">
 
   <!-- Main Header -->

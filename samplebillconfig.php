@@ -85,4 +85,14 @@ $fromemail = '';
 // Data for Pinging Hosts
 $pingport = '22'; // This port should alawys respond hence 22 for ssh
 $pingtimeout = '10'; // Timeout in Secconds
+// GUI Skin
+$guiskin = 'skin-blue';
+/* Options
+ *skin-blue                               
+*skin-black                              
+*kin-purple                             
+*skin-yellow                             
+*skin-red                                
+*skin-green
+*/
 ?>

@@ -48,6 +48,7 @@ echo'
             <li><a href="assignticket.php">Assign Tickets</a></li>
             <li><a href="viewyourticket.php">View Your Tickets</a></li>
             <li><a href="createticketnote.php">Create a Ticket Note</a></li>
+            <li><a href="closeticket.php">Close a Ticket</a></li>
           </ul></li>
             <li><a href="troubleshooting.php">Troubleshooting</a></li>
           </ul>

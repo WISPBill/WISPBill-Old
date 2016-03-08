@@ -104,6 +104,8 @@ echo'
         <li class="treeview">
           <a href="#"><i class="fa fa-calendar-plus-o"></i> <span>Schedule Management</span> <i class="fa fa-angle-left pull-right"></i></a>
           <ul class="treeview-menu">
+            <li><a href="sethours.php">Set Work Schedule</a></li>
+            <li><a href="edithours.php">Edit Work Schedule</a></li>
             <li><a href="scheduletask.php">Schedule an Existing Task</a></li>
             <li><a href="starttask.php">Start A Task</a></li>
            <li><a href="endtask.php">End A Task</a></li>

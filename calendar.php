@@ -361,9 +361,42 @@ desired effect
           start: new Date($start),
           end: new Date($end),
           allDay: false,
-          backgroundColor: '#00a65a', //Success (green)
-          borderColor: '#00a65a', //Success (green)
+          backgroundColor: '#00a65a', 
+          borderColor: '#00a65a',
+          overlap: true,
         },";
+    }
+}
+
+ if ($result = $mysqli->query("SELECT * FROM  `admin_hours`")) {
+      /* fetch associative array */
+         
+    while ($row = $result->fetch_assoc()) {
+      $start= $row["start"];
+      $day= $row["day_of_week"];
+      $end= $row["end"];
+      $taskadminid= $row["admin_users_idadmin"];
+			
+            if($start and $end != '0'){
+            
+            $start =  date("H:i", strtotime("$start"));
+            $end =  date("H:i", strtotime("$end"));
+
+			 if ($result3 = $mysqli->query("SELECT * FROM `admin_users` WHERE `idadmin` = '$taskadminid'")) {
+     while ($row3 = $result3->fetch_assoc()) {
+     $afname= $row3["fname"];
+     $alname= $row3["lname"];
+     }
+     }
+			
+     echo"{
+    start: '$start', 
+    end: '$end', 
+    title: '$afname $alname is working',
+    dow: [$day],
+    overlap: true,
+    },";
+            }
     }
 }
 

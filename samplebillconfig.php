@@ -88,11 +88,17 @@ $pingtimeout = '10'; // Timeout in Secconds
 // GUI Skin
 $guiskin = 'skin-blue';
 /* Options
- *skin-blue                               
-*skin-black                              
-*kin-purple                             
-*skin-yellow                             
-*skin-red                                
-*skin-green
+*skin-blue	
+*skin-blue-light	
+*skin-yellow	
+*skin-yellow-light	
+*skin-green	
+*skin-green-light	
+*skin-purple	
+*skin-purple-light	
+*skin-red	
+*skin-red-light	
+*skin-black	
+*skin-black-light
 */
 ?>

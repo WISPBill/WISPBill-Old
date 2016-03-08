@@ -63,13 +63,15 @@ echo'
           <a href="#"><i class="fa fa-fire"></i> <span>Firewall Management</span> <i class="fa fa-angle-left pull-right"></i></a>
           <ul class="treeview-menu">
             <li><a href="setupacl.php">Set up ACL Firewall</a></li>
-            
+            <li><a href="viewfirewall.php">View Firewalls</a></li>
           </ul></li>
           <li><a href="configrouter.php">Configure Monitoring</a></li>
           </ul>
             <li><a href="createdevice.php">Add a Device to Inventory</a></li>
+            <li><a href="viewdeviceinventory.php">View Device Inventory</a></li>
             <li><a href="ipview.php">View Static IP Assignments </a></li>
             <li><a href="adddhcp.php">Add a DHCP Server</a></li>
+            <li><a href="viewdhcp.php">View DHCP Servers</a></li>
              <li><a href="linkdevice.php">Link a Device to LibreNMS</a></li>
           </ul>
         </li>

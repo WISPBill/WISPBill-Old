@@ -102,7 +102,7 @@ AND  `location_idlocation` =  '$site'")) {
 					 
 					 $cidr = substr($mask,1);
 
-$network = long2ip((ip2long($ip)) & ((-1 << (32 - (int)$cidr))));
+$network = long2ip((ip2long($defaultrouter)) & ((-1 << (32 - (int)$cidr))));
 
 $subnet = $network.$mask;
 

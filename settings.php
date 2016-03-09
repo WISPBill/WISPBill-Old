@@ -30,6 +30,7 @@ $_SESSION['email'] = '';
 $_SESSION['errorcode'] ='';
 echo'<br><a href="dashbored.php">Back</a></br>';
 echo'<br><a href="createadminuser.php">Create Admin User</a></br>';
+echo'<br><a href="setskin.php">Set Skin</a></br>';
 echo'<br><a href="deleteadminuser.php">Delete Admin User</a></br>';
 echo'<br><a href="logout.php">Log Out</a></br>'; // In Dash
 

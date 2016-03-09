@@ -85,20 +85,31 @@ $fromemail = '';
 // Data for Pinging Hosts
 $pingport = '22'; // This port should alawys respond hence 22 for ssh
 $pingtimeout = '10'; // Timeout in Secconds
-// GUI Skin
-$guiskin = 'skin-blue';
-/* Options
-*skin-blue	
-*skin-blue-light	
-*skin-yellow	
-*skin-yellow-light	
-*skin-green	
-*skin-green-light	
-*skin-purple	
-*skin-purple-light	
-*skin-red	
-*skin-red-light	
-*skin-black	
-*skin-black-light
-*/
+
+// gets settings from DB
+if(isset($_SESSION['adminid'])){
+    $mysqli = new mysqli("$ip", "$username", "$password", "$db");
+    $adminid = $_SESSION['adminid'];
+    if ($result = $mysqli->query("SELECT * FROM `admin_settings` WHERE `setting_name` = 'guiskin' and `admin_users_idadmin` = '$adminid'")) {
+      /* fetch associative array */
+      $skinset = $result->num_rows;
+    }
+    
+    if($skinset == '0'){
+    // Default is used
+    $guiskin = 'skin-blue';
+        
+    }elseif($skinset == '1'){
+        if ($result = $mysqli->query("SELECT * FROM `admin_settings` WHERE `setting_name` = 'guiskin' and `admin_users_idadmin` = '$adminid'")) {
+      /* fetch associative array */
+      while ($row = $result->fetch_assoc()) {
+        $guiskin = $row["value"];
+        
+        }
+    }
+    }
+}else{
+    // Defaults are used
+    $guiskin = 'skin-blue';
+}
 ?>

@@ -70,7 +70,7 @@ echo'
           <li class="treeview">
           <a href="#"><i class="fa fa-link"></i> <span>Link Management</span> <i class="fa fa-angle-left pull-right"></i></a>
           <ul class="treeview-menu">
-            
+            <li><a href="addlink.php">Add a Link</a></li>
           </ul></li>
             <li><a href="createdevice.php">Add a Device to Inventory</a></li>
             <li><a href="viewdeviceinventory.php">View Device Inventory</a></li>

@@ -22,41 +22,6 @@ require_once('./session.php');
 require_once('./fileloader.php');
 $mysqli = new mysqli("$ip", "$username", "$password", "$db");
 
-if(isset($_GET["workflow"])){
- $workflow = $_GET["workflow"];
- 
- if($workflow == 'lead1C'){
-  require_once('./billingcon.php');
-  $isworkflow = true;
-  $workflowcusid = $_SESSION['lead1'];
-  if ($result = $mysqli->query("SELECT * FROM `customer_info` WHERE `idcustomer_info` = '$workflowcusid'")) {
-      /* fetch associative array */
-      
-    while ($row = $result->fetch_assoc()) {
-     $cusemail= $row["email"];
-	 $custel= $row["phone"];
-	 $uid= $row["idcustomer_users"];
-    }
-	if ($result2 = $mysqli->query("SELECT * FROM `customer_users` WHERE `idcustomer_users` = $uid")) {
-    /* fetch associative array */
-     while ($row = $result2->fetch_assoc()) {
-     $cid= $row["stripeid"];
-}
-       /* free result set */
-    $result2->close();
-}// end if
-
- $cus= Stripe_Customer::retrieve("$cid");
- $last4 = $cus->sources->data[0]->last4;
-    } //end of mysql if
-  } //  end of lead1b if
-}else{
-  $isworkflow = false;
-  $cusemail= '';
-	 $custel= '';
-	 $last4 ='';
-}
-
 $adminid = $_SESSION['adminid'];
 
 if ($result = $mysqli->query("SELECT * FROM `admin_users` WHERE `idadmin` = $adminid")) {
@@ -244,7 +209,7 @@ desired effect
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-      Select a Device to Link it to an Account
+      Select a Device to Link it a Site
       </h1>
       <ol class="breadcrumb">
         <li><a href="dashbored.php"><i class="fa fa-dashboard"></i> Dashbored</a></li>
@@ -253,7 +218,7 @@ desired effect
     </section>
 
     <!-- Main content -->
-	 <form role="form" action="linkcusdevice2.php"method="post">
+	 <form role="form" action="linkrouter2.php"method="post">
 	<div class="row">
         <div class="col-xs-12">
     <section class="content">
@@ -271,7 +236,7 @@ $errorlabel ='<label class="control-label" for="inputError" style="color: red;">
             <div class="box-body">
               <div class="form-group">
 			  <?php
-				 if ($result = $mysqli->query("SELECT * FROM `location` WHERE `ifconfig` = 'yes'")) {
+				 if ($result = $mysqli->query("SELECT * FROM `location` WHERE `ifconfig` != 'yes'")) {
     /* fetch associative array */
 	
                 if($error == 'site'){
@@ -293,66 +258,7 @@ $errorlabel ='<label class="control-label" for="inputError" style="color: red;">
         echo'  <label class="control-label" for="inputError">Datebase
                     error contact your webmaster</label>';
     }?>
-			   <div class="form-group">
-					<?php
-					if($error == 'email' or $error == 'emailphone'){
-						echo "$errorlabel";
-					}else{
-						echo '<label>Email</label>';
-					}
-					?>
-                  <input type="text" class="form-control" name="email" placeholder="Enter Email"
-				  <?php if($isworkflow == true){
-				   echo "value='$cusemail'";
-				  }elseif($isworkflow == false){
-				 
-				  }//nothing
-				  ?>required>
-                </div>
-               
-			      <?php
-				  if($isworkflow == true){
-				   echo "<input type='hidden' name='workflow' value='$workflow'>";
-				  }elseif($isworkflow == false){
-				   echo "<input type='hidden' name='workflow' value='false'>";
-				  }else{
-				   echo "<input type='hidden' name='workflow' value='false'>"; 
-				  }
-				  ?>
-
-			   <div class="form-group">
-                  
-                     <?php
-					if($error == 'tel' or $error == 'emailphone'){
-						echo "$errorlabel";
-					}else{
-						echo '<label>Telephone</label>';
-					}
-					?>
-                  <input type="tel" class="form-control"  name="tel" placeholder="Enter Telephone"  <?php if($isworkflow == true){
-				   echo "value='$custel'";
-				  }elseif($isworkflow == false){
-				 
-				  }//nothing
-				  ?>required>
-                </div>
 			   
-			   <div class="form-group">
-                <?php
-					if($error == '4'){
-						echo "$errorlabel";
-					}else{
-						echo '<label>Last 4 Digits of Credit Card</label>';
-					}
-					?>
-                  
-                  <input type="number" min="0" max="9999" class="form-control" name="4" placeholder="Enter Last 4"  <?php if($isworkflow == true){
-				   echo "value='$last4'";
-				  }elseif($isworkflow == false){
-				 
-				  }//nothing
-				  ?>required>
-                </div>
 			   <?php
 			    if($error =='dev'){
 				 echo '<label style="color: red;">You need to Select a Device</label>';
@@ -375,7 +281,7 @@ $errorlabel ='<label class="control-label" for="inputError" style="color: red;">
 				 <?php
                 if ($result = $mysqli->query("SELECT * FROM `devices`
                              WHERE `location_idlocation` is NULL and
-                             `type` = 'cpe' and `field_status` ='inventory'")) {
+                             `type` = 'router' and `field_status` ='inventory'")) {
       /* fetch associative array */
          
      while ($row = $result->fetch_assoc()) {
@@ -400,7 +306,7 @@ $errorlabel ='<label class="control-label" for="inputError" style="color: red;">
                 </tbody>
                 <tfoot>
                 <tr>
-                 <th>Select</th>
+                  <th>Select</th>
 				  <th>Name</th> 
 				  <th>Type</th>
 				  <th>Mac Address</th> 

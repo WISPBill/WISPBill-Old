@@ -30,7 +30,7 @@ if ($result = $mysqli->query("SELECT * FROM `devices` WHERE `type` = 'router'
                              and `location_idlocation`
                              is NULL and `librenms_id` is not NUll")) {
       /* fetch associative array */
-      echo'<h1>All Devices Will Be Reconfigured</h1>
+      echo'<h1>All Devices Will Be Reconfigured LibreNMS is needed for this config</h1>
       <h1>Select the Sites Router</h1>
       <form action="configsite2.php"method="post">
       <table border="1" style="width:100%">

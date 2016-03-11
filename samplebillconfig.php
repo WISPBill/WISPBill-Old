@@ -57,6 +57,9 @@ $manufacturer = array("Ubiquiti Networks","Other");
 $state= '';
 $mapcenterlat ='xx.xx'; // Center of MAP 
 $mapcenterlon ='xx.xx'; // Center of MAP
+// Used for routing 
+$officelat ='xx.xx'; // Center of MAP 
+$officelon ='xx.xx'; // Center of MAP
 $mapzoom ='12'; // Intial Map zoom
 $dns='8.8.8.8'; //Default DNS Server
 $url = ''; // Server URL https://example.com

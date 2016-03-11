@@ -213,12 +213,12 @@ desired effect
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Map of Links
+        Map of all Data
         
       </h1>
       <ol class="breadcrumb">
         <li><a href="dashbored.php"><i class="fa fa-dashboard"></i> Dashbored</a></li>
-        <li class="active">Site Map</li>
+        <li class="active">Map</li>
       </ol>
     </section>
 
@@ -294,6 +294,56 @@ var polyline = L.polyline(line_points, polyline_options).addTo(map);
    
     } // End of loop
     }
+    if ($result = $mysqli->query("SELECT * FROM `location` WHERE `coverage` is not NULL")) {
+      /* fetch associative array */
+    
+    while ($row = $result->fetch_assoc()) {
+
+     $name = $row["name"];
+     $cov = $row["coverage"];
+     echo" 
+        var geo = $cov;
+            L.geoJson(geo, {   
+        }).addTo(map)
+            .bindPopup('$name coverage');
+  ";
+    }}
+    
+    if ($result = $mysqli->query("SELECT * FROM `customer_info` WHERE `idcustomer_users` is NULL")) {
+      /* fetch associative array */
+    
+    while ($row = $result->fetch_assoc()) {
+     $lat= $row["lat"];
+     $lon = $row["lon"];
+     $email = $row["email"];
+     $phone = $row["phone"];
+     $fname = $row["fname"];
+     $lname = $row["lname"];
+     $phone = "(".substr($phone,0,3).") ".substr($phone,3,3)."-".substr($phone,6);
+     echo" 
+       var marker = L.marker([$lat, $lon])
+        .addTo(map)
+            .bindPopup('Lead Name: $fname $lname Email: $email Phone: $phone');
+  ";
+    }}
+    
+    if ($result = $mysqli->query("SELECT * FROM `customer_info` WHERE `idcustomer_users` is not NULL")) {
+      /* fetch associative array */
+    
+    while ($row = $result->fetch_assoc()) {
+     $lat= $row["lat"];
+     $lon = $row["lon"];
+     $email = $row["email"];
+     $phone = $row["phone"];
+     $fname = $row["fname"];
+     $lname = $row["lname"];
+     $phone = "(".substr($phone,0,3).") ".substr($phone,3,3)."-".substr($phone,6);
+     echo" 
+       var marker = L.marker([$lat, $lon])
+        .addTo(map)
+            .bindPopup('Customer Name: $fname $lname Email: $email Phone: $phone');
+  ";
+    }}
 ?>
   </script>
     </section>

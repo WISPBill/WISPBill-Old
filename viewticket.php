@@ -319,7 +319,7 @@ echo '</tbody>
                 </thead>
                 <tbody>';
 				
- if ($result = $mysqli->query("SELECT * FROM `ticket_notes` WHERE `ticket_idticket` = '$id'")) {
+ if ($result = $mysqli->query("SELECT * FROM `ticket_note` WHERE `ticket_idticket` = '$id'")) {
     /* fetch associative array */
     foreach ($result as $row){
 		 $note = $row["note"];

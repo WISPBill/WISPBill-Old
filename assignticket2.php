@@ -40,7 +40,7 @@ if (empty($_POST['id'])) {
     
 }
 
-$assignto = $mysqli->real_escape_string($assignto);
+ $assignto = inputcleaner($assignto,$mysqli);
 
 foreach ($_POST['id'] as $id) {
     /*0 unassigned
@@ -50,8 +50,8 @@ foreach ($_POST['id'] as $id) {
   *4 solved with escalation 
 	Odd is unsloved and even is solved
   */
-    $id = $mysqli->real_escape_string($id);
-    
+    $id = inputcleaner($id,$mysqli);
+
     if ($result2 = $mysqli->query("SELECT * FROM `ticket` WHERE `idticket` = '$id'")) {
      while ($row2 = $result2->fetch_assoc()) {
      $cusinfoid= $row2["customer_info_idcustomer_info"];

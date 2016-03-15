@@ -42,9 +42,8 @@ $id = $_POST["id"];
     // do nothing 
 } // end if
 
-$note = $mysqli->real_escape_string($note);
-$id = $mysqli->real_escape_string($id);
-
+$id = inputcleaner($id,$mysqli);
+$note = inputcleaner($note,$mysqli);
 // end of data sanitize and existence check
 
 $time = time();

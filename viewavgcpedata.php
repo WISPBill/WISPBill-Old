@@ -231,6 +231,9 @@ if(empty($_POST["data"])){
     $intdata = $_POST["data"];
 $timeframe = $_POST["time"];
 
+$intdata = inputcleaner($intdata,$mysqli);
+$timeframe = inputcleaner($timeframe,$mysqli);
+
 $time = time();
   $time1dayago = $time-$timeframe;
 

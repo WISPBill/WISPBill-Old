@@ -27,7 +27,7 @@ $router = $_POST["router"];
 $cleandata = $_SESSION['cleandata'];
 // end of post
 
-$router = $mysqli->real_escape_string($router);
+$router = inputcleaner($router,$mysqli);
 
 if ($result = $mysqli->query("SELECT * FROM `device_credentials` WHERE `devices_iddevices` = '$router'")) {
       /* fetch associative array */

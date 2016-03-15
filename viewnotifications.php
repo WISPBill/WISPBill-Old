@@ -21,8 +21,11 @@
 require_once('./session.php');
 require_once('./fileloader.php');
 
+$mysqli = new mysqli("$ip", "$username", "$password", "$db");
+
 if (isset($_GET["id"])){
     $id = $_GET["id"];
+	$id = inputcleaner($id,$mysqli);
     header("Location: readnoti.php?id=$id");
     exit;
 }else {

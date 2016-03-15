@@ -26,6 +26,10 @@ $mysqli = new mysqli("$ip", "$username", "$password", "$db");
 // start of post
 $data = $_POST["data"];
 $id = $_SESSION['id'];
+
+$id = inputcleaner($id,$mysqli);
+$data = strip_tags($data);
+$data = $mysqli->real_escape_string($data);
 // end of post
 // start of data sanitize and existence check
  if (empty($data)) {

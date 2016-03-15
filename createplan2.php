@@ -62,6 +62,10 @@ $price = $mysqli->real_escape_string($price);
 $up = $mysqli->real_escape_string($up);
 $down = $mysqli->real_escape_string($down);
 
+$name = inputcleaner($name,$mysqli);
+$price = inputcleaner($price,$mysqli);
+$up = inputcleaner($up,$mysqli);
+$down = inputcleaner($down,$mysqli);
 // end of data sanitize and existence check
 // start of cheack for exsting plan name
 

@@ -65,13 +65,13 @@ $sat = $_POST["saturday"];
     // Nothing 
  }
 
- $sun = $mysqli->real_escape_string($sun);
- $mon = $mysqli->real_escape_string($mon);
- $tue = $mysqli->real_escape_string($tue);
- $wed = $mysqli->real_escape_string($wed);
- $thr = $mysqli->real_escape_string($thr);
- $fri = $mysqli->real_escape_string($fri);
- $sat = $mysqli->real_escape_string($sat);
+ $sun = inputcleaner($sun,$mysqli);
+ $mon = inputcleaner($mon,$mysqli);
+ $tue = inputcleaner($tue,$mysqli);
+ $wed = inputcleaner($wed,$mysqli);
+ $thr = inputcleaner($thr,$mysqli);
+ $fri = inputcleaner($fri,$mysqli);
+ $sat = inputcleaner($sat,$mysqli);
  
  $weekdata = array(
     "sunday" => "$sun",
@@ -112,9 +112,9 @@ $sat = $_POST["saturday"];
     $start = $_POST["$poststart"];
     $end = $_POST["$postend"];
     
-    $start = $mysqli->real_escape_string($start);
-    $end = $mysqli->real_escape_string($end);
-    
+    $start = inputcleaner($start,$mysqli);
+	$end = inputcleaner($end,$mysqli);
+	
     if ($result = $mysqli->query("INSERT INTO `$db`.`admin_hours`
     (`idadmin_hours`, `day_of_week`, `start`, `end`, `admin_users_idadmin`) VALUES
     (NULL, '$intday', '$start', '$end', '$adminid');") === TRUE){

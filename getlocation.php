@@ -22,9 +22,12 @@ require_once('./session.php');
 require_once('./fileloader.php');
 $mysqli = new mysqli("$ip", "$username", "$password", "$db");
 
-    $loc = $mysqli->real_escape_string($_GET['choice']);
-    $name = $mysqli->real_escape_string($_GET['name']);
+    $loc = $_GET['choice'];
+    $name = $_GET['name'];
 
+	$loc = inputcleaner($loc,$mysqli);
+	$name = inputcleaner($name,$mysqli);
+	
     if($loc == 'office'){
         
         echo "<input type='hidden' name='$name' value='$loc'>";

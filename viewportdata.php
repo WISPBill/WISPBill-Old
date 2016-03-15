@@ -231,6 +231,9 @@ if(empty($_POST["port"])){
     $port = $_POST["port"];
 $timeframe = $_POST["time"];
 
+$port = inputcleaner($port,$mysqli);
+$timeframe = inputcleaner($timeframe,$mysqli);
+
 $time = time();
 
 $starttime = $time - $timeframe;

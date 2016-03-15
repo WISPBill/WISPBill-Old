@@ -43,6 +43,11 @@ if (empty($id)) {
 } else{
     // We are good
 }
+
+$id = inputcleaner($id,$mysqli);
+$id2 = inputcleaner($id2,$mysqli);
+$id3 = inputcleaner($id3,$mysqli);
+
 if ($result = $mysqli->query("SELECT * FROM `devices` WHERE `iddevices` = $id")) {
       /* fetch associative array */
      

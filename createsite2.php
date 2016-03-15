@@ -60,13 +60,11 @@ $con = $_POST["contact"];
      $_SESSION['exitcodev2'] = '';
 }
 
-
-$name = $mysqli->real_escape_string($name);
-$lat = $mysqli->real_escape_string($lat);
-$lon = $mysqli->real_escape_string($lon);
-$type = $mysqli->real_escape_string($type);
-$con = $mysqli->real_escape_string($con);
-
+$name = inputcleaner($name,$mysqli);
+$lat = inputcleaner($lat,$mysqli);
+$lon = inputcleaner($lon,$mysqli);
+$type = inputcleaner($type,$mysqli);
+$con = inputcleaner($con,$mysqli);
 // end of data sanitize and existence check
 // start of data entry
 if ($mysqli->query("INSERT INTO `$db`.`location` (`idlocation`, `name`,

@@ -51,11 +51,9 @@ $port = $_POST["port"];
      $_SESSION['exitcodev2'] = '';
 }
 
-
-$backport = $mysqli->real_escape_string($backport);
-$site = $mysqli->real_escape_string($site);
-$portid = $mysqli->real_escape_string($port);
-
+$backport = inputcleaner($backport,$mysqli);
+$site = inputcleaner($site,$mysqli);
+$portid = inputcleaner($port,$mysqli);
 // end of data sanitize and existence check
 // start of data entry
 if ($result2 = $mysqli->query("SELECT * FROM  `devices` WHERE  `type` =  'router'

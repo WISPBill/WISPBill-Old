@@ -30,6 +30,9 @@ require_once(dirname(__FILE__) . '/billingcon.php');
 $email = $_POST['stripeEmail'];
 $workflow = $_POST["workflow"];
 
+$email = inputcleaner($email,$mysqli);
+$workflow = inputcleaner($workflow,$mysqli);
+
 // end of post
 
 if($workflow == 'false'){
@@ -52,7 +55,7 @@ if ($result = $mysqli->query("SELECT * FROM `customer_users` WHERE `email` = '$e
     $result->close();
 }
   $customer = Stripe_Customer::create(array(
-      'email' => $email,
+      'email' => $emahymil,
       'card'  => $token,
       
   ));

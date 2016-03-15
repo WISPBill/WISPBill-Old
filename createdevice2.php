@@ -75,13 +75,14 @@ else
   {
   //do nothing 
   }
-$name = $mysqli->real_escape_string($name);
-$serial = $mysqli->real_escape_string($serial);
-$modle = $mysqli->real_escape_string($modle);
-$mac = $mysqli->real_escape_string($mac);
-$type = $mysqli->real_escape_string($type);
-$man = $mysqli->real_escape_string($man);
 
+
+$name = inputcleaner($name,$mysqli);
+$serial = inputcleaner($serial,$mysqli);
+$modle = inputcleaner($modle,$mysqli);
+$mac = inputcleaner($mac,$mysqli);
+$type = inputcleaner($type,$mysqli);
+$man = inputcleaner($man,$mysqli);
 // end of data sanitize and existence check
 // start of data entry
 if ($mysqli->query("INSERT INTO `$db`.`devices` (`iddevices`, `location_idlocation`, `name`, `serial_number`, `manufacturer`, `model`, `type`, `librenms_id`, `field_status`, `mac`)

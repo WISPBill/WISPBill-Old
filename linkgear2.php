@@ -44,10 +44,8 @@ $site = $_POST["site"];
      $_SESSION['exitcodev2'] = '';
 }
 
-
-$device = $mysqli->real_escape_string($device);
-$site = $mysqli->real_escape_string($site);
-
+$device = inputcleaner($device,$mysqli);
+$site = inputcleaner($site,$mysqli);
 // end of data sanitize and existence check
 // start of data entry
 					

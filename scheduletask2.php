@@ -54,10 +54,10 @@ $time = $_POST["time"];
  $starttime = strtotime($starttime);
  $endtime = strtotime($endtime);
  }
-
- $id = $mysqli->real_escape_string($id);
- $endtime = $mysqli->real_escape_string($endtime);
- $starttime = $mysqli->real_escape_string($starttime);
+ 
+ $id = inputcleaner($id,$mysqli);
+ $endtime = inputcleaner($endtime,$mysqli);
+ $starttime = inputcleaner($starttime,$mysqli);
  
  /*0 unassigned
   *1 assigned but not solved

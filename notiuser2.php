@@ -44,9 +44,8 @@ $msg = $_POST["msg"];
      $_SESSION['exitcodev2'] = '';
 }
 
-
-$name = $mysqli->real_escape_string($name);
-$msg = $mysqli->real_escape_string($msg);
+$name = inputcleaner($name,$mysqli);
+$msg = inputcleaner($msg,$mysqli);
 
  if ($mysqli->query("INSERT INTO `$db`.
 								   `notifications` (`idnotifications`, `readyn`,

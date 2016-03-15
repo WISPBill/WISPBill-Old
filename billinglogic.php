@@ -374,4 +374,12 @@ if($event == 'receipt'){
 }
 }// End of Mail User
 
+function inputcleaner($input,$mysqli) {
+	// Other actions can go here
+$input = $mysqli->real_escape_string($input);
+$input = htmlspecialchars($input);
+
+return $input;
+}// inputcleaner
+
 ?>

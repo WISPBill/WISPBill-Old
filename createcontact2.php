@@ -22,16 +22,17 @@ require_once('./session.php');
 require_once('./fileloader.php');
 $mysqli = new mysqli("$ip", "$username", "$password", "$db");
 // start of post
-$fname = $_POST["fname"];
-$lname = $_POST["lname"];
-$org = $_POST["org"];
-$tel = $_POST["tel"];
-$add = $_POST["add"];
-$city = $_POST["city"];
-$zip = $_POST["zip"];
-$state = $_POST["state"];
-$email1 = $_POST["email"];
-$email2 = $_POST["email2"];
+
+$fname = inputcleaner($fname,$mysqli);
+$lname = inputcleaner($lname,$mysqli);
+$org = inputcleaner($org,$mysqli);
+$tel = inputcleaner($tel,$mysqli);
+$add = inputcleaner($add,$mysqli);
+$city = inputcleaner($city,$mysqli);
+$zip = inputcleaner($zip,$mysqli);
+$state = inputcleaner($state,$mysqli);
+$email1 = inputcleaner($email1,$mysqli);
+$email2 = inputcleaner($email2,$mysqli);
 // end of post
 
 // start of data sanitize and existence check

@@ -56,11 +56,10 @@ $router = $_POST["router"];
 }
 
 
-$name = $mysqli->real_escape_string($name);
-$pass = $mysqli->real_escape_string($pass);
-$ip = $mysqli->real_escape_string($ip);
-$router = $mysqli->real_escape_string($router);
-
+$name = inputcleaner($name,$mysqli);
+$pass = inputcleaner($pass,$mysqli);
+$ip = inputcleaner($ip,$mysqli);
+$router = inputcleaner($router,$mysqli);
 
 // end of data sanitize and existence check
 $routerip = $ip;

@@ -38,9 +38,9 @@ $status = $_POST["status"];
     // Nothing
  }
 
- $id = $mysqli->real_escape_string($id);
-  $status= $mysqli->real_escape_string($status);
-
+  $id = inputcleaner($id,$mysqli);
+  $status = inputcleaner($status,$mysqli);
+  
   if(is_numeric($status)){
     //nothing
   }else{

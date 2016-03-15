@@ -30,6 +30,7 @@ if($priv == 0){
 }
 $mysqli = new mysqli("$ip", "$username", "$password", "$db");
 foreach ($_POST['id'] as $id) {
+	$id = inputcleaner($id,$mysqli);
      if ($result = $mysqli->query("DELETE FROM `$db`.`admin_users` WHERE `admin_users`.`idadmin` = $id")) {
       
     } 

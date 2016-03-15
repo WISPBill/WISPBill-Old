@@ -42,9 +42,9 @@ $intday = $intday + 1; // for empty
  }
  
  $intday = $intday - 1; // for empty
- 
- $intday = $mysqli->real_escape_string($intday);
- $daydata = $mysqli->real_escape_string($daydata);
+  
+  $intday = inputcleaner($intday,$mysqli);
+  $daydata = inputcleaner($daydata,$mysqli);
   
      if($daydata =='false'){
     
@@ -71,9 +71,8 @@ WHERE `day_of_week` = '$intday' and `admin_users_idadmin` = '$adminid'") === TRU
     $start = $_POST["newstart"];
     $end = $_POST["newend"];
     
-    $start = $mysqli->real_escape_string($start);
-    $end = $mysqli->real_escape_string($end);
-    
+	$start = inputcleaner($start,$mysqli);
+	$end = inputcleaner($end,$mysqli);
     if ($result = $mysqli->query("DELETE FROM `admin_hours`
 WHERE `day_of_week` = '$intday' and `admin_users_idadmin` = '$adminid'") === TRUE){
 

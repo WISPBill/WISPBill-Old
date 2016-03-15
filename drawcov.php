@@ -40,6 +40,7 @@ if ($result = $mysqli->query("SELECT * FROM `admin_users` WHERE `idadmin` = $adm
 $id =  $_SESSION['id'];
 if(empty($id)){
   $site = $_POST["id"];
+  $site = inputcleaner($site,$mysqli);
  if (empty($site)) {
 
    $_SESSION['exitcodev2'] = 'site';

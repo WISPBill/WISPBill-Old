@@ -49,9 +49,9 @@ elseif(empty($down)){
     // do nothing 
 } // end if
 
-$up = $mysqli->real_escape_string($up);
-$down = $mysqli->real_escape_string($down);
-$id = $mysqli->real_escape_string($id);
+$up = inputcleaner($up,$mysqli);
+$down = inputcleaner($down,$mysqli);
+$id = inputcleaner($id,$mysqli);
 // end of data sanitize and existence check
 if ($result = $mysqli->query("SELECT * FROM `customer_plans` WHERE `idcustomer_plans` ='$id'")) {
       /* fetch associative array */

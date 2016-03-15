@@ -276,6 +276,9 @@ desired effect
              if(isset($_GET["id"])){
             $mailid = $_GET["id"];
             $folder = $_GET["folder"];
+			
+			$mailid = inputcleaner($mailid,$mysqli);
+			$folder = inputcleaner($folder,$mysqli);
         } else{
             //no folder we want to view
           header('Location: mailbox.php');

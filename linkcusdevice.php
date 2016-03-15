@@ -25,6 +25,8 @@ $mysqli = new mysqli("$ip", "$username", "$password", "$db");
 if(isset($_GET["workflow"])){
  $workflow = $_GET["workflow"];
  
+ $workflow = inputcleaner($workflow,$mysqli);
+ 
  if($workflow == 'lead1C'){
   require_once('./billingcon.php');
   $isworkflow = true;

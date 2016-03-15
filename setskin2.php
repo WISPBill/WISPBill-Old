@@ -38,9 +38,7 @@ $skin = $_POST["skin"];
      $_SESSION['exitcodev2'] = '';
 }
 
-
-$skin = $mysqli->real_escape_string($skin);
-
+$skin = inputcleaner($skin,$mysqli);
 
 // end of data sanitize and existence check
 // start of data entry

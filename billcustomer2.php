@@ -28,6 +28,7 @@ $phone = $_POST["tel"];
 $email = $_POST["stripeEmail"];
 $l4= $_POST["4"];
 $token = $_POST['stripeToken'];
+
 // end of post
 // start of data sanitize and existence check
  if (empty($email)) {
@@ -49,9 +50,10 @@ $token = $_POST['stripeToken'];
     // do nothing 
 } // end if
 
-$emailc = $mysqli->real_escape_string($email);
-$phonec = $mysqli->real_escape_string($phone);
-$l4c = $mysqli->real_escape_string($l4);
+$emailc = inputcleaner($email,$mysqli);
+$phonec = inputcleaner($phone,$mysqli);
+$l4c = inputcleaner($l4,$mysqli);
+
 if(!filter_var($emailc, FILTER_VALIDATE_EMAIL)){
      $_SESSION['errorcode'] = 'email';
     header('Location: billcustomer.php');

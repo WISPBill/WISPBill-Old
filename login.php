@@ -60,10 +60,11 @@ $epass = $_POST["epass"];
     // do nothing 
 } // end if
 
-$user = $mysqli->real_escape_string($user);
-$pass = $mysqli->real_escape_string($pass);
+$user = inputcleaner($user,$mysqli);
+$pass= inputcleaner($pass,$mysqli);
+
 if($emailreader == true){
-$epass = $mysqli->real_escape_string($epass);
+$epass = inputcleaner($epass,$mysqli);
 }else{
 	//email is not on
 }

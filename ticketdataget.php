@@ -23,7 +23,9 @@ require_once('./fileloader.php');
 $mysqli = new mysqli("$ip", "$username", "$password", "$db");
 
 	
-    $id = $mysqli->real_escape_string($_GET['choice']);
+    $id = $_GET['choice'];
+	
+	$id = inputcleaner($id,$mysqli);
 
 if(empty($id)){
     //No id

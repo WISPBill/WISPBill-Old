@@ -24,7 +24,9 @@ $mysqli = new mysqli("$ip", "$username", "$password", "$db");
 
 if(isset($_POST['id'])){
 foreach ($_POST['id'] as $id) {
-   $id = $mysqli->real_escape_string($id);
+
+   $id = inputcleaner($id,$mysqli);
+   
    if ($result = $mysqli->query("UPDATE  `$db`.`notifications` SET  `readyn` =  '1'
                                 WHERE  `notifications`.`idnotifications` =$id;
 ")) {

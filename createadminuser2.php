@@ -86,15 +86,16 @@ elseif(empty($email2)){
 } else{
     // do nothing 
 } // end if
-$fname = $mysqli->real_escape_string($fname);
-$lname = $mysqli->real_escape_string($lname);
-$tel = $mysqli->real_escape_string($tel);
-$ctel = $mysqli->real_escape_string($ctel);
-$user = $mysqli->real_escape_string($user);
-$pass1 = $mysqli->real_escape_string($pass1);
-$pass2 = $mysqli->real_escape_string($pass2);
-$email1 = $mysqli->real_escape_string($email1);
-$email2 = $mysqli->real_escape_string($email2);
+
+$fname = inputcleaner($fname,$mysqli);
+$lname = inputcleaner($lname,$mysqli);
+$tel = inputcleaner($tel,$mysqli);
+$ctel = inputcleaner($ctel,$mysqli);
+$user = inputcleaner($user,$mysqli);
+$pass1 = inputcleaner($pass1,$mysqli);
+$pass2 = inputcleaner($pass2,$mysqli);
+$email1 = inputcleaner($email1,$mysqli);
+$email2 = inputcleaner($email2,$mysqli);
 
 if(!filter_var($email1, FILTER_VALIDATE_EMAIL)){
     $_SESSION['exitcode'] = 'email not valid';

@@ -61,11 +61,11 @@ elseif(empty($slavesite)){
     // do nothing 
 } // end if
 
-$mastersite = $mysqli->real_escape_string($mastersite);
-$masterport = $mysqli->real_escape_string($masterport);
-$slavesite = $mysqli->real_escape_string($slavesite);
-$slaveport = $mysqli->real_escape_string($slaveport);
-$capacity = $mysqli->real_escape_string($capacity);
+ $mastersite = inputcleaner($mastersite,$mysqli);
+  $masterport = inputcleaner($masterport,$mysqli);
+   $slavesite = inputcleaner($slavesite,$mysqli);
+    $slaveport = inputcleaner($slaveport,$mysqli);
+	 $capacity = inputcleaner($capacity,$mysqli);
 // end of data sanitize and existence check
 //start of data entry for system DB
 if ($mysqli->query("INSERT INTO `$db`.`links` (`idlinks`, `capacity`, `status`, `master_site`, `slave_site`,

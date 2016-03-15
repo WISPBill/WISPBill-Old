@@ -27,9 +27,11 @@ if($emailreader == true){
     header('Location: index.php');
 }
 $folder = $_POST['folder'];
+$folder = inputcleaner($folder,$mysqli);
 
              if(isset($_POST['id'])){
             $uid = $_POST['id'];
+			$uid = inputcleaner($uid,$mysqli);
         } else{
             //no folder we want to view
           header('Location: mailbox.php');

@@ -32,6 +32,8 @@ $lid= $_POST["site"];
 
 $workflow = $_POST["workflow"];
 
+$workflow = inputcleaner($workflow,$mysqli);
+
 // end of post
 
 if($workflow == 'false'){
@@ -68,10 +70,12 @@ if (empty($id)) {
 }  else {
     // Nothing
 }
-$emailc = $mysqli->real_escape_string($email);
-$phonec = $mysqli->real_escape_string($phone);
-$l4c = $mysqli->real_escape_string($l4);
-$site = $mysqli->real_escape_string($lid);
+
+$emailc = inputcleaner($email,$mysqli);
+$phonec = inputcleaner($phone,$mysqli);
+$l4c= inputcleaner($l4,$mysqli);
+$site = inputcleaner($lid,$mysqli);
+
 if(!filter_var($emailc, FILTER_VALIDATE_EMAIL)){
          $_SESSION['exitcodev2'] = 'email';
     header('Location: linkcusdevice.php');

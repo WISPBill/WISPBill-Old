@@ -37,6 +37,9 @@ $mysqli = new mysqli("$ip", "$username", "$password", "$db");
 $status = $_POST["status"];
 $note = $_POST["text1"];
 
+$note = inputcleaner($note,$mysqli);
+$status = inputcleaner($status,$mysqli);
+
  if (empty($status)) {
     $_SESSION['exitcodev2'] = 'status';
     header('Location: troubleshooting3.php');

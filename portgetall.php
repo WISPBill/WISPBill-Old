@@ -23,7 +23,9 @@ require_once('./fileloader.php');
 $mysqli = new mysqli("$ip", "$username", "$password", "$db");
 $mysqlil = new mysqli("$ipl", "$usernamel", "$passwordl", "$dbl");
 	
-    $site = $mysqli->real_escape_string($_GET['choice']);
+    $site = $_GET['choice'];
+	
+	$site = inputcleaner($site,$mysqli);
 
     if ($result2 = $mysqli->query("SELECT * FROM `devices` WHERE `location_idlocation` = '$site'and `type` = 'router'")) {
 				/* fetch associative array */

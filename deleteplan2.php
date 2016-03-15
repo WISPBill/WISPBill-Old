@@ -23,6 +23,8 @@ require_once('./fileloader.php');
 require_once('./billingcon.php');
 
 $newplanid = $_POST['plan'];
+$newplanid = inputcleaner($newplanid,$mysqli);
+
 $mysqli = new mysqli("$ip", "$username", "$password", "$db");
 if ($result = $mysqli->query("SELECT * FROM `customer_plans` WHERE `idcustomer_plans` = $newplanid")){
           /* fetch associative array */
@@ -34,6 +36,7 @@ if ($result = $mysqli->query("SELECT * FROM `customer_plans` WHERE `idcustomer_p
 
 
 foreach ($_POST['id'] as $id) {
+	$id = inputcleaner($id,$mysqli);
     if ($result = $mysqli->query("SELECT * FROM `customer_plans` WHERE `idcustomer_plans` = $id")){
           /* fetch associative array */
      while ($row = $result->fetch_assoc()) {

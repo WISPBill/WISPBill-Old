@@ -91,17 +91,17 @@ elseif(empty($email2)){
     // do nothing 
 } // end if
 
+$fname = inputcleaner($fname,$mysqli);
+$lname = inputcleaner($lname,$mysqli);
+$tel = inputcleaner($tel,$mysqli);
+$add = inputcleaner($add,$mysqli);
+$city = inputcleaner($city,$mysqli);
+$zip = inputcleaner($zip,$mysqli);
+$state = inputcleaner($state,$mysqli);
+$email1 = inputcleaner($email1,$mysqli);
+$email2 = inputcleaner($email2,$mysqli);
+$source = inputcleaner($source,$mysqli);
 
-$fname = $mysqli->real_escape_string($fname);
-$lname = $mysqli->real_escape_string($lname);
-$tel = $mysqli->real_escape_string($tel);
-$add = $mysqli->real_escape_string($add);
-$city = $mysqli->real_escape_string($city);
-$zip = $mysqli->real_escape_string($zip);
-$state = $mysqli->real_escape_string($state);
-$email1 = $mysqli->real_escape_string($email1);
-$email2 = $mysqli->real_escape_string($email2);
-$source = $mysqli->real_escape_string($source);
 if(!filter_var($email1, FILTER_VALIDATE_EMAIL)){
     $_SESSION['exitcodev2'] = 'Email was Not Valid';
      header('Location: createlead.php');

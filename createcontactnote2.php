@@ -26,6 +26,10 @@ $mysqli = new mysqli("$ip", "$username", "$password", "$db");
 // start of post
 $note = $_POST["text1"];
 $id = $_POST["contact"];
+
+$id = inputcleaner($id,$mysqli);
+$note = inputcleaner($note,$mysqli);
+
 // end of post
 // start of data sanitize and existence check
  if (empty($note)) {

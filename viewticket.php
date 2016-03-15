@@ -30,6 +30,8 @@ $mysqli = new mysqli("$ip", "$username", "$password", "$db");
 
 $adminid = $_SESSION['adminid'];
 
+$ticketid = inputcleaner($ticketid,$mysqli);
+
 if ($result = $mysqli->query("SELECT * FROM `admin_users` WHERE `idadmin` = $adminid")) {
     /* fetch associative array */
      while ($row = $result->fetch_assoc()) {

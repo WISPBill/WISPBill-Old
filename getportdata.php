@@ -16,7 +16,8 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-	@turtles2 on ubiquiti community, DSLReports and Netonix 
+	@turtles2 on ubiquiti community, DSLReports and Netonix
+	// THIS file is depreciated ?
  */
 require_once('./session.php');
 require_once('./fileloader.php');

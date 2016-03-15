@@ -49,6 +49,11 @@ $end =   $_POST["end"];
 $startvalue = $_POST["startvalue"];
 $endvalue = $_POST["endvalue"];
 
+$start = inputcleaner($start,$mysqli);
+$end = inputcleaner($end,$mysqli);
+$startvalue = inputcleaner($startvalue,$mysqli);
+$endvalue = inputcleaner($endvalue,$mysqli);
+
 if($start == 'office'){
         $startlat = $officelat;
         $startlon = $officelon;

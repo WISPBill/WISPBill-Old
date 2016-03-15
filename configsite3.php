@@ -43,6 +43,10 @@ if ($result2 = $mysqlil->query("SELECT * FROM `ports` WHERE `device_id` = $nms")
         while ($row = $result2->fetch_assoc()) {
      $port = $row["port_id"];
      $use = $_POST["$port"];
+     
+     $use = inputcleaner($use,$mysqli);
+
+     
     if ($result = $mysqli->query("INSERT INTO `$db`.`device_ports`
                                  (`iddevice_ports`, `port id`, `use`,
                                  `devices_iddevices`) VALUES

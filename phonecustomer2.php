@@ -54,10 +54,11 @@ $l4= $_POST["4"];
     // do nothing 
 } // end if
 
-$emailc = $mysqli->real_escape_string($email);
-$nphonec = $mysqli->real_escape_string($nphone);
-$phonec = $mysqli->real_escape_string($phone);
-$l4c = $mysqli->real_escape_string($l4);
+$emailc = inputcleaner($email,$mysqli);
+$nphonec= inputcleaner($nphone,$mysqli);
+$phonec = inputcleaner($phone,$mysqli);
+$l4c = inputcleaner($l4,$mysqli);
+
 if(!filter_var($emailc, FILTER_VALIDATE_EMAIL)){
      $_SESSION['exitcodev2'] = 'email';
     header('Location: phonecustomer.php');

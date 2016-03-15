@@ -29,6 +29,8 @@ if (isset($_GET["id"])){
 }
 $mysqli = new mysqli("$ip", "$username", "$password", "$db");
 
+$id = inputcleaner($id,$mysqli);
+
 $adminid = $_SESSION['adminid'];
 
 if ($result = $mysqli->query("SELECT * FROM `admin_users` WHERE `idadmin` = $adminid")) {

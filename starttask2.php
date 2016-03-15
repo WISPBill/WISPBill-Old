@@ -33,8 +33,7 @@ $id = $_POST["id"];
     // Nothing 
  }
 
- $id = $mysqli->real_escape_string($id);
-
+ $id = inputcleaner($id,$mysqli);
  /*0 unassigned
   *1 assigned but not solved
   *2 assigned and solved

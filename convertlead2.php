@@ -65,10 +65,9 @@ else{
     // do nothing 
 } // end if
 
-$user = $mysqli->real_escape_string($user);
-$pass1 = $mysqli->real_escape_string($pass1);
-$pass2 = $mysqli->real_escape_string($pass2);
-
+$user = inputcleaner($user,$mysqli);
+$pass1 = inputcleaner($pass1,$mysqli);
+$pass2 = inputcleaner($pass2,$mysqli);
 // end of data sanitize and existence check
 if ($result = $mysqli->query("SELECT * FROM `customer_info` WHERE `idcustomer_info` = $infoid")) {
       /* fetch associative array */

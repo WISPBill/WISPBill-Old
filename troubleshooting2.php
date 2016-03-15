@@ -50,10 +50,9 @@ $id = $_POST["id"];
      $_SESSION['exitcodev2'] = '';
 }
 
-$id = $mysqli->real_escape_string($id);
-$medium = $mysqli->real_escape_string($medium);
-$issue = $mysqli->real_escape_string($issue);
-
+$id = inputcleaner($id,$mysqli);
+$medium = inputcleaner($medium,$mysqli);
+$issue = inputcleaner($issue,$mysqli);
 // end of data sanitize and existence check
 
  /*0 unassigned

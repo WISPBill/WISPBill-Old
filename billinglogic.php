@@ -61,24 +61,19 @@ AND  `location_idlocation` =  '$site'")) {
                         return $success;
                      }
                      
-					 if ($result3 = $mysqli->query("SELECT * FROM `device_ports` WHERE `use` = 'mgmt' and `devices_iddevices` = '$did'")) {
+					 if ($result3 = $mysqli->query("SELECT * FROM `routermgmt` WHERE `iddevices` = '$did'")) {
 				/* fetch associative array */
 				 while ($row3 = $result3->fetch_assoc()) {
 					 $routerip= $row3["ip_address"];
+                     $eusername= $row3["username"];
+					 $epassword= $row3["password"];
+					 $iv= $row3["IV"];
 					 }
-						 if ($result4 = $mysqli->query("SELECT * FROM `device_credentials` WHERE `devices_iddevices` = '$did'")) {
-						 /* fetch associative array */
-						 while ($row4 = $result4->fetch_assoc()) {
-						 $eusername= $row4["username"];
-						 $epassword= $row4["password"];
-						 $iv= $row4["IV"];
-						 }
+    
 						 
 						 $rpass= mcrypt_decrypt (MCRYPT_BLOWFISH,"$masterkey", "$epassword","ofb","$iv");
 						 $rname = mcrypt_decrypt (MCRYPT_BLOWFISH,"$masterkey", "$eusername","ofb","$iv");
-                         }else{
-                        return $success;
-                     }
+                      
                      }else{
                         return $success;
                      }
@@ -181,24 +176,19 @@ AND  `location_idlocation` =  '$site'")) {
                         return $success;
                      }
                      
-					 if ($result3 = $mysqli->query("SELECT * FROM `device_ports` WHERE `use` = 'mgmt' and `devices_iddevices` = '$did'")) {
+if ($result3 = $mysqli->query("SELECT * FROM `routermgmt` WHERE `iddevices` = '$did'")) {
 				/* fetch associative array */
 				 while ($row3 = $result3->fetch_assoc()) {
 					 $routerip= $row3["ip_address"];
+                     $eusername= $row3["username"];
+					 $epassword= $row3["password"];
+					 $iv= $row3["IV"];
 					 }
-						 if ($result4 = $mysqli->query("SELECT * FROM `device_credentials` WHERE `devices_iddevices` = '$did'")) {
-						 /* fetch associative array */
-						 while ($row4 = $result4->fetch_assoc()) {
-						 $eusername= $row4["username"];
-						 $epassword= $row4["password"];
-						 $iv= $row4["IV"];
-						 }
+    				 
 						 
 						 $rpass= mcrypt_decrypt (MCRYPT_BLOWFISH,"$masterkey", "$epassword","ofb","$iv");
 						 $rname = mcrypt_decrypt (MCRYPT_BLOWFISH,"$masterkey", "$eusername","ofb","$iv");
-                         }else{
-                        return $success;
-                     }
+                        
                      }else{
                         return $success;
                      }
@@ -273,24 +263,20 @@ AND  `location_idlocation` =  '$site'")) {
                         return $success;
                      }
                      
-					 if ($result3 = $mysqli->query("SELECT * FROM `device_ports` WHERE `use` = 'mgmt' and `devices_iddevices` = '$did'")) {
+					 if ($result3 = $mysqli->query("SELECT * FROM `routermgmt` WHERE `iddevices` = '$did'")) {
 				/* fetch associative array */
 				 while ($row3 = $result3->fetch_assoc()) {
 					 $routerip= $row3["ip_address"];
+                     $eusername= $row3["username"];
+					 $epassword= $row3["password"];
+					 $iv= $row3["IV"];
 					 }
-						 if ($result4 = $mysqli->query("SELECT * FROM `device_credentials` WHERE `devices_iddevices` = '$did'")) {
-						 /* fetch associative array */
-						 while ($row4 = $result4->fetch_assoc()) {
-						 $eusername= $row4["username"];
-						 $epassword= $row4["password"];
-						 $iv= $row4["IV"];
-						 }
+    
+						 
 						 
 						 $rpass= mcrypt_decrypt (MCRYPT_BLOWFISH,"$masterkey", "$epassword","ofb","$iv");
 						 $rname = mcrypt_decrypt (MCRYPT_BLOWFISH,"$masterkey", "$eusername","ofb","$iv");
-                         }else{
-                        return $success;
-                     }
+                       
                      }else{
                         return $success;
                      }

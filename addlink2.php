@@ -76,6 +76,6 @@ if ($mysqli->query("INSERT INTO `$db`.`links` (`idlinks`, `capacity`, `status`, 
       exit;
 }
 
-header('Location: menue.php');
+header('Location: index.php');
 // end of file
 ?>

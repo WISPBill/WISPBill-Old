@@ -31,18 +31,14 @@ LIMIT 0 , 25")) {
          $portid = $row["iddevice_ports"];
          $name = $row["name"];
          
-					 if ($result3 = $mysqli->query("SELECT * FROM `device_ports` WHERE `use` = 'mgmt' and `devices_iddevices` = '$did'")) {
+					 if ($result3 = $mysqli->query("SELECT * FROM `routermgmt` WHERE `iddevices` = '$did'")) {
 				/* fetch associative array */
 				 while ($row3 = $result3->fetch_assoc()) {
 					 $routerip= $row3["ip_address"];
-					 }
-						 if ($result4 = $mysqli->query("SELECT * FROM `device_credentials` WHERE `devices_iddevices` = '$did'")) {
-						 /* fetch associative array */
-						 while ($row4 = $result4->fetch_assoc()) {
-						 $eusername= $row4["username"];
-						 $epassword= $row4["password"];
-						 $iv= $row4["IV"];
-						 }
+                     $eusername= $row3["username"];
+					 $epassword= $row3["password"];
+					 $iv= $row3["IV"];
+					 }					 
 						 
 						 $rpass= mcrypt_decrypt (MCRYPT_BLOWFISH,"$masterkey", "$epassword","ofb","$iv");
 						 $rname = mcrypt_decrypt (MCRYPT_BLOWFISH,"$masterkey", "$eusername","ofb","$iv");
@@ -193,7 +189,7 @@ ORDER BY  `port_data`.`idport_data` DESC LIMIT 0 , 1")) {
 	$txrate = '';
 	$rxrate = '';
     }
-						 }// end if
+						 
 					 } // End of If	 
     }// End of Loop
  } // End of IF 

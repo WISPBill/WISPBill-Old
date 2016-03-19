@@ -74,6 +74,11 @@ echo'
             <li><a href="viewlinks.php">View Links</a></li>
             <li><a href="maplinks.php">Map Links</a></li>
           </ul></li>
+          <li class="treeview">
+          <a href="#"><i class="fa fa-stethoscope"></i> <span>Network Monitoring</span> <i class="fa fa-angle-left pull-right"></i></a>
+          <ul class="treeview-menu">
+           <li><a href="addnetwork.php">Add a Network</a></li>
+          </ul></li>
             <li><a href="createdevice.php">Add a Device to Inventory</a></li>
             <li><a href="viewdeviceinventory.php">View Device Inventory</a></li>
             <li><a href="ipview.php">View Static IP Assignments </a></li>

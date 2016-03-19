@@ -84,6 +84,31 @@ $mac = inputcleaner($mac,$mysqli);
 $type = inputcleaner($type,$mysqli);
 $man = inputcleaner($man,$mysqli);
 // end of data sanitize and existence check
+
+$macformat = strpos($mac,":");
+  
+      if($macformat === false){
+        $macformat2 = strpos($mac,"-");
+        if($macformat2 === false){
+            $macformat3 = strpos($mac,".");
+            if($macformat3 === false){
+              $_SESSION['exitcodev2'] = 'mac';
+               header('Location: createdevice.php');
+              exit;
+            }else{
+           // mac is formact xxxx.xxxx.xxxx
+              $mac = preg_replace('~(..)(?!$)\.?~', '\1:', $mac);
+            }     
+        }else{
+          // mac is formact xx-xx-xx-xx-xx-xx
+          $mac = preg_replace("/\-/",":","$mac");
+        }
+      }else{
+        // mac has right format
+      }
+	  
+$mac = strtolower($mac);
+
 // start of data entry
 if ($mysqli->query("INSERT INTO `$db`.`devices` (`iddevices`, `location_idlocation`, `name`, `serial_number`, `manufacturer`, `model`, `type`, `librenms_id`, `field_status`, `mac`)
                    VALUES (NULL, NULL, '$name', '$serial', '$man', '$modle', '$type', NULL, 'inventory', '$mac');") === TRUE) {

@@ -23,8 +23,14 @@
  
 require_once('./fileloader.php');
 	 $mysqli = new mysqli("$ip", "$username", "$password", "$db");
+	 $start = $_GET['start'];
+	
+	$start = inputcleaner($start,$mysqli);
+	$end = $_GET['end'];
+	
+	$end = inputcleaner($end,$mysqli);
  if ($result = $mysqli->query("SELECT * FROM  `device_ports` WHERE  `use` !=  'no'
-LIMIT 0 , 25")) {
+LIMIT $start , $end")) {
     /* fetch associative array */
     foreach ($result as $row){
          $did = $row["devices_iddevices"];

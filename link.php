@@ -78,6 +78,7 @@ echo'
           <a href="#"><i class="fa fa-stethoscope"></i> <span>Network Monitoring</span> <i class="fa fa-angle-left pull-right"></i></a>
           <ul class="treeview-menu">
            <li><a href="addnetwork.php">Add a Network</a></li>
+           <li><a href="viewdown.php">View Down Devices</a></li>
           </ul></li>
             <li><a href="createdevice.php">Add a Device to Inventory</a></li>
             <li><a href="viewdeviceinventory.php">View Device Inventory</a></li>

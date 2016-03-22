@@ -66,8 +66,14 @@ if ($result = $mysqli->query("SELECT * FROM `history` WHERE `event` = 'Customer 
       /* fetch associative array */
       $calltotal = $result->num_rows;
 }
+    if ($result = $mysqli->query("SELECT COUNT( * ) FROM  `ip_address` 
+WHERE  `status` =  '0' AND  `devices_iddevices` IS NOT NULL")){
+     while ($row = $result->fetch_assoc()) {
+						 $devicedown = $row["COUNT( * )"];
+						
+						 }
+ }
 
-$devicedown = '1';
 ?>
 <!DOCTYPE html>
 <html>
@@ -311,7 +317,7 @@ desired effect
             <div class="icon">
               <i class="ion ion-alert-circled"></i>
             </div>
-            <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+            <a href="viewdown.php" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
           </div>
         </div>
         <!-- ./col -->

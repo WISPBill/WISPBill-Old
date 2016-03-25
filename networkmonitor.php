@@ -148,4 +148,8 @@ $time = $time_end - $time_start;
    // Run DHCP Reconciler
    $cmd = '	wget --no-check-certificate https://127.0.0.1/dhcpreconciler.php -O /dev/null';
    exec($cmd . " > /dev/null &");
+   
+    // Run Port Reconciler
+   $cmd = '	wget --no-check-certificate https://127.0.0.1/portreconciler.php -O /dev/null';
+   exec($cmd . " > /dev/null &");
 ?>

@@ -79,6 +79,7 @@ echo'
           <ul class="treeview-menu">
            <li><a href="addnetwork.php">Add a Network</a></li>
            <li><a href="viewdown.php">View Down Devices</a></li>
+           <li><a href="convertdevice.php">Convert Device to Inventory</a></li>
           </ul></li>
             <li><a href="createdevice.php">Add a Device to Inventory</a></li>
             <li><a href="viewdeviceinventory.php">View Device Inventory</a></li>

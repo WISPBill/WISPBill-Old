@@ -29,38 +29,47 @@ $mac = $_POST["add"];
 $type = $_POST["type"];
 $man = $_POST["manu"];
 
-// end of post
 
+// end of post
+if(isset($_GET["source"])){
+	$source = $_GET["source"];
+	
+	if($source == 'convert'){
+		$header = 'convertdevice.php?error=yes.php';
+	}
+}else{
+	$header = 'createdevice.php';
+}
 // start of data sanitize and existence check
  if (empty($name)) {
     // If input feild is empty it goes back to the fourm and informs the user
     $_SESSION['exitcodev2'] = 'name';
-    header('Location: createdevice.php');
+    header("Location: $header");
     exit;
 } elseif(empty($serial)){
     // If input feild is empty it goes back to the fourm and informs the user
     $_SESSION['exitcodev2'] = 'ser';
-    header('Location: createdevice.php');
+    header("Location: $header");
     exit;
 }elseif(empty($modle)){
     // If input feild is empty it goes back to the fourm and informs the user
     $_SESSION['exitcodev2'] = 'mod';
-    header('Location: createdevice.php');
+     header("Location: $header");
     exit;
 }elseif(empty($mac)){
     // If input feild is empty it goes back to the fourm and informs the user
     $_SESSION['exitcodev2'] = 'mac';
-    header('Location: createdevice.php');
+     header("Location: $header");
     exit;
 }elseif(empty($type)){
     // If input feild is empty it goes back to the fourm and informs the user
     $_SESSION['exitcodev2'] = 'type';
-    header('Location: createdevice.php');
+     header("Location: $header");
     exit;
 }elseif(empty($man)){
     // If input feild is empty it goes back to the fourm and informs the user
     $_SESSION['exitcodev2'] = 'devm';
-    header('Location: createdevice.php');
+    header("Location: $header");
     exit;
 }else{
     //resets the code
@@ -68,7 +77,7 @@ $man = $_POST["manu"];
 }
 if(!filter_var($mac, FILTER_VALIDATE_MAC)){
     $_SESSION['exitcodev2'] = 'mac';
-    header('Location: createdevice.php');
+     header("Location: $header");
     exit;
   }
 else
@@ -93,7 +102,7 @@ $macformat = strpos($mac,":");
             $macformat3 = strpos($mac,".");
             if($macformat3 === false){
               $_SESSION['exitcodev2'] = 'mac';
-               header('Location: createdevice.php');
+                header("Location: $header");
               exit;
             }else{
            // mac is formact xxxx.xxxx.xxxx

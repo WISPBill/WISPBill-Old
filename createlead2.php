@@ -126,10 +126,10 @@ if ($gps == 'No Match'){
     // Geocoder found no GPS
     if ($mysqli->query("INSERT INTO `$db`.`customer_info`
                    (`idcustomer_info`, `idcustomer_users`, `idcustomer_plans`,
-                   `devices_iddevices`, `static_leases_idstatic_leases`, `fname`,
+                   `devices_iddevices`,  `fname`,
                    `lname`, `phone`, `address`, `city`, `zip_code`, `state`,
                    `email`, `lat`, `lon`, `creation_date`, `source`) VALUES
-                   (NULL, NULL, NULL, NULL, NULL,
+                   (NULL, NULL, NULL, NULL,
                    '$fname', '$lname', '$tel', '$add',
                    '$city', '$zip', '$state', '$email1',
                    NULL, NULL, CURRENT_TIMESTAMP, '$source');") === TRUE) {
@@ -169,10 +169,10 @@ echo'<form action="createlead2.php"method="post">
 // start of data entry
 if ($mysqli->query("INSERT INTO `$db`.`customer_info`
                    (`idcustomer_info`, `idcustomer_users`, `idcustomer_plans`,
-                   `devices_iddevices`, `static_leases_idstatic_leases`, `fname`,
+                   `devices_iddevices`, `fname`,
                    `lname`, `phone`, `address`, `city`, `zip_code`, `state`,
                    `email`, `lat`, `lon`, `creation_date`, `source`) VALUES
-                   (NULL, NULL, NULL, NULL, NULL,
+                   (NULL, NULL, NULL, NULL,
                    '$fname', '$lname', '$tel', '$add',
                    '$city', '$zip', '$state', '$email1',
                    '$lat', '$lon', CURRENT_TIMESTAMP, '$source');") === TRUE) {

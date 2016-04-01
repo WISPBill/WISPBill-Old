@@ -250,10 +250,10 @@ if ($result = $mysqli->query("SELECT * FROM  `static_leases` ")) {
      $mac = $row["mac"];
      $IP = $row["ip"];
      $serverid = $row["DHCP_Servers_idDHCP_Servers"];
-     $leaseid = $row["idstatic_leases"];
+     $cusid = $row["customer_info_idcustomer_info"];
      
      if ($result = $mysqli->query("SELECT * FROM  `customer_info` WHERE
-                                  `static_leases_idstatic_leases` =  '$leaseid'")) {
+                                  `idcustomer_info` =  '$cusid'")) {
     /* fetch associative array */
      while ($row = $result->fetch_assoc()) {
     $fname = $row["fname"];

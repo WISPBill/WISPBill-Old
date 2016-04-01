@@ -215,30 +215,14 @@ $ssh->exec("/opt/vyatta/sbin/vyatta-cfg-cmd-wrapper begin\n
 // DB entry 
 
 if ($mysqli->query("INSERT INTO `$db`.`static_leases`
-                   (`idstatic_leases`, `ip`, `mac`, `DHCP_Servers_idDHCP_Servers`)
-                   VALUES (NULL, '$ip', '$mac', '$serverid');") === TRUE) {
+                   (`idstatic_leases`, `ip`, `mac`, `DHCP_Servers_idDHCP_Servers`, `customer_info_idcustomer_info`)
+                   VALUES (NULL, '$ip', '$mac', '$serverid', '$infoid');") === TRUE) {
 //nothing 
 } else{
     echo'Something went wrong with the database please contact your webmaster';
         exit;
 }
 
-if ($result2 = $mysqli->query("SELECT * FROM `static_leases` WHERE `ip` ='$ip' and `mac` = '$mac'")) {
-    /* fetch associative array */
-     while ($row = $result2->fetch_assoc()) {
-    $sid = $row["idstatic_leases"];
-}
-       /* free result set */
-    $result2->close();
-}// end if
-
-if ($result = $mysqli->query("UPDATE `$db`.`customer_info` SET
-                             `static_leases_idstatic_leases` = '$sid' WHERE
-                             `customer_info`.`idcustomer_info` = '$infoid';")) {
-}else{
-    echo'Something went wrong with the database please contact your webmaster';
-        exit;
-}
     header('Location: index.php');                   
 	}else{
 	//SSH works but IP not found

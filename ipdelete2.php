@@ -72,7 +72,6 @@ AND  `phone` =  '$phonec' AND  `devices_iddevices` IS NOT NULL ")) {
 	 } elseif($numsrows == 1){
 		while ($row = $result->fetch_assoc()) {
         $uid= $row["idcustomer_users"];
-        $lid= $row["static_leases_idstatic_leases"];
         $infoid= $row["idcustomer_info"];
      }								
 }
@@ -107,7 +106,7 @@ if ($result2 = $mysqli->query("SELECT * FROM `customer_users` WHERE `idcustomer_
      exit;
     }elseif($mode == 'wispbill'){
      
-     if ($result = $mysqli->query("SELECT * FROM `static_leases` WHERE `idstatic_leases` = '$lid'")) {
+     if ($result = $mysqli->query("SELECT * FROM `static_leases` WHERE `customer_info_idcustomer_info`= '$infoid'")) {
             while ($row = $result->fetch_assoc()) {
     $mac = $row["mac"];
      $ip = $row["ip"];

@@ -262,7 +262,11 @@ $error = $_SESSION['exitcodev2'];
                 </thead>
                 <tbody>
 				 <?php
-                if ($result = $mysqli->query("SELECT * FROM `customer_info` WHERE `idcustomer_users` is NULL")) {
+                if ($result = $mysqli->query("SELECT *
+FROM   customer_info
+WHERE  NOT EXISTS (SELECT customer_info_idcustomer_info
+                   FROM   customer_users
+                   WHERE  customer_info.idcustomer_info = customer_users.customer_info_idcustomer_info)")) {
       /* fetch associative array */
          
     while ($row = $result->fetch_assoc()) {
@@ -344,6 +348,20 @@ $error = $_SESSION['exitcodev2'];
                   <input class="form-control" type="password" 
   	            name="password2" placeholder="Confirm Password" required>
                 </div>
+			   
+			      <div class="form-group">
+                  
+                     <?php
+					if($error == 'pin'){
+						echo "$errorlabel";
+					}else{
+						echo '<label>PIN</label>';
+					}
+					?>
+                  <input class="form-control" type="password" 
+  	            name="pin"  placeholder="Enter PIN" required>
+                </div>
+				  
 			  <div class="box-footer">
                 <button type="submit" class="btn btn-primary">Submit</button>
               </div>

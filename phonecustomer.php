@@ -244,17 +244,7 @@ $errorlabel ='<label class="control-label" for="inputError" style="color: red;">
                   <input type="text" class="form-control" name="email" placeholder="Enter Email" required>
                 </div>
                
-			   <div class="form-group">
-                  
-                     <?php
-					if($error == 'tel' or $error == 'emailphone'){
-						echo "$errorlabel";
-					}else{
-						echo '<label>Current Telephone</label>';
-					}
-					?>
-                  <input type="tel" class="form-control"  name="tel" placeholder="Enter Current Telephone" required>
-                </div>
+		
                
                <div class="form-group">
                   
@@ -268,16 +258,16 @@ $errorlabel ='<label class="control-label" for="inputError" style="color: red;">
                   <input type="tel" class="form-control"  name="ntel" placeholder="Enter New Telephone" required>
                 </div>
 			   
-			   <div class="form-group">
+			       <div class="form-group">
                 <?php
-					if($error == '4'){
+					if($error == 'pin'){
 						echo "$errorlabel";
 					}else{
-						echo '<label>Last 4 Digits of Credit Card</label>';
+						echo '<label>PIN</label>';
 					}
 					?>
                   
-                  <input type="number" min="0" max="9999" class="form-control" name="4" placeholder="Enter Last 4" required>
+                  <input type="number" min="0" max="9999" class="form-control" name="pin" placeholder="Enter PIN" required>
                 </div>
 
 				<div class="box-footer">

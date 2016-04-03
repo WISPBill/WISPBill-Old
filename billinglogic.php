@@ -368,4 +368,25 @@ $input = htmlspecialchars($input);
 return $input;
 }// inputcleaner
 
+function userverify($email,$pin,$mysqli) {
+	
+if ($result2 = $mysqli->query("SELECT `pin` FROM `customer_users` WHERE `email` = '$email'")) {
+    /* fetch associative array */
+     while ($row = $result2->fetch_assoc()) {
+     $pinhash = $row["pin"];
+}
+       /* free result set */
+    $result2->close();
+}// end if
+
+if (password_verify($pin, $pinhash)) {
+    // Pin is valid
+    return true;
+} else {
+    // Pin is not valid
+	 return false;
+}
+
+}// end of userverify
+
 ?>

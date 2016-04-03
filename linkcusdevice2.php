@@ -20,14 +20,12 @@
  */
 require_once('./session.php');
 require_once('./fileloader.php');
-require_once('./billingcon.php');
 $mysqli = new mysqli("$ip", "$username", "$password", "$db");
 $mysqlil = new mysqli("$ipl", "$usernamel", "$passwordl", "$dbl");
 // start of post
 $id= $_POST["id"];
-$phone = $_POST["tel"];
 $email = $_POST["email"];
-$l4= $_POST["4"];
+$pin= $_POST["pin"];
 $lid= $_POST["site"];
 
 $workflow = $_POST["workflow"];
@@ -52,14 +50,9 @@ if (empty($id)) {
     $_SESSION['exitcodev2'] = 'email';
     header('Location: linkcusdevice.php');
     exit;
-} elseif(empty($phone)){
-    // If phone is empty it goes back to the fourm and informs the user
-    $_SESSION['exitcodev2'] = 'tel';
-    header('Location: linkcusdevice.php');
-    exit;
-} elseif(empty($l4)){
+}elseif(empty($pin)){
     // If Last 4 is empty it goes back to the fourm and informs the user
-    $_SESSION['exitcodev2'] = '4';
+    $_SESSION['exitcodev2'] = 'pin';
     header('Location: linkcusdevice.php');
     exit;
 } elseif(empty($lid)){
@@ -72,8 +65,7 @@ if (empty($id)) {
 }
 
 $emailc = inputcleaner($email,$mysqli);
-$phonec = inputcleaner($phone,$mysqli);
-$l4c= inputcleaner($l4,$mysqli);
+$pinc= inputcleaner($pin,$mysqli);
 $site = inputcleaner($lid,$mysqli);
 
 if(!filter_var($emailc, FILTER_VALIDATE_EMAIL)){
@@ -84,44 +76,21 @@ if(!filter_var($emailc, FILTER_VALIDATE_EMAIL)){
 else{
   //do nothing 
   }
-     if ($result = $mysqli->query("SELECT * FROM  `customer_info` WHERE  `email` =  '$emailc'
-AND  `phone` =  '$phonec'")) {
-    /* fetch associative array */
-     $numsrows = $result->num_rows;
-    if ($numsrows == 0){
-			 $_SESSION['exitcodev2']  = 'emailphone';
-     header('Location: linkcusdevice.php');
-    exit;							
-	 } elseif($numsrows == 1){
-		// Nothing								
-}
-       /* free result set */
-    $result->close();
-}// end if
-if ($result = $mysqli->query("SELECT * FROM `customer_info` WHERE `email` = '$emailc' and `phone` = '$phonec'")) {
-    /* fetch associative array */
-     while ($row = $result->fetch_assoc()) {
-     $uid= $row["idcustomer_users"];
-     $iid= $row["idcustomer_info"];
-}
-       /* free result set */
-    $result->close();
-}// end if
 
-if ($result2 = $mysqli->query("SELECT * FROM `customer_users` WHERE `idcustomer_users` = $uid")) {
+
+if ($result2 = $mysqli->query("SELECT * FROM `customer_users` WHERE `email` = '$emailc'")) {
     /* fetch associative array */
      while ($row = $result2->fetch_assoc()) {
-     $cid= $row["stripeid"];
+     $uid= $row["idcustomer_users"];
+     $iid= $row["customer_info_idcustomer_info"];
 }
        /* free result set */
     $result2->close();
 }// end if
 
- $cus= Stripe_Customer::retrieve("$cid");
- $last4 = $cus->sources->data[0]->last4;
+$isuser = userverify($emailc,$pinc,$mysqli);
 
- if($last4 == $l4c){
-    // if last 4 match update DB
+if($isuser === true){
          if ($result = $mysqli->query("UPDATE `$db`.`customer_info`
                                       SET `devices_iddevices` = '$id'
                                       WHERE `customer_info`.`idcustomer_info` = $iid;")) {
@@ -336,12 +305,16 @@ exit;
 						 }// end if
 					 } // End of If	 
          } // End of If
- }else{
-     $_SESSION['exitcodev2'] = '4';
-    header('linkcusdevice.php');
+
+}elseif($isuser === false){
+       $_SESSION['exitcodev2']  = 'pin';
+       header('linkcusdevice.php');
     exit;
- }
- 
+}else{
+  echo 'Error with userverify';
+  exit;
+}
+
 if($workflow == 'false'){
 header('Location: index.php');
 exit;

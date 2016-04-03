@@ -24,9 +24,9 @@ require_once('./billingcon.php');
 $mysqli = new mysqli("$ip", "$username", "$password", "$db");
 
 // start of post
-$phone = $_POST["tel"];
+
 $email = $_POST["email"];
-$l4= $_POST["4"];
+$pin= $_POST["pin"];
 // end of post
 // start of data sanitize and existence check
  if (empty($email)) {
@@ -34,14 +34,9 @@ $l4= $_POST["4"];
     $_SESSION['exitcodev2'] = 'email';
     header('Location: deletecustomer.php');
     exit;
-} elseif(empty($phone)){
-    // If phone is empty it goes back to the fourm and informs the user
-    $_SESSION['exitcodev2'] = 'tel';
-    header('Location: deletecustomer.php');
-    exit;
-} elseif(empty($l4)){
+} elseif(empty($pin)){
     // If Last 4 is empty it goes back to the fourm and informs the user
-    $_SESSION['exitcodev2'] = '4';
+    $_SESSION['exitcodev2'] = 'pin';
     header('Location: deletecustomer.php');
     exit;
 }else{
@@ -49,8 +44,7 @@ $l4= $_POST["4"];
 } // end if
 
 $emailc = inputcleaner($email,$mysqli);
-$phonec = inputcleaner($phone,$mysqli);
-$l4c = inputcleaner($l4,$mysqli);
+$pinc = inputcleaner($pin,$mysqli);
 
 if(!filter_var($emailc, FILTER_VALIDATE_EMAIL)){
      $_SESSION['exitcodev2'] = 'email';
@@ -60,49 +54,34 @@ if(!filter_var($emailc, FILTER_VALIDATE_EMAIL)){
 else{
   //do nothing 
   }
-if ($result = $mysqli->query("SELECT * FROM  `customer_info` WHERE  `email` =  '$emailc'
-AND  `phone` =  '$phonec' AND  `devices_iddevices` IS NOT NULL ")) {
-    /* fetch associative array */
-     $numsrows = $result->num_rows;
-    if ($numsrows == 0){
-			 $_SESSION['exitcodev2']  = 'emailphone';
-    header('Location: deletecustomer.php');
-    exit;							
-	 } elseif($numsrows == 1){
-		while ($row = $result->fetch_assoc()) {
-        $uid= $row["idcustomer_users"];
-        $cdid= $row["devices_iddevices"];
-        $infoid= $row["idcustomer_info"];
-     }								
-}
-       /* free result set */
-    $result->close();
-}// end if  
+
 // end of data sanitize and existence check
-if ($result = $mysqli->query("SELECT * FROM `customer_info` WHERE `email` = '$emailc' and `phone` = '$phonec'")) {
-    /* fetch associative array */
-     while ($row = $result->fetch_assoc()) {
-     $uid= $row["idcustomer_users"];
-     $iid= $row["idcustomer_info"];
-}
-       /* free result set */
-    $result->close();
-}// end if
-if ($result2 = $mysqli->query("SELECT * FROM `customer_users` WHERE `idcustomer_users` = $uid")) {
+if ($result2 = $mysqli->query("SELECT * FROM `customer_users`  WHERE `email` = '$emailc'")) {
     /* fetch associative array */
      while ($row = $result2->fetch_assoc()) {
      $cid= $row["stripeid"];
      $uname= $row["username"];
+     $uid= $row["idcustomer_users"];
+     $infoid= $row["customer_info_idcustomer_info"];
 }
        /* free result set */
     $result2->close();
 }// end if
 
- $cus= Stripe_Customer::retrieve("$cid");
- $last4 = $cus->sources->data[0]->last4;
+if ($result = $mysqli->query("SELECT * FROM `customer_info` WHERE `idcustomer_info` = '$infoid'")) {
+    /* fetch associative array */
+     while ($row = $result->fetch_assoc()) {
+     $cdid= $row["devices_iddevices"];
+}
+       /* free result set */
+    $result->close();
+}// end if
 
- if($last4 == $l4c){
-    // Delete all info from Stripe and Our database
+
+$isuser = userverify($emailc,$pinc,$mysqli);
+
+if($isuser === true){
+   // Delete all info from Stripe and Our database
     if ($result = $mysqli->query("DELETE FROM `customer_info` WHERE `idcustomer_info` ='$iid'")) {
       if ($result = $mysqli->query("DELETE FROM `customer_users` WHERE `idcustomer_users` ='$uid'")) {
        $mysqlir = new mysqli("$ipr", "$usernamer", "$passwordr", "$dbr");
@@ -110,11 +89,14 @@ if ($result2 = $mysqli->query("SELECT * FROM `customer_users` WHERE `idcustomer_
                     $cus->delete();
     
     }
-    }    
- }else{
-    $_SESSION['exitcodev2'] = '4';
-    header('Location: deletecustomer.php');
+    } 
+}elseif($isuser === false){
+       $_SESSION['exitcodev2']  = 'pin';
+          header('Location: deletecustomer.php');
     exit;
- }
+}else{
+  echo 'Error with userverify';
+  exit;
+}
 header('Location: index.php');
 ?>

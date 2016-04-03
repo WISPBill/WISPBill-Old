@@ -309,7 +309,11 @@ var polyline = L.polyline(line_points, polyline_options).addTo(map);
   ";
     }}
     
-    if ($result = $mysqli->query("SELECT * FROM `customer_info` WHERE `idcustomer_users` is NULL")) {
+    if ($result = $mysqli->query("SELECT *
+FROM   customer_info
+WHERE  NOT EXISTS (SELECT customer_info_idcustomer_info
+                   FROM   customer_users
+                   WHERE  customer_info.idcustomer_info = customer_users.customer_info_idcustomer_info)")) {
       /* fetch associative array */
     
     while ($row = $result->fetch_assoc()) {
@@ -327,7 +331,12 @@ var polyline = L.polyline(line_points, polyline_options).addTo(map);
   ";
     }}
     
-    if ($result = $mysqli->query("SELECT * FROM `customer_info` WHERE `idcustomer_users` is not NULL")) {
+    if ($result = $mysqli->query("SELECT *
+FROM   customer_info
+WHERE  (SELECT customer_info_idcustomer_info
+                   FROM   customer_users
+                   WHERE  customer_info.idcustomer_info = customer_users.customer_info_idcustomer_info)
+                             and `idcustomer_plans` is not NULL")) {
       /* fetch associative array */
     
     while ($row = $result->fetch_assoc()) {

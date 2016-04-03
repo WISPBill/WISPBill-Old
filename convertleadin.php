@@ -254,7 +254,9 @@ $error = $_SESSION['exitcodev2'];
 WHERE  `idcustomer_info` NOT IN (
 SELECT  `customer_info_idcustomer_info` 
 FROM  `ticket` WHERE  `issue` =  'Install'
-) AND  `idcustomer_users` IS NULL ")) {
+) AND NOT EXISTS (SELECT customer_info_idcustomer_info
+                   FROM   customer_users
+                   WHERE  customer_info.idcustomer_info = customer_users.customer_info_idcustomer_info) ")) {
       /* fetch associative array */
          
     while ($row = $result->fetch_assoc()) {

@@ -29,6 +29,7 @@ if(isset($_GET["workflow"])){
   require_once('./billingcon.php');
   $isworkflow = true;
   $workflowcusid = $_SESSION['lead1'];
+  $pin= $_SESSION['lead1pin'];
   if ($result = $mysqli->query("SELECT * FROM `customer_info` WHERE `idcustomer_info` = '$workflowcusid'")) {
       /* fetch associative array */
       
@@ -37,24 +38,14 @@ if(isset($_GET["workflow"])){
 	 $custel= $row["phone"];
 	 $uid= $row["idcustomer_users"];
     }
-	if ($result2 = $mysqli->query("SELECT * FROM `customer_users` WHERE `idcustomer_users` = $uid")) {
-    /* fetch associative array */
-     while ($row = $result2->fetch_assoc()) {
-     $cid= $row["stripeid"];
-}
-       /* free result set */
-    $result2->close();
-}// end if
 
- $cus= Stripe_Customer::retrieve("$cid");
- $last4 = $cus->sources->data[0]->last4;
     } //end of mysql if
   } //  end of lead1b if
 }else{
   $isworkflow = false;
   $cusemail= '';
 	 $custel= '';
-	 $last4 ='';
+
 }
 
 $adminid = $_SESSION['adminid'];
@@ -286,40 +277,22 @@ $errorlabel ='<label class="control-label" for="inputError" style="color: red;">
 				  }//nothing
 				  ?>required>
                 </div>
-               
-			   <div class="form-group">
-                  
-                     <?php
-					if($error == 'tel' or $error == 'emailphone'){
-						echo "$errorlabel";
-					}else{
-						echo '<label>Telephone</label>';
-					}
-					?>
-
-                  <input type="tel" class="form-control"  name="tel" placeholder="Enter Telephone" <?php if($isworkflow == true){
-				   echo "value='$custel'";
-				  }elseif($isworkflow == false){
-				 
-				  }//nothing
-				  ?>required>
-                </div>
 			   
 			   <div class="form-group">
                 <?php
-					if($error == '4'){
+					if($error == 'pin'){
 						echo "$errorlabel";
 					}else{
-						echo '<label>Last 4 Digits of Credit Card</label>';
+						echo '<label>PIN</label>';
 					}
 					?>
                   
-                  <input type="number" min="0" max="9999" class="form-control" name="4" placeholder="Enter Last 4" <?php if($isworkflow == true){
-				   echo "value='$last4'";
+                  <?php if($isworkflow == true){
+				   echo "<input type='hidden' name='pin' value='$pin'>";
 				  }elseif($isworkflow == false){
-				 
+				 echo '<input type="number" min="0" max="9999" class="form-control" name="pin" placeholder="Enter PIN" required>';
 				  }//nothing
-				  ?>required>
+				  ?>
                 </div>
 <div class="form-group">
                   <?php

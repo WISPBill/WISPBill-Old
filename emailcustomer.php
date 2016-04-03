@@ -208,11 +208,11 @@ desired effect
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Change Account Email
+        Change User Email
       </h1>
       <ol class="breadcrumb">
         <li><a href="dashbored.php"><i class="fa fa-dashboard"></i> Dashbored</a></li>
-        <li class="active">Change Account Email</li>
+        <li class="active">Change User Email</li>
       </ol>
     </section>
 <?php
@@ -232,6 +232,7 @@ $errorlabel ='<label class="control-label" for="inputError" style="color: red;">
             <div class="box-body">
               <form role="form" action="emailcustomer2.php"method="post">
                 <!-- text input -->
+				
                 <div class="form-group">
                     
 					<?php
@@ -244,17 +245,7 @@ $errorlabel ='<label class="control-label" for="inputError" style="color: red;">
                   <input type="text" class="form-control" name="email" placeholder="Enter Current Email" required>
                 </div>
                
-			   <div class="form-group">
-                  
-                     <?php
-					if($error == 'tel' or $error == 'emailphone'){
-						echo "$errorlabel";
-					}else{
-						echo '<label>Telephone</label>';
-					}
-					?>
-                  <input type="tel" class="form-control"  name="tel" placeholder="Enter Telephone" required>
-                </div>
+			 
                
                <div class="form-group">
                   
@@ -268,16 +259,16 @@ $errorlabel ='<label class="control-label" for="inputError" style="color: red;">
                   <input type="text" class="form-control" name="nemail" placeholder="Enter New Email" required>
                 </div>
 			   
-			   <div class="form-group">
+			      <div class="form-group">
                 <?php
-					if($error == '4'){
+					if($error == 'pin'){
 						echo "$errorlabel";
 					}else{
-						echo '<label>Last 4 Digits of Credit Card</label>';
+						echo '<label>PIN</label>';
 					}
 					?>
                   
-                  <input type="number" min="0" max="9999" class="form-control" name="4" placeholder="Enter Last 4" required>
+                  <input type="number" min="0" max="9999" class="form-control" name="pin" placeholder="Enter PIN" required>
                 </div>
 
 				<div class="box-footer">

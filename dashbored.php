@@ -33,6 +33,7 @@ $_SESSION['errorcode'] ='';
 $_SESSION['troubleshooting'] ='';
 // Workflow CLeanup
 $_SESSION['lead1'] = '';
+$_SESSION['lead1pin'] = '';
 // End of cleanup
 $adminid = $_SESSION['adminid'];
 
@@ -47,13 +48,20 @@ if ($result = $mysqli->query("SELECT * FROM `admin_users` WHERE `idadmin` = $adm
     $result->close();
 }// end if
 
-if ($result = $mysqli->query("SELECT * FROM `customer_info` WHERE
-                             `idcustomer_users` is not NULL
+if ($result = $mysqli->query("SELECT *
+FROM   customer_info
+WHERE  (SELECT customer_info_idcustomer_info
+                   FROM   customer_users
+                   WHERE  customer_info.idcustomer_info = customer_users.customer_info_idcustomer_info)
                              and `idcustomer_plans` is not NULL")) {
       /* fetch associative array */
       $custotal = $result->num_rows;
 }
-if ($result = $mysqli->query("SELECT * FROM `customer_info` WHERE `idcustomer_users` is NULL")) {
+if ($result = $mysqli->query("SELECT *
+FROM   customer_info
+WHERE  NOT EXISTS (SELECT customer_info_idcustomer_info
+                   FROM   customer_users
+                   WHERE  customer_info.idcustomer_info = customer_users.customer_info_idcustomer_info)")) {
       /* fetch associative array */
       $leadtotal = $result->num_rows;
 }

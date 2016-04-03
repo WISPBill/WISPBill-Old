@@ -25,7 +25,7 @@ echo'
           <a href="#"><i class="fa fa-user"></i> <span>Edit Customer\'s</span> <i class="fa fa-angle-left pull-right"></i></a>
           <ul class="treeview-menu">
             <li><a href="billcustomer.php">Change Billing Info</a></li>
-            <li><a href="emailcustomer.php">Change Email</a></li>
+            <li><a href="emailcustomer.php">Change User Email</a></li>
             <li><a href="phonecustomer.php">Change Phone Number</a></li>
             <li><a href="changecusser.php">Change Service Plan</a></li>
           </ul></li>

@@ -27,6 +27,7 @@ $user = $_POST["username"];
 $pass1 = $_POST["password"];
 $pass2 = $_POST["password2"];
 $infoid = $_POST["id"];
+$pin = $_POST["pin"];
 $workflow = $_POST["workflow"];
 
 // end of post
@@ -61,6 +62,12 @@ elseif(empty($infoid)){
     header("Location: convertlead.php$getadd");
     exit;
 }
+elseif(empty($pin)){
+    // If email is empty it goes back to the fourm and informs the user
+   $_SESSION['exitcodev2'] = 'pin';
+    header("Location: convertlead.php$getadd");
+    exit;
+}
 else{
     // do nothing 
 } // end if
@@ -68,6 +75,8 @@ else{
 $user = inputcleaner($user,$mysqli);
 $pass1 = inputcleaner($pass1,$mysqli);
 $pass2 = inputcleaner($pass2,$mysqli);
+$pin = inputcleaner($pin,$mysqli);
+$inputpin = $pin;
 // end of data sanitize and existence check
 if ($result = $mysqli->query("SELECT * FROM `customer_info` WHERE `idcustomer_info` = $infoid")) {
       /* fetch associative array */
@@ -122,31 +131,19 @@ if ($result = $mysqli->query("SELECT * FROM `customer_users` WHERE `email` = '$e
 // end of cheack for exsting username and or email
 //start of hashing
 $hash= password_hash("$pass1", PASSWORD_DEFAULT);
+$pin= password_hash("$pin", PASSWORD_DEFAULT);
 // end of hashing
 
 //start of data entry
-if ($mysqli->query("INSERT INTO `$db`.`customer_users` (`idcustomer_users`, `username`, `password`, `email`, `stripeid`)
-                   VALUES (NULL, '$user', '$hash', '$email', NULL);") === TRUE) {
+if ($mysqli->query("INSERT INTO `$db`.`customer_users` (`idcustomer_users`, `username`, `password`, `email`, `stripeid`, `pin`, `customer_info_idcustomer_info`)
+                   VALUES (NULL, '$user', '$hash', '$email', NULL, '$pin', '$infoid');") === TRUE) {
 //nothing 
 } else{
     echo'Something went wrong with the database please contact your webmaster';
         exit;
 }
-if ($result = $mysqli->query("SELECT * FROM `customer_users` WHERE `email` = '$email'")) {
-      /* fetch associative array */
-      
-    while ($row = $result->fetch_assoc()) {
-     $cusid= $row["idcustomer_users"];
-    }
-}
-if ($mysqli->query("UPDATE `$db`.`customer_info`
-                   SET `idcustomer_users` = '$cusid' WHERE
-                   `customer_info`.`idcustomer_info` = $infoid;") === TRUE) {
-//nothing 
-} else{
-    echo'Something went wrong with the database please contact your webmaster';
-        exit;
-}
+
+
 
 // end of data entry
 if($workflow == 'false'){
@@ -154,6 +151,7 @@ header('Location: index.php');
 }elseif($workflow == 'lead1'){
  header('Location: setbill.php?workflow=lead1B');
  $_SESSION['lead1'] = "$infoid";
+ $_SESSION['lead1pin'] = "$inputpin";
 }else{
  echo "Workflow Error";
 }

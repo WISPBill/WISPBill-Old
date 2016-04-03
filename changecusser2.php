@@ -24,9 +24,8 @@ require_once('./billingcon.php');
 $mysqli = new mysqli("$ip", "$username", "$password", "$db");
 
 // start of post
-$phone = $_POST["tel"];
 $email = $_POST["email"];
-$l4= $_POST["4"];
+$pin = $_POST["pin"];
 $plan = $_POST["plan"];
 // end of post
 // start of data sanitize and existence check
@@ -35,14 +34,9 @@ $plan = $_POST["plan"];
     $_SESSION['exitcodev2'] = 'email';
     header('Location: changecusser.php');
     exit;
-} elseif(empty($phone)){
-    // If phone is empty it goes back to the fourm and informs the user
-    $_SESSION['exitcodev2'] = 'tel';
-    header('Location: changecusser.php');
-    exit;
-} elseif(empty($l4)){
+}elseif(empty($pin)){
     // If Last 4 is empty it goes back to the fourm and informs the user
-    $_SESSION['exitcodev2'] = '4';
+    $_SESSION['exitcodev2'] = 'pin';
     header('Location: changecusser.php');
     exit;
 }else{
@@ -50,8 +44,8 @@ $plan = $_POST["plan"];
 } // end if
 
 $emailc = inputcleaner($email,$mysqli);
-$phonec = inputcleaner($phone,$mysqli);
-$l4c = inputcleaner($l4,$mysqli);
+$pinc = inputcleaner($pin,$mysqli);
+$plan = inputcleaner($plan,$mysqli);
 
 if(!filter_var($emailc, FILTER_VALIDATE_EMAIL)){
      $_SESSION['exitcodev2'] = 'email';
@@ -61,7 +55,7 @@ if(!filter_var($emailc, FILTER_VALIDATE_EMAIL)){
 else{
   //do nothing 
   }
-     if ($result = $mysqli->query("SELECT * FROM  `customer_info` WHERE  `email` =  '$emailc'
+     if ($result = $mysqli->query("SELECT * FROM  `customer_users` WHERE  `email` =  '$emailc'
 AND  `phone` =  '$phonec'")) {
     /* fetch associative array */
      $numsrows = $result->num_rows;
@@ -76,20 +70,14 @@ AND  `phone` =  '$phonec'")) {
     $result->close();
 }// end if
 // end of data sanitize and existence check
-if ($result = $mysqli->query("SELECT * FROM `customer_info` WHERE `email` = '$emailc' and `phone` = '$phonec'")) {
-    /* fetch associative array */
-     while ($row = $result->fetch_assoc()) {
-     $uid= $row["idcustomer_users"];
-     $iid= $row["idcustomer_info"];
-}
-       /* free result set */
-    $result->close();
-}// end if
-if ($result2 = $mysqli->query("SELECT * FROM `customer_users` WHERE `idcustomer_users` = $uid")) {
+
+if ($result2 = $mysqli->query("SELECT * FROM `customer_users` WHERE `email` = '$emailc'")) {
     /* fetch associative array */
      while ($row = $result2->fetch_assoc()) {
      $cid= $row["stripeid"];
      $uname= $row["username"];
+     $uid= $row["idcustomer_users"];
+     $iid= $row["customer_info_idcustomer_info"];
 }
        /* free result set */
     $result2->close();
@@ -105,11 +93,10 @@ if ($result3 = $mysqli->query("SELECT * FROM `customer_plans` WHERE `idcustomer_
     $result3->close();
 }// end if
 
- $cus= Stripe_Customer::retrieve("$cid");
- $last4 = $cus->sources->data[0]->last4;
+$isuser = userverify($emailc,$pinc,$mysqli);
 
- if($last4 == $l4c){
-    if ($result = $mysqli->query("UPDATE `customer_info` SET `idcustomer_plans` = '$plan' WHERE `idcustomer_info` = '$iid'")) {
+if($isuser === true){
+  if ($result = $mysqli->query("UPDATE `customer_info` SET `idcustomer_plans` = '$plan' WHERE `idcustomer_info` = '$iid'")) {
      
      $subid = $cus->subscriptions->data[0]->id;
      $subscription = $cus->subscriptions->retrieve("$subid");
@@ -118,10 +105,14 @@ if ($result3 = $mysqli->query("SELECT * FROM `customer_plans` WHERE `idcustomer_
        header('Location: index.php');
 
 }
- }else{
-    $_SESSION['exitcodev2'] = '4';
-    header('Location: changecusser.php');
+}elseif($isuser === false){
+       $_SESSION['exitcodev2']  = 'pin';
+       header('Location: changecusser.php');
     exit;
- }
+}else{
+  echo 'Error with userverify';
+  exit;
+}
 
+header('Location: index.php');
 ?>

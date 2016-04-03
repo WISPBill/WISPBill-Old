@@ -226,7 +226,11 @@ desired effect
             <div class="box-header">
 <?php
 	         $mysqli = new mysqli("$ip", "$username", "$password", "$db");
-if ($result = $mysqli->query("SELECT * FROM `customer_info` WHERE `idcustomer_users` is NULL")) {
+if ($result = $mysqli->query("SELECT *
+FROM   customer_info
+WHERE  NOT EXISTS (SELECT customer_info_idcustomer_info
+                   FROM   customer_users
+                   WHERE  customer_info.idcustomer_info = customer_users.customer_info_idcustomer_info)")) {
       /* fetch associative array */
       $numrow = $result->num_rows;
      echo "<h3 class=\"box-title\">We have $numrow Leads</h3>";			

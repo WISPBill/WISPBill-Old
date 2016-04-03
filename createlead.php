@@ -233,12 +233,27 @@ $errorlabel ='<label class="control-label" for="inputError" style="color: red;">
             <div class="box-body">
               <form role="form" action="createlead2.php"method="post">
                 <!-- text input -->
+				  <div class="form-group">
+                  <?php
+					if($error == 'type'){
+						echo "$errorlabel";
+					}else{
+						echo '<label>Lead Type</label>';
+					}
+					?>
+                  <select class="form-control"  name='type' required>
+					<option value='' selected disabled>Please Select an Option</option>
+                <option value='residential'>Residential</option>
+                <option value='business'>Business</option>
+                  </select>
+                </div>
+				  
                 <div class="form-group">
 					<?php
 					if($error == 'fname'){
 						echo "$errorlabel";
 					}else{
-						echo '<label>First Name</label>';
+						echo '<label>First Name If Business Enter Common Name</label>';
 					}
 					?>
                   <input type="text" class="form-control" name="fname" placeholder="Enter First Name" required>
@@ -250,7 +265,7 @@ $errorlabel ='<label class="control-label" for="inputError" style="color: red;">
 					if($error == 'lname'){
 						echo "$errorlabel";
 					}else{
-						echo '<label>Last Name</label>';
+						echo '<label>Last Name If Business Enter Entity Type (LLC, INC, ETC)</label>';
 					}
 					?>
                   <input type="text" class="form-control" name="lname" placeholder="Enter Last Name" required>

@@ -33,6 +33,7 @@ $state = $_POST["state"];
 $email1 = $_POST["email"];
 $email2 = $_POST["email2"];
 $source = $_POST["source"];
+$type = $_POST["type"];
 // end of post
 
 // start of data sanitize and existence check
@@ -87,6 +88,11 @@ elseif(empty($email2)){
     $_SESSION['exitcodev2'] = 'source';
     header('Location: createlead.php');
     exit;
+} elseif(empty($type)){
+    // If email is empty it goes back to the fourm and informs the user 
+    $_SESSION['exitcodev2'] = 'type';
+    header('Location: createlead.php');
+    exit;
 }else{
     // do nothing 
 } // end if
@@ -101,6 +107,7 @@ $state = inputcleaner($state,$mysqli);
 $email1 = inputcleaner($email1,$mysqli);
 $email2 = inputcleaner($email2,$mysqli);
 $source = inputcleaner($source,$mysqli);
+$type = inputcleaner($type,$mysqli);
 
 if(!filter_var($email1, FILTER_VALIDATE_EMAIL)){
     $_SESSION['exitcodev2'] = 'Email was Not Valid';
@@ -125,14 +132,14 @@ $gps = geocode($add, $city, $state, $zip);
 if ($gps == 'No Match'){
     // Geocoder found no GPS
     if ($mysqli->query("INSERT INTO `$db`.`customer_info`
-                   (`idcustomer_info`, `idcustomer_users`, `idcustomer_plans`,
+                   (`idcustomer_info`,`idcustomer_plans`,
                    `devices_iddevices`,  `fname`,
                    `lname`, `phone`, `address`, `city`, `zip_code`, `state`,
-                   `email`, `lat`, `lon`, `creation_date`, `source`) VALUES
-                   (NULL, NULL, NULL, NULL,
+                   `email`, `lat`, `lon`, `creation_date`, `source`, `type`) VALUES
+                   (NULL, NULL, NULL,
                    '$fname', '$lname', '$tel', '$add',
                    '$city', '$zip', '$state', '$email1',
-                   NULL, NULL, CURRENT_TIMESTAMP, '$source');") === TRUE) {
+                   NULL, NULL, CURRENT_TIMESTAMP, '$source', '$type');") === TRUE) {
 //nothing 
 } else{
     echo'Something went wrong with the database please contact your webmaster';
@@ -168,14 +175,14 @@ echo'<form action="createlead2.php"method="post">
 // end of data sanitize and existence check
 // start of data entry
 if ($mysqli->query("INSERT INTO `$db`.`customer_info`
-                   (`idcustomer_info`, `idcustomer_users`, `idcustomer_plans`,
+                   (`idcustomer_info`, `idcustomer_plans`,
                    `devices_iddevices`, `fname`,
                    `lname`, `phone`, `address`, `city`, `zip_code`, `state`,
-                   `email`, `lat`, `lon`, `creation_date`, `source`) VALUES
-                   (NULL, NULL, NULL, NULL,
+                   `email`, `lat`, `lon`, `creation_date`, `source`, `type`) VALUES
+                   (NULL, NULL,  NULL,
                    '$fname', '$lname', '$tel', '$add',
                    '$city', '$zip', '$state', '$email1',
-                   '$lat', '$lon', CURRENT_TIMESTAMP, '$source');") === TRUE) {
+                   '$lat', '$lon', CURRENT_TIMESTAMP, '$source', '$type');") === TRUE) {
 //nothing 
 } else{
     echo'Something went wrong with the database please contact your webmaster';

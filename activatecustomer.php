@@ -36,7 +36,6 @@ if(isset($_GET["workflow"])){
     while ($row = $result->fetch_assoc()) {
      $cusemail= $row["email"];
 	 $custel= $row["phone"];
-	 $uid= $row["idcustomer_users"];
     }
 
     } //end of mysql if

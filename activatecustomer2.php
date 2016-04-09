@@ -70,7 +70,7 @@ else{
 // end of data sanitize and existence check
 
 
-if ($result2 = $mysqli->query("SELECT * FROM `customer_users` WHERE WHERE `email` = '$emailc' ")) {
+if ($result2 = $mysqli->query("SELECT * FROM `customer_users` WHERE `email` = '$emailc' ")) {
     /* fetch associative array */
      while ($row = $result2->fetch_assoc()) {
      $cid= $row["stripeid"];
@@ -147,6 +147,7 @@ if($isuser === true){
 `billing_mode` =  '$mode' WHERE  `customer_external`.`customer_info_idcustomer_info` =$iid;")) {
  
   //Stripe Enroll
+  $cus= Stripe_Customer::retrieve("$cid");
      $cus->subscriptions->create(array("plan" => "$planname"));
      $cus->save();
   }// end if

@@ -27,7 +27,7 @@ $id= $_POST["id"];
 $email = $_POST["email"];
 $pin= $_POST["pin"];
 $lid= $_POST["site"];
-
+$location = $_POST["location"];
 $workflow = $_POST["workflow"];
 
 $workflow = inputcleaner($workflow,$mysqli);
@@ -60,6 +60,11 @@ if (empty($id)) {
     $_SESSION['exitcodev2'] = 'site';
     header('Location: linkcusdevice.php');
     exit;
+}elseif(empty($location)){
+    // If phone is empty it goes back to the fourm and informs the user
+    $_SESSION['exitcodev2'] = 'location';
+   header('Location: linkcusdevice.php');
+    exit;
 }  else {
     // Nothing
 }
@@ -67,7 +72,8 @@ if (empty($id)) {
 $emailc = inputcleaner($email,$mysqli);
 $pinc= inputcleaner($pin,$mysqli);
 $site = inputcleaner($lid,$mysqli);
-
+   $location = inputcleaner($location,$mysqli);
+   
 if(!filter_var($emailc, FILTER_VALIDATE_EMAIL)){
          $_SESSION['exitcodev2'] = 'email';
     header('Location: linkcusdevice.php');
@@ -91,18 +97,86 @@ if ($result2 = $mysqli->query("SELECT * FROM `customer_users` WHERE `email` = '$
 $isuser = userverify($emailc,$pinc,$mysqli);
 
 if($isuser === true){
-         if ($result = $mysqli->query("UPDATE `$db`.`customer_info`
-                                      SET `devices_iddevices` = '$id'
-                                      WHERE `customer_info`.`idcustomer_info` = $iid;")) {
+         
+         if($location == "true"){
+		  $add = $_POST["add"];
+		  $city = $_POST["city"];
+		  $zip = $_POST["zip"];
+		  $state = $_POST["state"];
+		  
+		  if(empty($add)){
+	     // If input feild is empty it goes back to the fourm and informs the user
+		      $_SESSION['exitcodev2'] = 'add';
+		        header('Location: activatecustomer.php');
+		      exit;
+		  }elseif(empty($city)){
+		      // If input feild is empty it goes back to the fourm and informs the user
+		      $_SESSION['exitcodev2'] = 'city';
+		         header('Location: activatecustomer.php');
+		      exit;
+		  }elseif(empty($zip)){
+		     // If input feild is empty it goes back to the fourm and informs the user
+		      $_SESSION['exitcodev2'] = 'zip';
+		         header('Location: activatecustomer.php');
+		      exit;
+		  }elseif(empty($state)){
+		      // If input feild is empty it goes back to the fourm and informs the user
+		      $_SESSION['exitcodev2'] = 'state';
+		         header('Location: activatecustomer.php');
+		      exit;
+		  }
+		  
+		  $add = inputcleaner($add,$mysqli);
+		  $city = inputcleaner($city,$mysqli);
+		  $zip = inputcleaner($zip,$mysqli);
+		  $state = inputcleaner($state,$mysqli);
+		  
+		  $gps = geocode($add, $city, $state, $zip);
+		  if ($gps == 'No Match'){
+		      // Geocoder found no GPS
+			   $lat = 'Fail';
+			   $lon = 'Fail';
+		  } elseif(empty($gps)){
+		      echo 'Geocoder has failed contact your webmaster';
+		      exit;
+		  }else{
+		      // Shoud get a lat lon
+		      $lat = $gps['lat'];
+		      $lon = $gps['lon'];
+		  }
+	 }elseif($location == "false"){
+		  if ($result2 = $mysqli->query("SELECT * FROM `customer_info` WHERE `idcustomer_info` = '$iid'")) {
+	  /* fetch associative array */
+	  while ($row = $result2->fetch_assoc()) {
+	  $lat = $row["lat"];
+	  $lon = $row["lon"];
+	  $add = $row["address"];
+	  $zip = $row["zip_code"];
+	  $city= $row["city"];
+	  $state= $row["state"];
+		  }
+       /* free result set */
+	  $result2->close();
+		  }// end if
+	 }else{
+		  echo "Unexpected Input";
+		  exit;
+	 }
+         
+         if ($result = $mysqli->query("INSERT INTO `$db`.`customer_locations`
+(`idcustomer_locations`, `billing_mode`, `lat`, `lon`, `street_address`, `city`, `zip`, `state`,
+`customer_info_idcustomer_info`, `devices_iddevices`, `customer_plans_idcustomer_plans`) VALUES
+(NULL, NULL, '$lat', '$lon', '$add', '$city', '$zip', '$state', '$iid', '$id', NULL);")) {
  
          }// end if
+          
          if ($result = $mysqli->query("UPDATE `$db`.`devices` SET
                                       `location_idlocation` = '$site',
                                       `field_status` = 'customer' WHERE
                                       `devices`.`iddevices` = $id;")) {
  
          }// end if
-         
+
          if ($result14 = $mysqli->query("SELECT * FROM `devices` WHERE `iddevices` = '$id' AND  `manufacturer` =  'Ubiquiti Networks'")) {
     /* fetch associative array */
     $numsrows = $result14->num_rows;

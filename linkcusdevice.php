@@ -329,6 +329,69 @@ $errorlabel ='<label class="control-label" for="inputError" style="color: red;">
 				  }//nothing
 				  ?>
                 </div>
+				  
+				  <div class="form-group">
+                  <?php
+					if($error == 'location'){
+						echo "$errorlabel";
+					}else{
+						echo '<label>Service Location</label>';
+					}
+					?>
+                  <select class="form-control" name="location" id="location" required>
+					<option value='' selected disabled>Please Select an Option</option>
+                    <option value="false">Same as Billing Address</option>
+                    <option value="true">Diffrent From Billing Address</option>
+                  </select>
+                </div>
+				  
+			   <span id="locationenter" style="display:none;">
+                <div class="form-group">
+                <?php
+					if($error == 'add'){
+						echo "$errorlabel";
+					}else{
+						echo '<label>Street Address</label>';
+					}
+					?>
+                  
+                  <input type="text" class="form-control" name="add" placeholder="Enter Street Address" >
+                </div>
+               <div class="form-group">
+                <?php
+					if($error == 'city'){
+						echo "$errorlabel";
+					}else{
+						echo '<label>City</label>';
+					}
+					?>
+                  
+                  <input type="text" class="form-control" name="city" placeholder="Enter City" >
+                </div>
+               <div class="form-group">
+                <?php
+					if($error == 'zip'){
+						echo "$errorlabel";
+					}else{
+						echo '<label>Zip Code</label>';
+					}
+					?>
+                  
+                  <input type="text" class="form-control" name="zip" placeholder="Enter ZIP Code" >
+                </div>
+               <div class="form-group">
+                <?php
+					if($error == 'state'){
+						echo "$errorlabel";
+					}else{
+						echo '<label>State</label>';
+					}
+					?>
+                  
+                  <input type="text" class="form-control" name="state" <?php echo "value='$state'";?> >
+                </div>
+            </span>
+				  
 			   <?php
 			    if($error =='dev'){
 				 echo '<label style="color: red;">You need to Select a Device</label>';
@@ -443,6 +506,18 @@ $errorlabel ='<label class="control-label" for="inputError" style="color: red;">
       "autoWidth": false
     });
   });
+</script>
+<script>
+        $(document).ready(function (){
+            $("#location").change(function() {
+                // foo is the id of the other select box 
+                if ($(this).val() != "false") {
+                    $("#locationenter").show();
+                }else{
+                    $("#locationenter").hide();
+                } 
+            });
+        });
 </script>
 </body>
 </html>

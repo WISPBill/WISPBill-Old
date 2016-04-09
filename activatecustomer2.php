@@ -28,6 +28,7 @@ $email = $_POST["email"];
 $pin= $_POST["pin"];
 $mode = $_POST["mode"];
 $plan= $_POST["plan"];
+$location = $_POST["location"];
 // end of post
 // start of data sanitize and existence check
  if (empty($email)) {
@@ -50,6 +51,11 @@ $plan= $_POST["plan"];
     $_SESSION['exitcodev2'] = 'plan';
    header('Location: activatecustomer.php');
     exit;
+}elseif(empty($location)){
+    // If phone is empty it goes back to the fourm and informs the user
+    $_SESSION['exitcodev2'] = 'location';
+   header('Location: activatecustomer.php');
+    exit;
 }else{
     // do nothing 
 } // end if
@@ -58,6 +64,8 @@ $emailc = inputcleaner($email,$mysqli);
    $pinc = inputcleaner($pin,$mysqli);
   $plan = inputcleaner($plan,$mysqli);
    $mode = inputcleaner($mode,$mysqli);
+$location = inputcleaner($location,$mysqli);
+
 if(!filter_var($emailc, FILTER_VALIDATE_EMAIL)){
      $_SESSION['exitcodev2'] = 'email';
     header('Location: activatecustomer.php');
@@ -97,6 +105,7 @@ if ($result3 = $mysqli->query("SELECT * FROM `customer_plans` WHERE `idcustomer_
 $isuser = userverify($emailc,$pinc,$mysqli);
 
 if($isuser === true){
+
    if($mode == "radius"){
      // DO if mode radius
 	 $upr = $up*1000;
@@ -123,7 +132,7 @@ if($isuser === true){
                 }
    }elseif($mode == "wispbill"){
      // Do WISPBill SSH Billing
-       $works = ACLWhitelist($iid,$mysqli,$masterkey,$db);
+       $works = ACLWhitelist($iid,$location,$mysqli,$masterkey,$db);
 	   if($works == false){
 		  echo "SSH Error AClWhitelist";
 		  exit;
@@ -141,17 +150,14 @@ if($isuser === true){
      exit;
    }
    // DB Update
-  if ($result = $mysqli->query("UPDATE `customer_info` SET `idcustomer_plans` ='$plan' WHERE `idcustomer_info` ='$iid'")) {
- 
-  if ($result = $mysqli->query("UPDATE  `$db`.`customer_external` SET  `billing` =  '1',
-`billing_mode` =  '$mode' WHERE  `customer_external`.`customer_info_idcustomer_info` =$iid;")) {
- 
+ if ($result = $mysqli->query("UPDATE  `$db`.`customer_locations` SET  `billing_mode` =  '$mode',
+`customer_plans_idcustomer_plans` =  '$plan' WHERE `idcustomer_locations` = '$location'")) {
+  
   //Stripe Enroll
   $cus= Stripe_Customer::retrieve("$cid");
      $cus->subscriptions->create(array("plan" => "$planname"));
      $cus->save();
   }// end if
-}// end if
 
 }elseif($isuser === false){
        $_SESSION['exitcodev2']  = 'pin';

@@ -19,11 +19,10 @@
 	@turtles2 on ubiquiti community, DSLReports and Netonix
 	
  */
-function ACLWhitelist($cusid,$mysqli,$masterkey,$db){
+function ACLWhitelist($cusid,$location,$mysqli,$masterkey,$db){
 // This assumes Customer already has linked cpe
 $success = false;
-if ($result = $mysqli->query("SELECT  `devices_iddevices` FROM  `customer_info` 
-WHERE  `idcustomer_info` =  '$cusid'")) {
+if ($result = $mysqli->query("SELECT `devices_iddevices` FROM `customer_locations` WHERE `idcustomer_locations` = '$location'")) {
 				/* fetch associative array */
 				 while ($row = $result->fetch_assoc()) {
 					 $cdid= $row["devices_iddevices"];

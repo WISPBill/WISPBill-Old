@@ -269,7 +269,7 @@ $errorlabel ='<label class="control-label" for="inputError" style="color: red;">
 						echo '<label>Email</label>';
 					}
 					?>
-                  <input type="text" class="form-control" name="email" placeholder="Enter Email" <?php if($isworkflow == true){
+                  <input type="text" class="form-control" name="email" id="first-choice"  placeholder="Enter Email" <?php if($isworkflow == true){
 				   echo "value='$cusemail'";
 				  }elseif($isworkflow == false){
 				 
@@ -308,6 +308,19 @@ $errorlabel ='<label class="control-label" for="inputError" style="color: red;">
                     <option value="test">Test Mode (Customer Will Be Charged)</option>
                   </select>
                 </div>
+<?php
+ if($error == 'location'){
+						echo "$errorlabel";
+					}else{
+						echo '<label>Select Service Location</label>';
+					}
+                    ?>
+                    <div class="form-group">
+                <select class="form-control" name="location" id="second-choice" required>
+				  <option value="" selected disabled>Please Enter Email First</option>
+                </select>
+                </div>
+					
               <div class="form-group">
 			  <?php
 				 if ($result = $mysqli->query("SELECT * FROM `customer_plans` ")) {
@@ -334,7 +347,8 @@ $errorlabel ='<label class="control-label" for="inputError" style="color: red;">
         echo'  <label class="control-label" for="inputError">Datebase
                     error contact your webmaster</label>';
     }?>
-               
+                 
+			   
 			  <div class="box-footer">
                 <button type="submit" class="btn btn-primary">Submit</button>
               </div>
@@ -367,9 +381,14 @@ $errorlabel ='<label class="control-label" for="inputError" style="color: red;">
 <!-- ./wrapper -->
 
 <!-- REQUIRED JS SCRIPTS -->
+ 
 
 <!-- jQuery 2.1.4 -->
 <script src="AdminLTE2/plugins/jQuery/jQuery-2.1.4.min.js"></script>
+  <script type="text/javascript">
+  $("#first-choice").change(function() {
+  $("#second-choice").load("<?php echo"$url"; ?>/locationget.php?choice=" + $("#first-choice").val());});
+  </script>
 <!-- Bootstrap 3.3.5 -->
 <script src="AdminLTE2/bootstrap/js/bootstrap.min.js"></script>
 <!-- AdminLTE App -->

@@ -252,8 +252,11 @@ $error = $_SESSION['exitcodev2'];
                 </thead>
                 <tbody>
 				 <?php
-                if ($result = $mysqli->query("SELECT * FROM `customer_info` WHERE
-                             `idcustomer_users` is not NULL
+                if ($result = $mysqli->query("SELECT *
+FROM   customer_info
+WHERE  (SELECT customer_info_idcustomer_info
+                   FROM   customer_users
+                   WHERE  customer_info.idcustomer_info = customer_users.customer_info_idcustomer_info)
                              and `idcustomer_plans` is not NULL")) {
       /* fetch associative array */
          

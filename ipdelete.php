@@ -241,9 +241,20 @@ $errorlabel ='<label class="control-label" for="inputError" style="color: red;">
 						echo '<label>Email</label>';
 					}
 					?>
-                  <input type="text" class="form-control" name="email" placeholder="Enter Email" required>
+                  <input type="text" class="form-control" name="email" placeholder="Enter Email" id="first-choice" required>
                 </div>
- 
+ 			   <?php
+ if($error == 'location'){
+						echo "$errorlabel";
+					}else{
+						echo '<label>Select Service Location</label>';
+					}
+                    ?>
+                    <div class="form-group">
+                <select class="form-control" name="location" id="second-choice" required>
+				  <option value="" selected disabled>Please Enter Email First</option>
+                </select>
+                </div>
 			   
 			       <div class="form-group">
                 <?php
@@ -284,6 +295,10 @@ $errorlabel ='<label class="control-label" for="inputError" style="color: red;">
 <!-- jQuery 2.1.4 -->
 <script src="AdminLTE2/plugins/jQuery/jQuery-2.1.4.min.js"></script>
 <!-- Bootstrap 3.3.5 -->
+  <script type="text/javascript">
+  $("#first-choice").change(function() {
+  $("#second-choice").load("<?php echo"$url"; ?>/locationget.php?ip=false&choice=" + $("#first-choice").val());});
+  </script>
 <script src="AdminLTE2/bootstrap/js/bootstrap.min.js"></script>
 <!-- AdminLTE App -->
 <script src="AdminLTE2/dist/js/app.min.js"></script>

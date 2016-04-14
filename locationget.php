@@ -23,9 +23,16 @@ require_once('./fileloader.php');
 $mysqli = new mysqli("$ip", "$username", "$password", "$db");
 	
     $user = $_GET['choice'];
+	if(isset($_GET['ip'])){
+		$isip = $_GET['ip'];
+		
+	}
 	
 	$user = inputcleaner($user,$mysqli);
-
+	$isip = inputcleaner($isip,$mysqli);
+	
+	echo "$isip";
+	
     if ($result2 = $mysqli->query("SELECT * FROM `customer_users` WHERE `email` = '$user'")) {
 				/* fetch associative array */
 				 while ($row2 = $result2->fetch_assoc()) {
@@ -41,14 +48,37 @@ $mysqli = new mysqli("$ip", "$username", "$password", "$db");
                      $state = $row3["state"];
                      $locid = $row3["idcustomer_locations"];
                      $plan = $row3["customer_plans_idcustomer_plans"];
-                     
+                     $mode = $row3["billing_mode"];
+					 $disabled = '';
+					
+					 
                      if(empty($plan)){
-                        $plan = 'No Active Services at this Location';
+                        $plan = 'No Active Service at this Location';
                      }else{
-                        $plan = 'Active Services at this Location';
+                        $plan = "Active Service at this Location Billing Mode: $mode";
                      }
 					 
-                    echo"<option value=$locid>$street_address $city $state $zip Note $plan</option>";
+					 $display = "$street_address $city $state $zip Note $plan";
+					 
+					  if($isip == 'true'){
+						if($mode == 'radius'){
+							$disabled = 'disabled';
+							$display = 'This Locations is using Radius Which Does Not Support Static IP Address';
+						}
+					 }elseif($isip == 'false'){
+						    if ($result = $mysqli->query("SELECT COUNT( * ) FROM  `static_leases` WHERE `customer_locations_idcustomer_locations` = '$locid'")){
+						   while ($row = $result->fetch_assoc()) {
+						 $ips= $row["COUNT( * )"];
+						
+						 }
+						 }
+						 if($ips == '0'){
+							$disabled = 'disabled';
+							$display = 'This Location Has No Static IP Address\'s';
+						 }
+					 }
+					 
+                    echo"<option value=$locid $disabled>$display</option>";
 					 
                  } // end of loop
                  }

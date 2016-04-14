@@ -26,12 +26,18 @@ $mysqlil = new mysqli("$ipl", "$usernamel", "$passwordl", "$dbl");
 // start of post
 $email = $_POST["email"];
 $pin = $_POST["pin"];
+$location = $_POST["location"];
 // end of post
 // start of data sanitize and existence check
  if (empty($email)) {
     // If email is empty it goes back to the fourm and informs the user
     $_SESSION['exitcodev2']  = 'email';
     header('Location: ipdelete.php');
+    exit;
+} elseif(empty($location)){
+    // If phone is empty it goes back to the fourm and informs the user
+    $_SESSION['exitcodev2'] = 'location';
+   header('Location: ipdelete.php');
     exit;
 }elseif(empty($pin)){
     // If Last 4 is empty it goes back to the fourm and informs the user
@@ -43,8 +49,8 @@ $pin = $_POST["pin"];
 } // end if
 
 $emailc = inputcleaner($email,$mysqli);
-$phonec = inputcleaner($phone,$mysqli);
 $pinc = inputcleaner($pin,$mysqli);
+$location = inputcleaner($location,$mysqli);
 
 if(!filter_var($emailc, FILTER_VALIDATE_EMAIL)){
      $_SESSION['errorcode'] = 'email';
@@ -55,39 +61,30 @@ if(!filter_var($emailc, FILTER_VALIDATE_EMAIL)){
   }
 // end of data sanitize and existence check
 
-if ($result2 = $mysqli->query("SELECT * FROM `customer_users`  WHERE  `email` =  '$emailc'")) {
-    /* fetch associative array */
-     while ($row = $result2->fetch_assoc()) {
-      $uid= $row["idcustomer_users"];
-      $infoid= $row["customer_info_idcustomer_info"];
-}
-       /* free result set */
-    $result2->close();
-}// end if
-
 $isuser = userverify($emailc,$pinc,$mysqli);
 
 if($isuser === true){
-         if ($result3 = $mysqli->query("SELECT * FROM  `customer_external` 
-     WHERE  `customer_info_idcustomer_info` =  '$infoid'")) {
+  if ($result3 = $mysqli->query("SELECT * FROM `customer_locations` WHERE `idcustomer_locations` = '$location'")) {
     /* fetch associative array */
      while ($row = $result3->fetch_assoc()) {
      $mode= $row["billing_mode"];
-     }
+     $cdid= $row["devices_iddevices"];
+}
        /* free result set */
     $result3->close();
-     }// end if
+}// end if
     if($mode == 'radius'){
      //Radius
      echo "Static IP not supported in Radius Mode";
      exit;
     }elseif($mode == 'wispbill'){
      
-     if ($result = $mysqli->query("SELECT * FROM `static_leases` WHERE `customer_info_idcustomer_info`= '$infoid'")) {
+     if ($result = $mysqli->query("SELECT * FROM `static_leases` WHERE `customer_locations_idcustomer_locations	`= '$location'")) {
             while ($row = $result->fetch_assoc()) {
     $mac = $row["mac"];
      $ip = $row["ip"];
      $serverid= $row["DHCP_Servers_idDHCP_Servers"];
+     $lid = $row["idstatic_leases"];
 }}
  if ($result = $mysqli->query("SELECT * FROM `dhcp_servers` WHERE `idDHCP_Servers` = '$serverid'")) {
     /* fetch associative array */
@@ -102,27 +99,32 @@ if($isuser === true){
 				/* fetch associative array */
 				 while ($row2 = $result2->fetch_assoc()) {
 					 $did= $row2["devices_iddevices"];
-					 }
-					 if ($result3 = $mysqli->query("SELECT * FROM `device_ports` WHERE `use` = 'mgmt' and `devices_iddevices` = '$did'")) {
+					 }}
+					
+                    if ($result3 = $mysqli->query("SELECT * FROM `routermgmt` WHERE `iddevices` = '$did'")) {
 				/* fetch associative array */
 				 while ($row3 = $result3->fetch_assoc()) {
-					 $portid= $row3["port id"];
+					 $routerip= $row3["ip_address"];
+                     $eusername= $row3["username"];
+					 $epassword= $row3["password"];
+					 $iv= $row3["IV"];
 					 }
-						 if ($resultl = $mysqlil->query("SELECT * FROM `ipv4_addresses` WHERE `port_id` = '$portid'")) {
-				/* fetch associative array */
-				 while ($rowl = $resultl->fetch_assoc()) {
-					 $routerip= $rowl["ipv4_address"];
-					 }
-                         }
-                    }               
-          }
+
+						 $rpass= mcrypt_decrypt (MCRYPT_BLOWFISH,"$masterkey", "$epassword","ofb","$iv");
+						 $rname = mcrypt_decrypt (MCRYPT_BLOWFISH,"$masterkey", "$eusername","ofb","$iv");
+                      
+                     }else{
+                        echo 'MYSQL DB Error';
+                        exit;
+                     }               
+          
       $mac = strtolower($mac);
       
           $ssh = new Net_SSH2("$routerip");
 if (!$ssh->login("$rname", "$rpass")) {
     exit('Login Failed');
 }
-$mapname = "static.ip.set.by.wispbill.for.user.$uid";
+$mapname = "static.ip.set.by.wispbill.for.user.$location";
 $ssh->exec("/opt/vyatta/sbin/vyatta-cfg-cmd-wrapper begin\n
 /opt/vyatta/sbin/vyatta-cfg-cmd-wrapper delete service dhcp-server shared-network-name $name subnet $subnet static-mapping $mapname ip-address $ip/n
 /opt/vyatta/sbin/vyatta-cfg-cmd-wrapper delete service dhcp-server shared-network-name $name subnet $subnet static-mapping $mapname mac-address '$mac'/n

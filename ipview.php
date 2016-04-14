@@ -250,10 +250,19 @@ if ($result = $mysqli->query("SELECT * FROM  `static_leases` ")) {
      $mac = $row["mac"];
      $IP = $row["ip"];
      $serverid = $row["DHCP_Servers_idDHCP_Servers"];
-     $cusid = $row["customer_info_idcustomer_info"];
+     $cuslocation = $row["customer_locations_idcustomer_locations"];
      
-     if ($result = $mysqli->query("SELECT * FROM  `customer_info` WHERE
-                                  `idcustomer_info` =  '$cusid'")) {
+     if ($result = $mysqli->query("SELECT * FROM `customer_locations` WHERE `idcustomer_locations` = '$cuslocation'")) {
+    /* fetch associative array */
+     while ($row = $result->fetch_assoc()) {
+    $infoid = $row["customer_info_idcustomer_info"];
+
+}
+       /* free result set */
+    $result->close();
+}// end if
+
+     if ($result = $mysqli->query("SELECT * FROM `customer_info` WHERE `idcustomer_info` = '$infoid'")) {
     /* fetch associative array */
      while ($row = $result->fetch_assoc()) {
     $fname = $row["fname"];
@@ -262,6 +271,7 @@ if ($result = $mysqli->query("SELECT * FROM  `static_leases` ")) {
        /* free result set */
     $result->close();
 }// end if
+
       if ($result = $mysqli->query("SELECT * FROM `dhcp_servers` WHERE `idDHCP_Servers` = '$serverid'")) {
     /* fetch associative array */
      while ($row = $result->fetch_assoc()) {
